@@ -11,7 +11,8 @@
 /**
  * Module dependencies
  */
-var fs = require( 'fs' );
+var fs = require( 'fs' ),
+	crypto = require( 'crypto' );
 
 /**
  * Test module.
@@ -87,5 +88,40 @@ exports.test_verifyFile_creates_new_file = function( test ) {
 
 	fs.existsSync = _existsSync;
 	fs.writeFileSync = _writeSync;
+	test.done();
+};
+
+exports.test_createHash_creates_stable_hash = function( test ) {
+	var unhashed = '123456',
+		hashed = 'abcdefghij::67615732412823f2e3b59dc4ccbab5cde62c8d67dabc0429a276c5deb20dc9f0f1caf4d936cd1b7564ed5236ec8b49159638361dd788febc3d760100b62e9ad3';
+
+	// Cache util's randomness
+	var _randomValueHex = util.randomString;
+	util.randomString = function( len ) { return 'abcdefghij' };
+
+	var actual = util.createHash( unhashed );
+
+	test.strictEqual( hashed, actual );
+
+	// Reset
+	util.randomString = _randomValueHex;
+
+	test.done();
+};
+
+exports.test_validateHash_validates_hash = function( test ) {
+	var unhashed = '123456',
+		hashed = 'abcdefghij::67615732412823f2e3b59dc4ccbab5cde62c8d67dabc0429a276c5deb20dc9f0f1caf4d936cd1b7564ed5236ec8b49159638361dd788febc3d760100b62e9ad3';
+
+	// Cache util's randomness
+	var _randomValueHex = util.randomString;
+	util.randomString = function( len ) { return 'abcdefghij' };
+
+	test.ok( util.validateHash( unhashed, hashed ) );
+	test.ok( ! util.validateHash( unhashed, 'abcd' ) );
+
+	// Reset
+	util.randomString = _randomValueHex;
+
 	test.done();
 };
