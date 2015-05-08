@@ -13,7 +13,15 @@
  */
 var fs = require( 'fs' ),
 	path = require( 'path' ),
-	crypto = require( 'crypto' );
+	crypto = require( 'crypto' ),
+	util = require( './util' );
+
+/**
+ * Useful constants for encryption
+ */
+var algorithm = 'aes-256-cbc',
+	inputEncoding = 'ascii',
+	outputEncoding = 'hex';
 
 /**
  * Module container
@@ -85,6 +93,56 @@ Util.prototype.validateHash = function( secret, hash ) {
 	var validate = this.createHash( secret, salt );
 
 	return hash === validate;
+};
+
+/**
+ * Encrypt some data with a set password.
+ *
+ * @param {String}        password
+ * @param {String|Object} data
+ *
+ * @returns {String}
+ */
+Util.prototype.encryptData = function( password, data ) {
+	if ( typeof data === 'object' ) {
+		data = JSON.stringify( data );
+	}
+
+	// Create a security hash of our key we'll use to prepend the output.
+	var hash = this.createHash( password );
+
+	// Create a cipher object to which we'll add data.
+	var cipher = crypto.createCipher( algorithm, password );
+
+	// Encrypt our information
+	var ciphered = cipher.update( data, inputEncoding, outputEncoding );
+
+	ciphered += cipher.final( outputEncoding );
+
+	// Return our coded output
+	return hash + '::' + ciphered;
+};
+
+/**
+ * Decrypt some data with a set password.
+ *
+ * @param {String} password
+ * @param {String} ciphertext
+ *
+ * @returns {Object}
+ */
+Util.prototype.decryptData = function( password, ciphertext ) {
+	// Create a decipher object
+	var decipher = crypto.createDecipher( algorithm, password );
+
+	// Decipher our information
+	var deciphered = decipher.update( ciphertext, outputEncoding, inputEncoding );
+
+	// Get our decoded data
+	deciphered +=  decipher.final( inputEncoding );
+
+	// Return our decoded object
+	return JSON.parse( deciphered );
 };
 
 /**
