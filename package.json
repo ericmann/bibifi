@@ -1,0 +1,21 @@
+{
+  "name": "bibifi",
+  "version": "1.0.0",
+  "description": "BIBIFI Project for Coursera Cybersecurity",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:eamann/bibifi.git"
+  },
+  "author": "Eric Mann",
+  "license": "MIT",
+  "devDependencies": {
+    "nodeunit": "^0.9.1"
+  }
+}
