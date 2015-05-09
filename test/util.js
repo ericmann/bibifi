@@ -131,9 +131,13 @@ exports.test_encryptData_protects_data = function( test ) {
 		data = { obj: {arr: [ 1, 2 ] } };
 
 	// Cache util's functionality
-	var _createHash = util.createHash;
+	var _createHash = util.createHash,
+		_randomString = util.randomString;
 	util.createHash = function( key ) {
 		return 'hashed_key';
+	};
+	util.randomString = function( len ) {
+		return '';
 	};
 
 	var expected = 'hashed_key::15a23f531fa49e2f5e38be23da8a943e51feac1bfef8712a916ce6bdf6fb7582',
@@ -143,13 +147,14 @@ exports.test_encryptData_protects_data = function( test ) {
 
 	// Reset
 	util.createHash = _createHash;
+	util.randomString = _randomString;
 
 	test.done();
 };
 
 exports.test_decryptData_exposes_data = function( test ) {
 	var secret = '123456',
-		ciphertext = '15a23f531fa49e2f5e38be23da8a943e51feac1bfef8712a916ce6bdf6fb7582';
+		ciphertext = '::hashed_key::15a23f531fa49e2f5e38be23da8a943e51feac1bfef8712a916ce6bdf6fb7582';
 
 	var expected = { obj: {arr: [ 1, 2 ] } },
 		actual = util.decryptData( secret, ciphertext );
@@ -163,11 +168,9 @@ exports.test_encryption_decryption_integration = function( test ) {
 	var data = { obj: {arr: [ 1, 2 ] }},
 		password = 'abcdef';
 
-	var encrypted = util.encryptData( password, data ),
-		enc_parts = encrypted.split( '::' ),
-		ciphertext = enc_parts[2];
+	var encrypted = util.encryptData( password, data );
 
-	var decrypted = util.decryptData( password, ciphertext );
+	var decrypted = util.decryptData( password, encrypted );
 
 	test.notEqual( undefined, decrypted.obj );
 	test.notEqual( undefined, decrypted.obj.arr );

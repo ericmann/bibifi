@@ -98,6 +98,9 @@ Util.prototype.validateHash = function( secret, hash ) {
 /**
  * Encrypt some data with a set password.
  *
+ * We will create a secure hash of our password with a random, 10-character salt. This salt will be prepended to the password
+ * when we encrypt our data.
+ *
  * @param {String}        password
  * @param {String|Object} data
  *
@@ -108,11 +111,15 @@ Util.prototype.encryptData = function( password, data ) {
 		data = JSON.stringify( data );
 	}
 
+	// Create a salt
+	var salt = this.randomString( 10 );
+
 	// Create a security hash of our key we'll use to prepend the output.
-	var hash = this.createHash( password );
+	var hash = this.createHash( password, salt ),
+		pass_key = salt + password;
 
 	// Create a cipher object to which we'll add data.
-	var cipher = crypto.createCipher( algorithm, password );
+	var cipher = crypto.createCipher( algorithm, pass_key );
 
 	// Encrypt our information
 	var ciphered = cipher.update( data, inputEncoding, outputEncoding );
@@ -126,17 +133,27 @@ Util.prototype.encryptData = function( password, data ) {
 /**
  * Decrypt some data with a set password.
  *
+ * We expect the data to be passed in the format:
+ *   `salt::hashed_password::encrypted_data`
+ *
+ * The salt will be pre-pended to the plaint-text password and used as the pass key for the decryption algorithm.
+ *
  * @param {String} password
  * @param {String} ciphertext
  *
  * @returns {Object}
  */
 Util.prototype.decryptData = function( password, ciphertext ) {
+	var cipher_parts = ciphertext.split( '::' ),
+		salt = cipher_parts[0],
+		data = cipher_parts[2],
+		pass_key = salt + password;
+
 	// Create a decipher object
-	var decipher = crypto.createDecipher( algorithm, password );
+	var decipher = crypto.createDecipher( algorithm, pass_key );
 
 	// Decipher our information
-	var deciphered = decipher.update( ciphertext, outputEncoding, inputEncoding );
+	var deciphered = decipher.update( data, outputEncoding, inputEncoding );
 
 	// Get our decoded data
 	deciphered +=  decipher.final( inputEncoding );
