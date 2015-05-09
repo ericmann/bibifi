@@ -11,8 +11,7 @@
 /**
  * Module dependencies
  */
-var fs = require( 'fs' ),
-	crypto = require( 'crypto' );
+var fs = require( 'fs' );
 
 /**
  * Test module.
@@ -175,5 +174,31 @@ exports.test_encryption_decryption_integration = function( test ) {
 	test.notEqual( undefined, decrypted.obj );
 	test.notEqual( undefined, decrypted.obj.arr );
 	test.equal( 2, decrypted.obj.arr.length );
+	test.done();
+};
+
+exports.test_invalid = function( test ) {
+	var lastErr,
+		exitCode;
+
+	// Capture stderr
+	var _write = process.stderr.write,
+		_exit = process.exit;
+	process.stderr.write = function( output ) {
+		lastErr = output;
+	};
+	process.exit = function( code ) {
+		exitCode = code;
+	};
+
+	util.invalid();
+
+	test.strictEqual( lastErr, 'invalid' );
+	test.strictEqual( exitCode, 255 );
+
+	// Reset
+	process.stderr.write = _write;
+	process.exit = _exit;
+
 	test.done();
 };

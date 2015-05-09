@@ -163,6 +163,14 @@ Util.prototype.decryptData = function( password, ciphertext ) {
 };
 
 /**
+ * Print an error message.
+ */
+Util.prototype.invalid = function() {
+	process.stderr.write( 'invalid' );
+	process.exit( 255 );
+};
+
+/**
  * Export the module
  */
 module.exports = new Util;
