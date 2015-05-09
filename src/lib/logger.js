@@ -124,6 +124,18 @@ function validate_entry( entry ) {
  */
 Logger.prototype.append = function( entry ) {
 
+	// Parse entry
+
+	// Validate entry
+
+	// Store the entry
+	entries.push( entry );
+
+	// Write the log
+	this.write();
+
+	// Exit
+	process.exit( 0 );
 };
 
 /**
