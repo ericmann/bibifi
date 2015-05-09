@@ -102,13 +102,14 @@ Logger.prototype.validate_entry_type = function( entry ) {
  */
 function validate_entry( entry ) {
 
+	// Validate entry type
 	if ( ! validate_entry_type( entry ) ) {
 		return util.invalid();
 	}
 
 	// Sanitize and validate timestamp
 	entry.timestamp = parseInt( entry.timestamp, 10 );
-	if ( entry.timestamp <= latest_timestamp ) {
+	if ( entry.timestamp <= this.latest_timestamp ) {
 		return util.invalid();
 	}
 
