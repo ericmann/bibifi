@@ -11,7 +11,8 @@
 /**
  * Module dependencies
  */
-var cli = new (require( './lib/cli' )),
+var _ = require( 'lodash' ),
+	cli = new (require( './lib/cli' )),
 	Entry = require( './lib/entry' ),
 	Logger = require( './lib/logger' );
 
@@ -36,7 +37,8 @@ if ( undefined !== data.batchfile ) {
 var logs = {}, error = false;
 _.forEach( entries, function( entry ) {
 	if ( undefined === logs['logfile'] ) {
-		var log = Logger.open( logs['logfile'], entry.secret );
+
+		var log = Logger.prototype.open( data.data['logfile'], entry.secret );
 
 		// The Logger utility returns error messages when needed
 		if ( 'key_err' === log ) {
@@ -52,7 +54,7 @@ _.forEach( entries, function( entry ) {
 
 // Now, close out all of the logs
 _.forEach( logs, function( log, filename ) {
-	log.close();
+	log.write();
 } );
 
 // Fin

@@ -46,17 +46,22 @@ Logger.prototype.open = function( logfile, key ) {
 
 	// If it's an existing file, validate our key first
 	if ( 'append' === log[1] ) {
-		var valid = this.validateKey( log[0], key );
+		var valid = false;
+		try {
+			valid = this.validateKey( log[0], key );
+		} catch ( e ) {}
+
 		if ( ! valid ) {
 			return 'key_err';
 		}
+
+		// Parse existing log
+		this.parse( log[0], key );
 	}
 
 	// Store our log reference
 	this.logDescriptor = log[0];
 
-	// Parse data
-	this.parse( log[0], key );
 
 	// Return the current instance
 	return this;
@@ -80,6 +85,18 @@ Logger.prototype.getLogFile = function( logfile ) {
 		// The file doesn't exist, so create it first, then open it.
 		fd = fs.openSync( logfile, 'w+' ); // The w+ flag will truncate existing data, so we only use this for _creating_ a logfile
 		status = 'empty';
+
+		// Pre-build our logfile
+		this.logData = {
+			'employees': [],
+			'guests': [],
+			'rooms': {},
+			'locations': {},
+			'last': 0,
+			'history': {}
+		};
+		this.parsed = true;
+		this.dirty = false;
 	}
 
 	return [fd, status];
@@ -156,6 +173,8 @@ Logger.prototype.parse = function( fd, key ) {
 
 	try {
 		this.logData = util.decryptData( key, encrypted );
+		this.parsed = true;
+		this.dirty = false;
 		return true;
 	} catch ( e ) {}
 
@@ -166,14 +185,32 @@ Logger.prototype.parse = function( fd, key ) {
 /**
  * Add an entry to the log.
  *
- * If the entry is invalid, this function returns false.
- *
  * @param {Entry} entry
  *
- * @returns {Boolean}
+ * @returns {Boolean} If the entry is invalid, this function returns false.
  */
 Logger.prototype.append = function( entry ) {
+	// Ensure order of operations
+	if ( ! this.parsed ) {
+		return false;
+	}
 
+	
+};
+
+/**
+ * Write out changes to our logfile.
+ */
+Logger.prototype.write = function() {
+	if ( ! this.dirty ) {
+		return;
+	}
+
+	// Get our data to write
+	var data = JSON.stringify( this.logData );
+
+	// We have a dirty log, which means we need to overwrite/replace the stored copy.
+	fs.writeSync( this.logDescriptor, data, 0 );
 };
 
 /**
