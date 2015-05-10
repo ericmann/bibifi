@@ -29,11 +29,20 @@ var security_key, log_path, entries = [];
 function Logger() {}
 
 /**
+ * Open a logfile using a given key.
  *
+ * If the logfile doesn't exist, create it and return at new Logger instance pointing at it.
+ * If the logfile exists and the key matches the hash at the beginning of the file, open it (decrypted) and return a new Logger instance.
+ * If the key is a mismatch, return the string 'key_err';
+ *
+ * @param {String} logfile
+ * @param {String} key
+ *
+ * @returns {Logger|String}
  */
-Logger.prototype.open( logfile, key ) {
+Logger.prototype.open = function( logfile, key ) {
 
-}
+};
 
 /**
  * Fields on the prototype, exposed for testing purposes.
