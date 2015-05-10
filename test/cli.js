@@ -35,7 +35,7 @@ function test_validEntryArgs( test ) {
 	];
 
 	var cli = new CLI,
-		parsed = cli.parsed();
+		parsed = cli.append_parsed();
 
 	test.equal( parsed.status, 'valid' );
 	test.strictEqual( parsed.data['time'], 5 );
@@ -72,7 +72,7 @@ function test_validRoomEntryArgs( test ) {
 	];
 
 	var cli = new CLI,
-		parsed = cli.parsed();
+		parsed = cli.append_parsed();
 
 	test.equal( parsed.status, 'valid' );
 	test.strictEqual( parsed.data['time'], 2 );
@@ -107,7 +107,7 @@ function test_validExitArgs( test ) {
 	];
 
 	var cli = new CLI,
-		parsed = cli.parsed();
+		parsed = cli.append_parsed();
 
 	test.equal( parsed.status, 'valid' );
 	test.strictEqual( parsed.data['time'], 2345 );
@@ -143,7 +143,7 @@ function test_validRoomExitArgs( test ) {
 	];
 
 	var cli = new CLI,
-		parsed = cli.parsed();
+		parsed = cli.append_parsed();
 
 	test.equal( parsed.status, 'valid' );
 	test.strictEqual( parsed.data['time'], 123 );
@@ -172,7 +172,7 @@ function test_validBatchArgs( test ) {
 	];
 
 	var cli = new CLI,
-		parsed = cli.parsed();
+		parsed = cli.append_parsed();
 
 	test.equal( parsed.status, 'valid' );
 	test.strictEqual( parsed.data['batchfile'], 'batchfile' );
@@ -202,7 +202,7 @@ function test_invalidArgs( test ) {
 	];
 
 	var cli = new CLI,
-		parsed = cli.parsed();
+		parsed = cli.append_parsed();
 
 	test.equal( parsed.status, 'invalid' );
 

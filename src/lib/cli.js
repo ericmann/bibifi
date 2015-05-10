@@ -153,7 +153,7 @@ function process_entry( argv ) {
  *
  * @returns {Object}
  */
-CLI.prototype.parsed = function() {
+CLI.prototype.append_parsed = function() {
 	// Process a batch file
 	if ( undefined !== this.argv['B'] ) {
 		return process_batch( this.argv );
