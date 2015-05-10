@@ -1,0 +1,4 @@
+x:
+	@true
+
+.PHONY: x
