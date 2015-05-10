@@ -81,7 +81,7 @@ function process_entry( argv ) {
 	data.data['time'] = Math.abs( time );
 
 	// Secret
-	data.data['secret'] = argv['S'];
+	data.data['secret'] = argv['K'];
 
 	// Action
 	if ( argv['L'] && ! argv['A'] ) {
@@ -130,7 +130,7 @@ function process_entry( argv ) {
 
 	// Make sure there are no extra parameters
 	_.forEach( argv, function( value, key ) {
-		if ( ! _.contains( ['_', 'T', 'S', 'A', 'L', 'R', 'E', 'G' ], key ) ) {
+		if ( ! _.contains( ['_', 'T', 'K', 'A', 'L', 'R', 'E', 'G' ], key ) ) {
 			valid_command = false;
 		}
 	} );
