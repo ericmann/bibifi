@@ -3,3 +3,4 @@
 # Development Node modueles are ignored
 node_modules/nodeunit
 node_modules/.bin/nodeunit
+node_modules/.bin/nodeunit.cmd
