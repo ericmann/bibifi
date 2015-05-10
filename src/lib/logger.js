@@ -55,6 +55,9 @@ Logger.prototype.open = function( logfile, key ) {
 	// Store our log reference
 	this.logDescriptor = log[0];
 
+	// Parse data
+	this.parse( log[0], key );
+
 	// Return the current instance
 	return this;
 };
@@ -88,6 +91,11 @@ Logger.prototype.getLogFile = function( logfile ) {
  * For reference, the encrypted log is of the format:
  * $0123456789$8d94109748d6156d5ee0a942d1dc510834016c43eea121128bbd4c49c0eafaca538a1aa39062ee3399a25fb364783dba7a18d5fbe16c71c507562b532e5a6e2f$A5fWQsdfjqweRSd234sadasFWEras...
  *  salt       hashed secret                                                                                                                    encrypted logfile
+ *
+ *  @param {Number} fd     File Descriptor
+ *  @param {String} secret Passkey
+ *
+ *  @returns {Boolean}
  */
 Logger.prototype.validateKey = function( fd, secret ) {
 	// Queue our buffers
@@ -105,6 +113,67 @@ Logger.prototype.validateKey = function( fd, secret ) {
 	var expectedHash = util.createHash( secret, salt );
 
 	return hashed === expectedHash;
+};
+
+/**
+ * Decrypt the data contained within the log.
+ *
+ * @param {Number} fd  File descriptor
+ * @param {String} key Passkey
+ *
+ * @returns {Boolean}
+ */
+Logger.prototype.parse = function( fd, key ) {
+	// Queue our buffers
+	var saltBuffer = new Buffer(10);
+
+	// Get the salt, starting from the beginning of the file and skipping the leading $
+	fs.readSync( fd, saltBuffer, 0, 10, 1 );
+	var salt = saltBuffer.toString();
+
+	// Read the filecontents into a large buffer
+	var fileBuffer = new Buffer(0);
+
+	// Set up some intermediate variables
+	var intermediateBuffer, // Don't initialize, we flush on each loop
+		position = 141,     // Account for salt, hash, and $ characters - 1 + 10 + 1 + 128 + 1 = 141
+		bytesRead;
+
+	do {
+		intermediateBuffer = new Buffer(128);
+		bytesRead = fs.readSync( fd, intermediateBuffer, 0, 128, position );
+		intermediateBuffer = intermediateBuffer.slice( 0, bytesRead );
+
+		// Concatenate everything we've read thus far
+		var oldBuffer = new Buffer( fileBuffer );
+		fileBuffer = Buffer.concat( [ oldBuffer, intermediateBuffer ] );
+
+		// Increment the position
+		position += 128;
+	} while ( 128 === bytesRead );
+
+	var encrypted = fileBuffer.toString();
+
+	try {
+		this.logData = util.decryptData( key, encrypted );
+		return true;
+	} catch ( e ) {}
+
+	// If we threw an exception, make sure we surface the error.
+	return false;
+};
+
+/**
+ * Add an entry to the log.
+ *
+ * If the entry is invalid, this function returns false.
+ *
+ * @param {Entry} entry
+ *
+ * @returns {Boolean}
+ */
+Logger.prototype.append = function( entry ) {
+
 };
 
 /**

@@ -78,45 +78,20 @@ Util.prototype.createHash = function( secret, salt ) {
 };
 
 /**
- * Validate that a given hash is for a given secret key.
- *
- * @param {String} secret
- * @param {String} hash
- *
- * @return {Boolean}
- */
-Util.prototype.validateHash = function( secret, hash ) {
-	var hash_parts = hash.split( '::' ),
-		salt = hash_parts[0],
-		hash_data = hash_parts[1];
-
-	var validate = this.createHash( secret, salt );
-
-	return hash === validate;
-};
-
-/**
  * Encrypt some data with a set password.
  *
  * We will create a secure hash of our password with a random, 10-character salt. This salt will be prepended to the password
  * when we encrypt our data.
  *
- * @param {String}        password
+ * @param {String}        pass_key
  * @param {String|Object} data
  *
  * @returns {String}
  */
-Util.prototype.encryptData = function( password, data ) {
+Util.prototype.encryptData = function( pass_key, data ) {
 	if ( typeof data === 'object' ) {
 		data = JSON.stringify( data );
 	}
-
-	// Create a salt
-	var salt = this.randomString( 10 );
-
-	// Create a security hash of our key we'll use to prepend the output.
-	var hash = this.createHash( password, salt ),
-		pass_key = salt + password;
 
 	// Create a cipher object to which we'll add data.
 	var cipher = crypto.createCipher( algorithm, pass_key );
@@ -127,7 +102,7 @@ Util.prototype.encryptData = function( password, data ) {
 	ciphered += cipher.final( outputEncoding );
 
 	// Return our coded output
-	return hash + '::' + ciphered;
+	return ciphered;
 };
 
 /**
@@ -138,22 +113,17 @@ Util.prototype.encryptData = function( password, data ) {
  *
  * The salt will be pre-pended to the plaint-text password and used as the pass key for the decryption algorithm.
  *
- * @param {String} password
+ * @param {String} pass_key
  * @param {String} ciphertext
  *
  * @returns {Object}
  */
-Util.prototype.decryptData = function( password, ciphertext ) {
-	var cipher_parts = ciphertext.split( '::' ),
-		salt = cipher_parts[0],
-		data = cipher_parts[2],
-		pass_key = salt + password;
-
+Util.prototype.decryptData = function( pass_key, ciphertext ) {
 	// Create a decipher object
 	var decipher = crypto.createDecipher( algorithm, pass_key );
 
 	// Decipher our information
-	var deciphered = decipher.update( data, outputEncoding, inputEncoding );
+	var deciphered = decipher.update( ciphertext, outputEncoding, inputEncoding );
 
 	// Get our decoded data
 	deciphered +=  decipher.final( inputEncoding );
