@@ -25,20 +25,14 @@ var security_key, log_path, entries = [];
  * Module definition
  *
  * @constructor
- *
- * @param {String} key       Security key
- * @param {String} file_path Log path
  */
-function Logger( key, file_path ) {
-	security_key = key;
+function Logger() {}
 
-	if ( undefined === file_path ) {
-		file_path = path.join( process.cwd(), 'log' );
-	}
-	log_path = file_path;
+/**
+ *
+ */
+Logger.prototype.open( logfile, key ) {
 
-	// Make sure the log file exists
-	util.verifyFile( log_path );
 }
 
 /**
