@@ -1,5 +1,11 @@
 .idea
-log*
+log
+log1
+log2
+log3
+log4
+log5
+log6
 
 # Development Node modueles are ignored
 node_modules/nodeunit
