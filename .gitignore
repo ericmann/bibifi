@@ -1,4 +1,5 @@
 .idea
+log*
 
 # Development Node modueles are ignored
 node_modules/nodeunit

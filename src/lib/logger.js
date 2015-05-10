@@ -14,12 +14,8 @@
 var fs = require( 'fs' ),
 	path = require( 'path' ),
 	_ = require( 'lodash' ),
+	nUtil = require( 'util' ),
 	util = require( './util' );
-
-/**
- * Module semi-globals
- */
-var security_key, log_path, entries = [];
 
 /**
  * Module definition
@@ -61,7 +57,7 @@ Logger.prototype.open = function( logfile, key ) {
 
 	// Store our log reference
 	this.logDescriptor = log[0];
-
+	this.security_key = key;
 
 	// Return the current instance
 	return this;
@@ -195,7 +191,7 @@ Logger.prototype.append = function( entry ) {
 		return false;
 	}
 
-	
+
 };
 
 /**
@@ -206,11 +202,21 @@ Logger.prototype.write = function() {
 		return;
 	}
 
+	// Queue up some new salts and hashes
+	var salt = util.randomString( 10 ),
+		hash = util.createHash( this.security_key, salt );
+
 	// Get our data to write
 	var data = JSON.stringify( this.logData );
 
+	// Encrypt the data
+	var encrypted = util.encryptData( this.security_key, data );
+
+	// Concatenate everything together
+	var output = nUtil.format( '$%s$%s$%s', salt, hash, encrypted );
+
 	// We have a dirty log, which means we need to overwrite/replace the stored copy.
-	fs.writeSync( this.logDescriptor, data, 0 );
+	fs.writeSync( this.logDescriptor, output, 0 );
 };
 
 /**
