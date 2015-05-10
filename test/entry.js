@@ -30,7 +30,9 @@ function test_sanitizeName( test ) {
 		'Adam': 'Adam',
 		'Mary   ': 'Mary',
 		'  Joseph': 'Joseph',
-		'{object:etc}': 'objectetc'
+		'{object:etc}': 'objectetc',
+		'First Last': 'FirstLast',
+		'Alpha1234': 'Alpha'
 	};
 
 	_.forEach( names, function( value, key ) {

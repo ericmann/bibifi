@@ -44,7 +44,7 @@ Entry.prototype.sanitizeName = function( name ) {
 	name = name.trim();
 
 	// Make sure we have only valid (word) characters
-	name = name.replace( /[^\w]/gi, '' );
+	name = name.replace( /[^(a-zA-Z)]/gi, '' );
 
 	return name;
 };
@@ -65,9 +65,6 @@ Entry.prototype.sanitizeType = function( type ) {
 
 	// Upper case
 	type = type.toUpperCase();
-
-	// Only word characters
-	type = type.replace( /[^\w]/gi, '' );
 
 	// Only E or G
 	type = type.replace( /[^(E|G)]/gi, '' );
@@ -116,9 +113,6 @@ Entry.prototype.sanitizeAction = function( action ) {
 
 	// Upper case
 	action = action.toUpperCase();
-
-	// Only word characters
-	action = action.replace( /[^\w]/gi, '' );
 
 	// Only A or L
 	action = action.replace( /[^(A|L)]/gi, '' );
