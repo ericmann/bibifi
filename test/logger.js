@@ -17,42 +17,92 @@
  *
  * @type {Object}
  */
-var logger = require( '../src/lib/logger' ),
-	util = require( '../src/lib/util' );
+var fs = require( 'fs' ),
+	logger = require( '../src/lib/logger' );
 
-exports.test_validate_entry_type = function( test ) {
-	var guest = { type: 'guest', name: 'guest' },
-		employee = { type: 'employee', name: 'employee' },
-		invalid = { type: 'invalid' };
+function test_getLogFile_creates_file( test ) {
+	// Make sure no file exists
+	var exists;
+	try {
+		fs.openSync( 'log1', 'r' );
+		exists = true;
+	} catch ( e ) {
+		exists = false;
+	}
 
-	test.ok( logger.prototype.validate_entry_type( guest ) );
-	test.ok( logger.prototype.validate_entry_type( employee ) );
-	test.ok( ! logger.prototype.validate_entry_type( invalid ) );
+	test.ok( ! exists );
 
-	test.done();
-};
+	logger.prototype.getLogFile( 'log1' );
 
-exports.test_validate_entry_unique_names = function( test ) {
-	var _guests = logger.prototype.guests;
-	logger.prototype.guests = [ 'Alice' ];
+	try {
+		fs.openSync( 'log1', 'r' );
+		exists = true;
+	} catch ( e ) {
+		exists = false;
+	}
 
-	var valid_employee = { type: 'employee', name: 'Bob'},
-		invalid_employee = { type: 'employee', name: 'Alice' };
-
-	test.ok( logger.prototype.validate_entry_type( valid_employee ) );
-	test.ok( ! logger.prototype.validate_entry_type( invalid_employee ) );
-
-	var _employees = logger.prototype.employees;
-	logger.prototype.employees = [ 'Bob' ];
-
-	var valid_guest = { type: 'guest', name: 'Alice'},
-		invalid_guest = { type: 'guest', name: 'Bob' };
-
-	test.ok( logger.prototype.validate_entry_type( valid_guest ) );
-	test.ok( ! logger.prototype.validate_entry_type( invalid_guest ) );
-
-	logger.prototype.guests = _guests;
-	logger.prototype.employees = _employees;
+	test.ok( exists );
 
 	test.done();
+}
+
+function test_validateKey_accepts_valid_key( test ) {
+	// Because I'm lazy, let's create a mock log using the actual filesystem
+	fs.writeFileSync( 'log2', '$0123456789$8d94109748d6156d5ee0a942d1dc510834016c43eea121128bbd4c49c0eafaca538a1aa39062ee3399a25fb364783dba7a18d5fbe16c71c507562b532e5a6e2f$A5fWQsdfjqweRSd234sadasFWEras' );
+
+	// Now, we're going to attempt to validate the key.
+	var secret = '123456';
+
+	// Open our file (again, we're lazy
+	var fd = fs.openSync( 'log2', 'r+' );
+
+	// Test our code
+	var valid = logger.prototype.validateKey( fd, secret );
+
+	test.ok( valid );
+
+	test.done();
+}
+
+function test_validateKey_rejects_invalid_key( test ) {
+	// Because I'm lazy, let's create a mock log using the actual filesystem
+	fs.writeFileSync( 'log3', '$0123457789$8d94109748d6156d5ee0a942d1dc510834016c43eea121128bbd4c49c0eafaca538a1aa39062ee3399a25fb364783dba7a18d5fbe16c71c507562b532e5a6e2f$A5fWQsdfjqweRSd234sadasFWEras' );
+
+	// Now, we're going to attempt to validate the key.
+	var secret = '123456';
+
+	// Open our file (again, we're lazy
+	var fd = fs.openSync( 'log3', 'r+' );
+
+	// Test our code
+	var valid = logger.prototype.validateKey( fd, secret );
+
+	test.ok( ! valid );
+
+	test.done();
+}
+
+/**
+ * Export the test group
+ */
+module.exports = {
+	setUp: function ( callback ) {
+		try { fs.unlinkSync( 'log1' ); } catch ( e ) {}
+		try { fs.unlinkSync( 'log2' ); } catch ( e ) {}
+		try { fs.unlinkSync( 'log3' ); } catch ( e ) {}
+
+		callback();
+	},
+
+	tearDown: function ( callback ) {
+		try { fs.unlinkSync( 'log1' ); } catch ( e ) {}
+		try { fs.unlinkSync( 'log2' ); } catch ( e ) {}
+		try { fs.unlinkSync( 'log3' ); } catch ( e ) {}
+
+		callback();
+	},
+
+	test_getLogFile_creates_file: test_getLogFile_creates_file,
+	test_validateKey_accepts_valid_key: test_validateKey_accepts_valid_key,
+	test_validateKey_rejects_invalid_key: test_validateKey_rejects_invalid_key
 };

@@ -74,7 +74,7 @@ Util.prototype.createHash = function( secret, salt ) {
 
 	hasher.update( secret );
 
-	return salt + '::' + hasher.digest( 'hex' );
+	return hasher.digest( 'hex' );
 };
 
 /**

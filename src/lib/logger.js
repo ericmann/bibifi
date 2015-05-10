@@ -45,116 +45,49 @@ Logger.prototype.open = function( logfile, key ) {
 };
 
 /**
- * Fields on the prototype, exposed for testing purposes.
+ * Get a handle to a logfile on the system.
+ *
+ * @param {String} logfile Path to read
+ *
+ * @returns {Number} File Descriptor
  */
+Logger.prototype.getLogFile = function( logfile ) {
+	// File descriptor
+	var fd;
 
-/**
- * List of employees who have been in the museum.
- *
- * @type {Array}
- */
-Logger.prototype.employees = [];
-
-/**
- * List of guests who have been in the museum.
- *
- * @type {Array}
- */
-Logger.prototype.guests = [];
-
-/**
- * Cache the latest timestamp used by the log.
- *
- * @type {Number}
- */
-Logger.prototype.latest_timestamp = 0;
-
-/**
- * Make sure guests and employees are unique in the system.
- *
- * @param {Object} entry
- *
- * @returns {Boolean}
- */
-Logger.prototype.validate_entry_type = function( entry ) {
-	switch( entry.type ) {
-		case 'employee':
-			if ( _.contains( this.guests, entry.name ) ) {
-				return false;
-			}
-			break;
-		case 'guest':
-			if ( _.contains( this.employees, entry.name ) ) {
-				return false;
-			}
-			break;
-		default:
-			return false;
-			break;
+	try {
+		fd = fs.openSync( logfile, 'r+' );
+	} catch ( e ) {
+		// The file doesn't exist, so create it first, then open it.
+		fd = fs.openSync( logfile, 'w+' ); // The w+ flag will truncate existing data, so we only use this for _creating_ a logfile
 	}
 
-	return true;
-}
-
-/**
- * Make sure we both sanitize fields and validate our entry is valid before proceeding.
- *
- * @param {Object} entry
- *
- * @returns {Object}
- */
-function validate_entry( entry ) {
-
-	// Validate entry type
-	if ( ! validate_entry_type( entry ) ) {
-		return util.invalid();
-	}
-
-	// Sanitize and validate timestamp
-	entry.timestamp = parseInt( entry.timestamp, 10 );
-	if ( entry.timestamp <= this.latest_timestamp ) {
-		return util.invalid();
-	}
-
-	// We're good to go!
-	return entry;
-}
-
-/**
- * Append a log entry to the collection.
- *
- * @param {Object} entry
- */
-Logger.prototype.append = function( entry ) {
-
-	// Parse entry
-
-	// Validate entry
-
-	// Store the entry
-	entries.push( entry );
-
-	// Write the log
-	this.write();
-
-	// Exit
-	process.exit( 0 );
+	return fd;
 };
 
 /**
- * Write the current object to the log.
- */
-Logger.prototype.write = function() {
-
-};
-
-/**
- * Read from the specified log file.
+ * The hashed key is stored as the prefix to the encrypted file.
  *
- * @returns {Object} Returns a status object {status: 'open', data: ... }
+ * For reference, the encrypted log is of the format:
+ * $0123456789$8d94109748d6156d5ee0a942d1dc510834016c43eea121128bbd4c49c0eafaca538a1aa39062ee3399a25fb364783dba7a18d5fbe16c71c507562b532e5a6e2f$A5fWQsdfjqweRSd234sadasFWEras...
+ *  salt       hashed secret                                                                                                                    encrypted logfile
  */
-Logger.prototype.read = function() {
+Logger.prototype.validateKey = function( fd, secret ) {
+	// Queue our buffers
+	var saltBuffer = new Buffer(10),
+		secretBuffer = new Buffer(128);
 
+	// Get the salt, starting from the beginning of the file and skipping the leading $
+	fs.readSync( fd, saltBuffer, 0, 10, 1 );
+	var salt = saltBuffer.toString();
+
+	// Get the hashed secret
+	fs.readSync( fd, secretBuffer, 0, 128, 12 );
+	var hashed = secretBuffer.toString();
+
+	var expectedHash = util.createHash( secret, salt );
+
+	return hashed === expectedHash;
 };
 
 /**
