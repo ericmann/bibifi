@@ -13,6 +13,7 @@
  */
 var _ = require( 'lodash' ),
 	cli = new (require( './lib/cli' )),
+	util = require( './lib/util' ),
 	Entry = require( './lib/entry' ),
 	Logger = require( './lib/logger' );
 
@@ -20,9 +21,7 @@ var _ = require( 'lodash' ),
 var data = cli.append_parsed();
 
 if ( 'invalid' == data.status ) {
-	process.stderr.write( 'invalid' );
-	process.exit( 255 );
-	return;
+	return util.invalid();
 }
 
 // If we have a valid request, let's handle it

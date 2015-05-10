@@ -12,13 +12,12 @@
  * Module dependencies
  */
 var cli = new (require( './lib/cli' )),
+	util = require( './lib/util' ),
 	Logger = require( './lib/logger' );
 
 // Get our parsed data
 var data = cli.read_parsed();
 
 if ( 'invalid' == data.status ) {
-	process.stderr.write( 'invalid' );
-	process.exit( 255 );
-	return;
+	return util.invalid();
 }

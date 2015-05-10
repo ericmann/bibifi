@@ -28,9 +28,7 @@ var algorithm = 'aes-256-cbc',
  *
  * @constructor
  */
-function Util() {
-
-}
+function Util() {}
 
 /**
  * Create a random hex string.
@@ -43,17 +41,6 @@ Util.prototype.randomString = function( len ) {
 	return crypto.randomBytes( Math.ceil( len / 2 ) )
 		.toString( 'hex' ) // convert to hexadecimal format
 		.slice( 0, len );   // return required number of characters
-};
-
-/**
- * Make sure a file exists. If not, create it.
- *
- * @param {String} filePath
- */
-Util.prototype.verifyFile = function( filePath ) {
-	if ( ! fs.existsSync( filePath ) ) {
-		fs.writeFileSync( filePath, '', { flag: 'wx' } );
-	}
 };
 
 /**
