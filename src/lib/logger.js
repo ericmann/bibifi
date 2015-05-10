@@ -41,7 +41,22 @@ function Logger() {}
  * @returns {Logger|String}
  */
 Logger.prototype.open = function( logfile, key ) {
+	// Get a handle on the logfile
+	var log = this.getLogFile( logfile );
 
+	// If it's an existing file, validate our key first
+	if ( 'append' === log[1] ) {
+		var valid = this.validateKey( log[0], key );
+		if ( ! valid ) {
+			return 'key_err';
+		}
+	}
+
+	// Store our log reference
+	this.logDescriptor = log[0];
+
+	// Return the current instance
+	return this;
 };
 
 /**
@@ -49,20 +64,22 @@ Logger.prototype.open = function( logfile, key ) {
  *
  * @param {String} logfile Path to read
  *
- * @returns {Number} File Descriptor
+ * @returns {Array} [ File Descriptor, Status ] Status can be 'empty' or 'append'
  */
 Logger.prototype.getLogFile = function( logfile ) {
 	// File descriptor
-	var fd;
+	var fd, status;
 
 	try {
 		fd = fs.openSync( logfile, 'r+' );
+		status = 'append';
 	} catch ( e ) {
 		// The file doesn't exist, so create it first, then open it.
 		fd = fs.openSync( logfile, 'w+' ); // The w+ flag will truncate existing data, so we only use this for _creating_ a logfile
+		status = 'empty';
 	}
 
-	return fd;
+	return [fd, status];
 };
 
 /**

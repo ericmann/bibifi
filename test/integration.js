@@ -81,7 +81,7 @@ function log_batch( test ) {
  *
  * @type {Object}
  */
-module.exports = {
+/*module.exports = {
 	setUp: function( callback ) {
 		exec( 'rm -rf log1' );
 
@@ -97,4 +97,4 @@ module.exports = {
 	log_status: log_status,
 	log_fred_movements: log_fred_movements,
 	log_batch: log_batch
-};
+};*/

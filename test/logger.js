@@ -32,7 +32,7 @@ function test_getLogFile_creates_file( test ) {
 
 	test.ok( ! exists );
 
-	logger.prototype.getLogFile( 'log1' );
+	var logfile = logger.prototype.getLogFile( 'log1' );
 
 	try {
 		fs.openSync( 'log1', 'r' );
@@ -41,6 +41,7 @@ function test_getLogFile_creates_file( test ) {
 		exists = false;
 	}
 
+	test.strictEqual( logfile[1], 'empty' );
 	test.ok( exists );
 
 	test.done();
@@ -82,6 +83,67 @@ function test_validateKey_rejects_invalid_key( test ) {
 	test.done();
 }
 
+function test_open_newLog( test ) {
+	// Cache behavior
+	var _getLogFile = logger.prototype.getLogFile;
+	logger.prototype.getLogFile = function( logfile ) {
+		return [1, 'empty'];
+	};
+
+	var log = logger.prototype.open( 'log4', '12345' );
+
+	test.notEqual( typeof log, 'string' );
+
+	// Reset
+	logger.prototype.getLogFile = _getLogFile;
+
+	test.done();
+}
+
+function test_open_existingLog( test ) {
+	// Cache behavior
+	var _getLogFile = logger.prototype.getLogFile,
+		_validateKey = logger.prototype.validateKey;
+	logger.prototype.getLogFile = function( logfile ) {
+		return [1, 'append'];
+	};
+	logger.prototype.validateKey = function( log, key ) {
+		return true;
+	};
+
+	var log = logger.prototype.open( 'log5', '123456' );
+
+	test.notEqual( typeof log, 'string' );
+
+	// Reset
+	logger.prototype.getLogFile = _getLogFile;
+	logger.prototype.validateKey = _validateKey;
+
+	test.done();
+}
+
+function test_open_logError( test ) {
+	// Cache behavior
+	var _getLogFile = logger.prototype.getLogFile,
+		_validateKey = logger.prototype.validateKey;
+	logger.prototype.getLogFile = function( logfile ) {
+		return [1, 'append'];
+	};
+	logger.prototype.validateKey = function( log, key ) {
+		return false;
+	};
+
+	var log = logger.prototype.open( 'log6', 'bad_secret' );
+
+	test.strictEqual( log, 'key_err' );
+
+	// Reset
+	logger.prototype.getLogFile = _getLogFile;
+	logger.prototype.validateKey = _validateKey;
+
+	test.done();
+}
+
 /**
  * Export the test group
  */
@@ -90,6 +152,9 @@ module.exports = {
 		try { fs.unlinkSync( 'log1' ); } catch ( e ) {}
 		try { fs.unlinkSync( 'log2' ); } catch ( e ) {}
 		try { fs.unlinkSync( 'log3' ); } catch ( e ) {}
+		try { fs.unlinkSync( 'log4' ); } catch ( e ) {}
+		try { fs.unlinkSync( 'log5' ); } catch ( e ) {}
+		try { fs.unlinkSync( 'log6' ); } catch ( e ) {}
 
 		callback();
 	},
@@ -98,11 +163,17 @@ module.exports = {
 		try { fs.unlinkSync( 'log1' ); } catch ( e ) {}
 		try { fs.unlinkSync( 'log2' ); } catch ( e ) {}
 		try { fs.unlinkSync( 'log3' ); } catch ( e ) {}
+		try { fs.unlinkSync( 'log4' ); } catch ( e ) {}
+		try { fs.unlinkSync( 'log5' ); } catch ( e ) {}
+		try { fs.unlinkSync( 'log6' ); } catch ( e ) {}
 
 		callback();
 	},
 
 	test_getLogFile_creates_file: test_getLogFile_creates_file,
 	test_validateKey_accepts_valid_key: test_validateKey_accepts_valid_key,
-	test_validateKey_rejects_invalid_key: test_validateKey_rejects_invalid_key
+	test_validateKey_rejects_invalid_key: test_validateKey_rejects_invalid_key,
+	test_open_newLog: test_open_newLog,
+	test_open_existingLog: test_open_existingLog,
+	test_open_logError: test_open_logError
 };
