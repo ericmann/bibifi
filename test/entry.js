@@ -88,7 +88,7 @@ function test_sanitizeRoom( test ) {
 
 	// Manually test some special cases
 	test.ok( isNaN( Entry.prototype.sanitizeRoom( 'a' ) ) );
-	test.ok( null == Entry.prototype.sanitizeRoom() );
+	test.ok( 'lobby' == Entry.prototype.sanitizeRoom( 'lobby' ) );
 
 	test.done();
 }
@@ -153,7 +153,7 @@ function test_isValid( test ) {
 		'name': 'Valid',
 		'type': 'E',
 		'action': 'A',
-		'room': undefined,
+		'room': 'lobby',
 		'time': 1
 	} ),
 		valid2 = new Entry( {
