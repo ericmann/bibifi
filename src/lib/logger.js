@@ -475,16 +475,20 @@ Logger.prototype.append = function( entry ) {
 	var success;
 	switch( entry.action ) {
 		case 'A':
-			if ( null === entry.room ) {
+			if ( null === entry.room || 'lobby' === entry.room ) {
+				console.log( 'enter gallery' );
 				success = this.enterGallery( entry.name, entry.type, entry.time );
 			} else {
+				console.log( 'enter room' );
 				success = this.enterRoom( entry.name, entry.room, entry.time );
 			}
 			break;
 		case 'L':
 			if ( null === entry.room ) {
+				console.log( 'exit gallery' );
 				success = this.exitGallery( entry.name, entry.type, entry.time );
 			} else {
+				console.log( 'exit room' );
 				success = this.exitRoom( entry.name, entry.room, entry.time );
 			}
 			break;

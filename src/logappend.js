@@ -17,27 +17,18 @@ var _ = require( 'lodash' ),
 	Entry = require( './lib/entry' ),
 	Logger = require( './lib/logger' );
 
-// Get our parsed data
-var data = cli.append_parsed();
+var argv = process.argv.slice( 2 ),
+	logs = {};
 
-if ( 'invalid' == data.status ) {
-	return util.invalid();
-}
+/**
+ * Append an entry to a logfile (specified by the entry)
+ *
+ * @param {Entry} entry
+ */
+function appendEntry( entry ) {
+	if ( undefined === logs[ entry.logfile ] ) {
 
-// If we have a valid request, let's handle it
-var entries = [];
-if ( undefined !== data.batchfile ) {
-	// Get an entry for each line in the batchfile
-} else {
-	entries.push( new Entry( data.data ) );
-}
-
-// Add each entry to its log, keeping track of our logs
-var logs = {}, error = false;
-_.forEach( entries, function( entry ) {
-	if ( undefined === logs['logfile'] ) {
-
-		var log = Logger.prototype.open( data.data['logfile'], entry.secret );
+		var log = Logger.prototype.open( entry.logfile, entry.secret );
 
 		// The Logger utility returns error messages when needed
 		if ( 'key_err' === log ) {
@@ -45,11 +36,36 @@ _.forEach( entries, function( entry ) {
 			return; // Continue to the next entry
 		}
 
-		logs['logfile'] = log;
+		logs[ entry.logfile ] = log;
 	}
 
-	logs['logfile'].append( entry );
-} );
+	logs[ entry.logfile ].append( entry );
+console.log( JSON.stringify( logs[ entry.logfile ] ) );
+}
+
+// Determine if we have a batchfile or not
+if ( _.contains( argv, '-B' ) ) {
+	// Get an entry for each line in the batchfile
+	var entries = [];
+
+	// Validate each entry in the batchfile
+
+	// Append each entry
+	_.forEach( entries, function( entry ) {
+		appendEntry( entry );
+	} );
+} else {
+	// Validate the entry
+	var entry = cli.validate_entry();
+
+	// If we're invalid, exit
+	if ( 'invalid' === entry.status ) {
+		return util.invalid();
+	}
+
+	// Append teh entry
+	appendEntry( entry.data );
+}
 
 // Now, close out all of the logs
 _.forEach( logs, function( log, filename ) {

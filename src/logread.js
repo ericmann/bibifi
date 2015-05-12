@@ -15,9 +15,5 @@ var cli = new (require( './lib/cli' )),
 	util = require( './lib/util' ),
 	Logger = require( './lib/logger' );
 
-// Get our parsed data
-var data = cli.read_parsed();
-
-if ( 'invalid' == data.status ) {
-	return util.invalid();
-}
+process.stdout.write( 'unimplemented' );
+process.exit( 0 );
