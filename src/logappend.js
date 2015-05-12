@@ -40,7 +40,6 @@ function appendEntry( entry ) {
 	}
 
 	logs[ entry.logfile ].append( entry );
-console.log( JSON.stringify( logs[ entry.logfile ] ) );
 }
 
 // Determine if we have a batchfile or not
@@ -63,7 +62,7 @@ if ( _.contains( argv, '-B' ) ) {
 		return util.invalid();
 	}
 
-	// Append teh entry
+	// Append the entry
 	appendEntry( entry.data );
 }
 
