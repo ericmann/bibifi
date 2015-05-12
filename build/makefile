@@ -7,4 +7,4 @@ build:
 	chmod +x logread
 	cp -r ../src/lib .
 
-.PHONY: x
+.PHONY: build
