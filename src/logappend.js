@@ -23,12 +23,19 @@ var argv = process.argv.slice( 2 ),
 /**
  * Append an entry to a logfile (specified by the entry)
  *
- * @param {Entry} entry
+ * @param {Entry}   entry
+ * @param {String}  logfile
+ * @param {String}  secret
+ * @param {Boolean} [handleError]
  */
-function appendEntry( entry ) {
-	if ( undefined === logs[ entry.logfile ] ) {
+function appendEntry( entry, logfile, secret, handleError ) {
+	if ( undefined === handleError ) {
+		handleError = true;
+	}
 
-		var log = Logger.prototype.open( entry.logfile, entry.secret );
+	if ( undefined === logs[ logfile ] ) {
+
+		var log = Logger.prototype.open( logfile, secret );
 
 		// The Logger utility returns error messages when needed
 		if ( 'key_err' === log ) {
@@ -36,10 +43,10 @@ function appendEntry( entry ) {
 			return; // Continue to the next entry
 		}
 
-		logs[ entry.logfile ] = log;
+		logs[ logfile ] = log;
 	}
 
-	logs[ entry.logfile ].append( entry );
+	logs[ logfile ].append( entry, handleError );
 }
 
 // Determine if we have a batchfile or not
@@ -51,7 +58,15 @@ if ( _.contains( argv, '-B' ) ) {
 
 	// Append each entry
 	_.forEach( entries, function( entry ) {
-		appendEntry( entry );
+		// Convert and double-check our entry
+		var sanitized = new Entry( entry.data );
+
+		if ( ! sanitized.isValid() ) {
+			process.stderr.write( 'invalid' );
+			return; // Move to the next item
+		}
+
+		appendEntry( entry, entry.data.logfile, entry.data.secret, false );
 	} );
 } else {
 	// Validate the entry
@@ -62,12 +77,19 @@ if ( _.contains( argv, '-B' ) ) {
 		return util.invalid();
 	}
 
+	// Convert and double-check our entry
+	var sanitized = new Entry( entry.data );
+
+	if ( ! sanitized.isValid() ) {
+		return util.invalid();
+	}
+
 	// Append the entry
-	appendEntry( entry.data );
+	appendEntry( sanitized, entry.data.logfile, entry.data.secret );
 }
 
 // Now, close out all of the logs
-_.forEach( logs, function( log, filename ) {
+_.forEach( logs, function( log ) {
 	log.write();
 } );
 

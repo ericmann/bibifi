@@ -84,9 +84,9 @@ Entry.prototype.sanitizeType = function( type ) {
  * @returns {Number}
  */
 Entry.prototype.sanitizeRoom = function( room ) {
-	// Use null to represent being in the museum, but not a room
-	if ( undefined === room ) {
-		return null;
+	// Use 'lobby' to represent being in the museum, but not a room
+	if ( 'lobby' === room ) {
+		return 'lobby';
 	}
 
 	// Cast as an integer
@@ -150,7 +150,7 @@ Entry.prototype.isValid = function() {
 		! _.isEmpty( this.action ) &&
 		! isNaN( this.time ) && 0 < this.time;
 
-	var valid_room = ! isNaN( this.room ) || undefined == this.room;
+	var valid_room = ! isNaN( this.room ) || 'lobby' == this.room;
 
 	return valid_museum_entry && valid_room;
 };
