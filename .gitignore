@@ -11,3 +11,8 @@ log6
 node_modules/nodeunit
 node_modules/.bin/nodeunit
 node_modules/.bin/nodeunit.cmd
+
+# Built files
+build/lib
+build/logread
+build/logappend
