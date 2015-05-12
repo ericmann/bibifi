@@ -18,7 +18,7 @@ var _ = require( 'lodash' );
  *
  * @constructor
  *
- * @param {String} raw Raw object/associative array
+ * @param {Object} raw Raw object/associative array
  */
 function Entry( raw ) {
 	// Sanitize our raw entries
@@ -38,6 +38,10 @@ function Entry( raw ) {
  * @returns {String}
  */
 Entry.prototype.sanitizeName = function( name ) {
+	if ( undefined === name ) {
+		return '';
+	}
+
 	// Make sure we're using a string
 	name = name.toString();
 
@@ -58,6 +62,10 @@ Entry.prototype.sanitizeName = function( name ) {
  * @return {String}
  */
 Entry.prototype.sanitizeType = function( type ) {
+	if ( undefined === type ) {
+		return '';
+	}
+
 	// Make sure our type is a string
 	type = type.toString();
 
@@ -81,7 +89,7 @@ Entry.prototype.sanitizeType = function( type ) {
  *
  * @param {*} room
  *
- * @returns {Number}
+ * @returns {String|Number}
  */
 Entry.prototype.sanitizeRoom = function( room ) {
 	// Use 'lobby' to represent being in the museum, but not a room
@@ -106,6 +114,10 @@ Entry.prototype.sanitizeRoom = function( room ) {
  * @return {String}
  */
 Entry.prototype.sanitizeAction = function( action ) {
+	if ( undefined === action ) {
+		return '';
+	}
+
 	// Make sure our action is a string
 	action = action.toString();
 
@@ -145,9 +157,9 @@ Entry.prototype.sanitizeTime = function( time ) {
  * Check if the object is valid.
  */
 Entry.prototype.isValid = function() {
-	var valid_museum_entry = ! _.isEmpty( this.name ) &&
-		! _.isEmpty( this.type ) &&
-		! _.isEmpty( this.action ) &&
+	var valid_museum_entry = '' !== this.name &&
+		'' !== this.type &&
+		'' !== this.action &&
 		! isNaN( this.time ) && 0 < this.time;
 
 	var valid_room = ! isNaN( this.room ) || 'lobby' == this.room;

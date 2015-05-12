@@ -171,5 +171,104 @@ CLI.prototype.validate_entry = function( argv ) {
 	return data;
 };
 
+/**
+ * Attempt to validate and parse a query.
+ *
+ * @param {Array} [argv]
+ */
+CLI.prototype.validate_query = function( argv ) {
+	if ( undefined === argv ) {
+		// Allow a global array if needed
+		argv = this.argv;
+	}
+
+	var query = {
+			'status': 'invalid',
+			'params': {}
+		},
+		parsed = {
+			'secret': false,
+			'query' : false,
+			'type'  : false,
+		},
+		logfile, secret;
+
+	// Get the logfile first
+	logfile = argv.pop();
+	logfile = logfile.replace( /[^(a-zA-Z0-9_)]/g, '' );
+	if ( '' === logfile ) {
+		return data;
+	}
+
+	query.params['logfile'] = logfile;
+
+	// Loop through the array of args
+	do {
+		var param = argv.shift();
+		switch( param ) {
+			case '-K':
+				if ( parsed.secret ) {
+					return query;
+				}
+
+				parsed.secret = true;
+
+				// Get the next parameter and assume it's the key
+				secret = argv.shift();
+				secret = secret.replace( /[^(a-zA-Z0-9)]/g, '' );
+				if ( '' === secret ) {
+					return query;
+				}
+
+				query.params['secret'] = secret;
+				break;
+			case '-S':
+				if ( parsed.query ) {
+					return query;
+				}
+				parsed.query = true;
+				query.params['query'] = 'S';
+
+
+				break;
+			case '-R':
+				if ( parsed.query ) {
+					return query;
+				}
+				parsed.query = true;
+				query.params['query'] = 'R';
+
+				break;
+			case '-T':
+				if ( parsed.query ) {
+					return query;
+				}
+				parsed.query = true;
+				query.params['query'] = 'T';
+
+				process.stdout.write( 'unimplemented' ); process.exit();
+				break;
+			case '-I':
+				if ( parsed.query ) {
+					return query;
+				}
+				parsed.query = true;
+				query.params['query'] = 'I';
+
+				process.stdout.write( 'unimplemented' ); process.exit();
+				break;
+			default:
+				// If we're here, it means we had an illegal entry.
+				return query;
+		}
+	} while ( argv.length > 0 );
+
+	// If we're good, we're valid
+	query['status'] = 'valid';
+
+	// Return our processed query
+	return query;
+};
+
 // Fire the module
 module.exports = CLI;

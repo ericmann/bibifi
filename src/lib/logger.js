@@ -530,6 +530,61 @@ Logger.prototype.write = function() {
 };
 
 /**
+ * Process a client query against the given log.
+ *
+ * @param {Query} query
+ */
+Logger.prototype.query = function( query ) {
+	switch( query.query ) {
+		case 'S':
+			// Print out 3 or more lines:
+			// - Employees, comma-separated
+			// - Guests, comma-separated
+			// - Rooms occupied (ignore the lobby)
+			var employees = this.logData.employees.active.join( ',' ),
+				guests = this.logData.guests.active.join( ',' );
+
+			var rooms = [];
+			_.forEach( this.logData.occupants, function( data, room ) {
+				if ( 'lobby' === room ) {
+					// Skip the lobby
+					return;
+				}
+
+				room = parseInt( room, 10 );
+				if ( isNaN( room ) ) {
+					// Error checking
+					return;
+				}
+
+				var sorted = _.sortBy( data, function( index ) { return index; } ),
+					last_entry = _.values( _.last( sorted ) || [] )[0];
+
+				if ( last_entry.length > 0 ) {
+					rooms.push( room.toString() + ': ' + last_entry.join( ',' ) );
+				}
+			} );
+
+			// Concatenate room data
+			rooms = rooms.join( '\n' );
+
+			process.stdout.write( employees + '\n' + guests + '\n' + rooms );
+			process.exit( 0 );
+			break;
+		case 'R':
+			break;
+		case 'T':
+			break;
+		case 'I':
+			break;
+		default:
+			process.stderr.write( 'invalid' );
+			process.exit( 255 );
+			break;
+	}
+};
+
+/**
  * Export the module
  */
 module.exports = Logger;
