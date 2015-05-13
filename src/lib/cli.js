@@ -188,10 +188,11 @@ CLI.prototype.validate_query = function( argv ) {
 		},
 		parsed = {
 			'secret': false,
-			'query' : false,
+			'name'  : false,
 			'type'  : false,
+			'query' : false
 		},
-		logfile, secret;
+		logfile, name, secret;
 
 	// Get the logfile first
 	logfile = argv.pop();
@@ -221,6 +222,36 @@ CLI.prototype.validate_query = function( argv ) {
 				}
 
 				query.params['secret'] = secret;
+				break;
+			case '-E':
+				if ( parsed.type ) {
+					return query;
+				}
+				parsed.type = true;
+
+				name = argv.shift();
+				name = name.replace( /[^(a-zA-Z)]/g, '' );
+				if ( '' === name ) {
+					return parsed;
+				}
+
+				query.params['type'] = 'E';
+				query.params['name'] = name;
+				break;
+			case '-G':
+				if ( parsed.type ) {
+					return query;
+				}
+				parsed.type = true;
+
+				name = argv.shift();
+				name = name.replace( /[^(a-zA-Z)]/g, '' );
+				if ( '' === name ) {
+					return query;
+				}
+
+				query.params['type'] = 'G';
+				query.params['name'] = name;
 				break;
 			case '-S':
 				if ( parsed.query ) {

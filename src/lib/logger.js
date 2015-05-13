@@ -643,6 +643,41 @@ Logger.prototype.query = function( query ) {
 			process.exit( 0 );
 			break;
 		case 'R':
+			// Print out a comma-separated list of rooms visited by this person
+
+			// First, make sure the visitor is the correct type
+			var type;
+			switch( query.type ) {
+				case 'E':
+					type = 'employees';
+					break;
+				case 'G':
+					type = 'guests';
+					break;
+				default:
+					return util.invalid();
+			}
+
+			if ( ! _.contains( this.logData[ type ].known, query.name ) ) {
+				return util.invalid();
+			}
+
+			// Get their location history
+			var history = this.logData.locations[ query.name],
+				keys = _.keys( history ).sort(),
+				rooms = [];
+
+			for ( var i = 0, l = keys.length; i < l; i++ ) {
+				var room = history[ i ];
+				if ( 'lobby' !== room ) {
+					room = parseInt( room, 10 );
+					if ( ! isNaN( room ) ) {
+						rooms.push( room );
+					}
+				}
+			}
+
+			process.stdout.write( rooms.join( ',' ) );
 			break;
 		case 'T':
 			break;

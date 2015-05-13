@@ -28,6 +28,7 @@ if ( 'invalid' === query.status ) {
 
 // Extra verification that the query is secure
 var lookup = new Query( query.params );
+
 if ( ! lookup.isValid() ) {
 	return util.invalid();
 }
