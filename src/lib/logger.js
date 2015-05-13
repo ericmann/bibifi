@@ -86,7 +86,7 @@ Logger.prototype.getLogFile = function( logfile ) {
 		this.logData = {
 			'employees': { 'known': [], 'active': [] },
 			'guests': { 'known': [], 'active': [] },
-			'occupants': { 'lobby': [] },
+			'occupants': { 'lobby': {} },
 			'locations': {},
 			'last': 0
 		};
@@ -128,6 +128,150 @@ Logger.prototype.validateKey = function( fd, secret ) {
 };
 
 /**
+ * Add a specific visitor to a room/lobby.
+ *
+ * Expects sanitized data
+ *
+ * @param {String}        name
+ * @param {String|Number} room
+ * @param {Number}        time
+ */
+Logger.prototype.addToRoom = function( name, room, time ) {
+	// Make sure the room container exists
+	this.logData.occupants[ room ] = this.logData.occupants[ room ] || {};
+
+	// Set up a container array
+	var occupants = [];
+
+	// Find out who's already in the room
+	var occupant_history = this.logData.occupants[ room ];
+
+	if ( !_.isEmpty( occupant_history ) ) {
+		var keys = _.keys( occupant_history ).sort(),
+			last = _.last( keys );
+
+		occupants = occupant_history[ last ];
+	}
+
+	// Add an occupant and dedupe
+	occupants.push( name );
+	occupants = _.uniq( occupants );
+
+	// Store the entry
+	this.logData.occupants[ room ][ time ] = occupants ;
+};
+
+/**
+ * Remove an occupant from a given room.
+ *
+ * Expects sanitized data
+ *
+ * @param {String}        name
+ * @param {String|Number} room
+ * @param {Number}        time
+ */
+Logger.prototype.removeFromRoom = function( name, room, time ) {
+	// Set up a container array
+	var occupants = [];
+
+	// Find out who's already in the room
+	var occupant_history = this.logData.occupants[ room ],
+		keys = _.keys( occupant_history ).sort(),
+		last = _.last( keys );
+	occupants = occupant_history[ last ];
+
+	// Now remove our visitor from the collection
+	_.remove( occupants, function( ident ) { return name === ident } );
+
+	// Store the entry
+	this.logData.occupants[ room ][ time ] = occupants;
+};
+
+/**
+ * Add a visitor to the `known` and `active` arrays for their user type.
+ *
+ * Expects sanitized data.
+ *
+ * @param {String} name
+ * @param {String} type
+ *
+ * @returns {Boolean}
+ */
+Logger.prototype.activateVisitor = function( name, type ) {
+	// Get our array keys
+	var key, other_list;
+	if ( 'E' === type ) {
+		key = 'employees';
+		other_list = 'guests';
+	} else if ( 'G' === type ) {
+		key = 'guests';
+		other_list = 'employees';
+	} else {
+		return false;
+	}
+
+	// Check for duplicates
+	if ( undefined !== this.logData[ other_list ].known[ name ] ) {
+		// Already exists in the other list
+		return false;
+	}
+	if ( undefined !== this.logData[ key ].active[ name ] ) {
+		// Visitor is already active
+		return false;
+	}
+
+	// Make sure the name is in our collection
+	var known = this.logData[ key ].known || [],
+		active = this.logData[ key ].active || [];
+
+	known.push( name );
+	active.push( name );
+
+	this.logData[ key ].known = _.uniq( known );
+	this.logData[ key ].active = _.uniq( active );
+
+	return true;
+};
+
+/**
+ * Remove a visitor to the `active` array for their user type.
+ *
+ * Expects sanitized data.
+ *
+ * @param {String} name
+ * @param {String} type
+ *
+ * @returns {Boolean}
+ */
+Logger.prototype.deactivateVisitor = function( name, type ) {
+	// Get our array keys
+	var key;
+	if ( 'E' === type ) {
+		key = 'employees';
+	} else if ( 'G' === type ) {
+		key = 'guests';
+	} else {
+		return false;
+	}
+
+	// Cache our active list
+	var active_visitors = this.logData[ key ].active;
+
+	// Fail if the visitor is not active
+	if ( ! _.contains( active_visitors, name ) ) {
+		return false;
+	}
+
+	// Mark them as inactive
+	_.remove( active_visitors, function( ident ) { return name === ident; } );
+
+	// Store the updated array
+	this.logData[ key ].active = active_visitors;
+
+	return true;
+};
+
+/**
  * Mark a visitor as having entered the gallery.
  *
  * If the name is a duplicate (Guests and Employees cannot share names), return false.
@@ -152,49 +296,13 @@ Logger.prototype.enterGallery = function( name, type, timestamp ) {
 		return false;
 	}
 
-	// Check for duplicates
-	var key, other_list;
-	switch( type ) {
-		case 'E':
-			key = 'employees';
-			other_list = 'guests';
-			break;
-		case 'G':
-			key = 'guests';
-			other_list = 'employees';
-			break;
-		default:
-			// Safety first!
-			return false;
-			break;
-	}
-
-	if ( undefined !== this.logData[ other_list ].known[ name ] ) {
-		// Already exists in the other list
+	// Attempt to activate our visitor
+	if ( ! this.activateVisitor( name, type ) ) {
 		return false;
 	}
-	if ( undefined !== this.logData[ key ].active[ name ] ) {
-		// Visitor is already active
-		return false;
-	}
-
-	// Make sure the name is in our collection
-	this.logData[ key ].known.push( name );
-	this.logData[ key ].known = _.uniq( this.logData[ key ].known );
-	this.logData[ key ].active.push( name );
-	this.logData[ key ].active = _.uniq( this.logData[ key ].active );
 
 	// Add an occupant entry for the lobby
-	this.logData.occupants.lobby = this.logData.occupants.lobby || [];
-	var lobby_entry = {},
-		lobby_peeps = [];
-	if ( this.logData.occupants.lobby.length > 0 ) {
-		var lobby_sort = _.sortBy( this.logData.occupants.lobby, function( index ) { return index; } );
-		lobby_peeps = _.values( _.last( lobby_sort ) || [] )[0];
-	}
-	lobby_peeps.push( name );
-	lobby_entry[ timestamp ] = lobby_peeps;
-	this.logData.occupants.lobby.push( lobby_entry );
+	this.addToRoom( name, 'lobby', timestamp );
 
 	// Add a location entry
 	this.logData.locations[ name ] = this.logData.locations[ name ] || {};
@@ -246,24 +354,10 @@ Logger.prototype.enterRoom = function( name, room, timestamp ) {
 	}
 
 	// Add an occupant to the room
-	this.logData.occupants[ room ] = this.logData.occupants[ room ] || [];
-	var occupants_entry = {},
-		occupants_peeps = [];
-	if ( this.logData.occupants[ room ].length > 0 ) {
-		var occupants_sort = _.sortBy( this.logData.occupants[ room ], function( index ) { return index; } );
-		occupants_peeps = _.values( _.last( occupants_sort ) || [] )[0];
-	}
-	occupants_peeps.push( name );
-	occupants_entry[ timestamp ] = occupants_peeps;
-	this.logData.occupants[ room ].push( occupants_entry );
+	this.addToRoom( name, room, timestamp );
 
 	// Remove the occupant from the lobby
-	var lobby_sort = _.sortBy( this.logData.occupants.lobby, function( index ) { return index; } ),
-		lobby_peeps = _.values( _.last( lobby_sort ) || [] )[0],
-		lobby_culled = _.remove( lobby_peeps, function( ident ) { return name === ident; } );
-	var lobby_entry = {};
-	lobby_entry[ timestamp ] = lobby_culled;
-	this.logData.occupants.lobby.push( lobby_entry );
+	this.removeFromRoom( name, 'lobby', timestamp );
 
 	// Update location history
 	this.logData.locations[ name ][ timestamp ] = room;
@@ -311,21 +405,10 @@ Logger.prototype.exitRoom = function( name, room, timestamp ) {
 	}
 
 	// Add an occupant entry for the lobby
-	this.logData.occupants.lobby = this.logData.occupants.lobby || [];
-	var lobby_sort = _.sortBy( this.logData.occupants.lobby, function( index ) { return index; } ),
-		lobby_peeps = _.values( _.last( lobby_sort ) || [] )[0];
-	lobby_peeps.push( name );
-	var lobby_entry = {};
-	lobby_entry[ timestamp ] = lobby_peeps;
-	this.logData.occupants.lobby.push( lobby_entry );
+	this.addToRoom( name, 'lobby', timestamp );
 
 	// Remove an occupant from the room
-	var room_sort = _.sortBy( this.logData.occupants[ room ], function( index ) { return index; } ),
-		room_peeps = _.last( room_sort ),
-		room_culled = _.remove( room_peeps, function( ident ) { return name === ident; } );
-	var room_entry = {};
-	room_entry[ timestamp ] = room_culled;
-	this.logData.occupants[ room ].push( room_entry );
+	this.removeFromRoom( name, room, timestamp );
 
 	// Update location history
 	this.logData.locations[ name ][ timestamp ] = 'lobby';
@@ -360,26 +443,6 @@ Logger.prototype.exitGallery = function( name, type, timestamp ) {
 		return false;
 	}
 
-	// Make sure the visitor is active
-	var key;
-	switch( type ) {
-		case 'E':
-			key = 'employees';
-			break;
-		case 'G':
-			key = 'guests';
-			break;
-		default:
-			// Safety first!
-			return false;
-			break;
-	}
-
-	if ( ! _.contains( this.logData[ key ].active, name ) ) {
-		// Visitor is not active
-		return false;
-	}
-
 	// Make sure they're in the lobby
 	var sorted = _.sortBy( this.logData.locations[ name ], function( index ) { return index; } );
 
@@ -387,17 +450,13 @@ Logger.prototype.exitGallery = function( name, type, timestamp ) {
 		return false;
 	}
 
-	// Mark the visitor as inactive
-	var actives = this.logData[ key ].active;
-	this.logData[ key ].active = _.remove( actives, function( ident ) { return name === ident; } );
+	// Attempt to deactivate the visitor
+	if ( ! this.deactivateVisitor( name, type ) ) {
+		return false;
+	}
 
 	// Remove the occupant from the lobby
-	var lobby_sort = _.sortBy( this.logData.occupants.lobby, function( index ) { return index; } ),
-		lobby_peeps = _.values( _.last( lobby_sort ) )[0],
-		lobby_culled = _.remove( lobby_peeps, function( ident ) { return name === ident; } );
-	var lobby_entry = {};
-	lobby_entry[ timestamp ]= lobby_culled;
-	this.logData.occupants.lobby.push( lobby_entry );
+	this.removeFromRoom( name, 'lobby', timestamp );
 
 	// Update the timestamp
 	this.logData.last = timestamp;
