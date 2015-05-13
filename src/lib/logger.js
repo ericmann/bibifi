@@ -600,8 +600,8 @@ Logger.prototype.query = function( query ) {
 			// - Employees, comma-separated
 			// - Guests, comma-separated
 			// - Rooms occupied (ignore the lobby)
-			var employees = this.logData.employees.active.join( ',' ),
-				guests = this.logData.guests.active.join( ',' );
+			var employees = this.logData.employees.active.sort().join( ',' ),
+				guests = this.logData.guests.active.sort().join( ',' );
 
 			var rooms = [];
 			_.forEach( this.logData.occupants, function( data, room ) {
