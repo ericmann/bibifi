@@ -39,7 +39,10 @@ function appendEntry( entry, logfile, secret, handleError ) {
 
 		// The Logger utility returns error messages when needed
 		if ( 'key_err' === log ) {
-			process.stderr.write( 'security error' );
+			process.stdout.write( 'invalid' );
+			if ( handleError ) {
+				process.exit( 255 );
+			}
 			return; // Continue to the next entry
 		}
 
