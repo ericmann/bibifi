@@ -536,6 +536,15 @@ Logger.prototype.append = function( entry, handleError ) {
 		return false;
 	}
 
+	// Make sure the entry is increasing
+	if ( entry.time <= this.logData.last ) {
+		if ( handleError ) {
+			return util.invalid();
+		} else {
+			return false;
+		}
+	}
+
 	var success;
 	switch( entry.action ) {
 		case 'A':
@@ -558,8 +567,7 @@ Logger.prototype.append = function( entry, handleError ) {
 	}
 
 	if ( ! success && handleError ) {
-		process.stderr.write( 'invalid' );
-		process.exit( 255 );
+		return util.invalid();
 	}
 };
 
