@@ -649,7 +649,7 @@ Logger.prototype.query = function( query ) {
 		case 'I':
 			break;
 		default:
-			process.stderr.write( 'invalid' );
+			process.stdout.write( 'invalid' );
 			process.exit( 255 );
 			break;
 	}

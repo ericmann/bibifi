@@ -123,7 +123,7 @@ Util.prototype.decryptData = function( pass_key, ciphertext ) {
  * Print an error message.
  */
 Util.prototype.invalid = function() {
-	process.stderr.write( 'invalid' );
+	process.stdout.write( 'invalid' );
 	process.exit( 255 );
 };
 

@@ -62,7 +62,7 @@ if ( _.contains( argv, '-B' ) ) {
 		var sanitized = new Entry( entry.data );
 
 		if ( ! sanitized.isValid() ) {
-			process.stderr.write( 'invalid' );
+			process.stdout.write( 'invalid' );
 			return; // Move to the next item
 		}
 
