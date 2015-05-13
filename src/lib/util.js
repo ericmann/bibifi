@@ -113,7 +113,7 @@ Util.prototype.decryptData = function( pass_key, ciphertext ) {
 	var deciphered = decipher.update( ciphertext, outputEncoding, inputEncoding );
 
 	// Get our decoded data
-	deciphered +=  decipher.final( inputEncoding );
+	deciphered += decipher.final( inputEncoding );
 
 	// Return our decoded object
 	return JSON.parse( deciphered );

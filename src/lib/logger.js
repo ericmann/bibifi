@@ -91,7 +91,7 @@ Logger.prototype.getLogFile = function( logfile ) {
 			'last': 0
 		};
 		this.parsed = true;
-		this.dirty = false;
+		this.dirty = true;
 	}
 
 	return [fd, status];
@@ -583,6 +583,9 @@ Logger.prototype.write = function() {
 
 	// Concatenate everything together
 	var output = nUtil.format( '$%s$%s$%s', salt, hash, encrypted );
+
+	// Truncate the file before writing it
+	fs.ftruncateSync( this.logDescriptor, 0 );
 
 	// We have a dirty log, which means we need to overwrite/replace the stored copy.
 	fs.writeSync( this.logDescriptor, output, 0 );
