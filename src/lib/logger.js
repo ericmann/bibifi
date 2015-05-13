@@ -487,7 +487,7 @@ Logger.prototype.append = function( entry, handleError ) {
 			}
 			break;
 		case 'L':
-			if ( null === entry.room ) {
+			if ( null === entry.room || 'lobby' === entry.room ) {
 				success = this.exitGallery( entry.name, entry.type, entry.time );
 			} else {
 				success = this.exitRoom( entry.name, entry.room, entry.time );
