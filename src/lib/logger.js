@@ -616,8 +616,9 @@ Logger.prototype.query = function( query ) {
 					return;
 				}
 
-				var sorted = _.sortBy( data, function( index ) { return index; } ),
-					last_entry = _.values( _.last( sorted ) || [] )[0];
+				var keys = _.keys( data ).sort(),
+					last = _.last( keys ),
+					last_entry = data[ last ];
 
 				if ( last_entry.length > 0 ) {
 					rooms.push( room.toString() + ': ' + last_entry.join( ',' ) );
