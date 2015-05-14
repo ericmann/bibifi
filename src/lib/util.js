@@ -128,6 +128,30 @@ Util.prototype.invalid = function() {
 };
 
 /**
+ * Ascending integer sort tool.
+ *
+ * @param {Number} a
+ * @param {Number} b
+ *
+ * @returns {number}
+ */
+Util.prototype.numOrderA = function( a, b ) {
+	return a - b;
+};
+
+/**
+ * Descending integer sort tool.
+ *
+ * @param {Number} a
+ * @param {Number} b
+ *
+ * @returns {number}
+ */
+Util.prototype.numOrderD = function( a, b ) {
+	return b - a;
+};
+
+/**
  * Export the module
  */
 module.exports = new Util;

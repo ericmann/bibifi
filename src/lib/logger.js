@@ -147,7 +147,7 @@ Logger.prototype.addToRoom = function( name, room, time ) {
 	var occupant_history = this.logData.occupants[ room ];
 
 	if ( !_.isEmpty( occupant_history ) ) {
-		var keys = _.keys( occupant_history ).sort(),
+		var keys = _.keys( occupant_history ).sort( util.numOrderA ),
 			last = _.last( keys );
 
 		occupants = occupant_history[ last ];
@@ -176,7 +176,7 @@ Logger.prototype.removeFromRoom = function( name, room, time ) {
 
 	// Find out who's already in the room
 	var occupant_history = this.logData.occupants[ room ],
-		keys = _.keys( occupant_history ).sort(),
+		keys = _.keys( occupant_history ).sort( util.numOrderA ),
 		last = _.last( keys );
 	occupants = occupant_history[ last ];
 
@@ -399,8 +399,12 @@ Logger.prototype.exitRoom = function( name, room, timestamp ) {
 	}
 
 	// Make sure they're actually in the room
-	var sorted = _.sortBy( this.logData.locations[ name ], function( index ) { return index; } );
-	if ( room !== _.last( sorted ) ) {
+	var locations = this.logData.locations[ name],
+		keys = _.keys( locations ).sort( util.numOrderA ),
+		current_key = keys.pop(),
+		current = locations[ current_key ];
+
+	if ( room !== current ) {
 		return false;
 	}
 
@@ -627,7 +631,7 @@ Logger.prototype.query = function( query ) {
 					return;
 				}
 
-				var keys = _.keys( data ).sort(),
+				var keys = _.keys( data ).sort( util.numOrderA ),
 					last = _.last( keys ),
 					last_entry = data[ last ];
 
@@ -664,11 +668,13 @@ Logger.prototype.query = function( query ) {
 
 			// Get their location history
 			var history = this.logData.locations[ query.name],
-				keys = _.keys( history ).sort(),
+				keys = _.keys( history ).sort( util.numOrderA ),
 				rooms = [];
 
 			for ( var i = 0, l = keys.length; i < l; i++ ) {
-				var room = history[ i ];
+				var room_key = keys[ i ],
+					room = history[ room_key ];
+
 				if ( 'lobby' !== room ) {
 					room = parseInt( room, 10 );
 					if ( ! isNaN( room ) ) {
