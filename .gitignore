@@ -16,3 +16,7 @@ node_modules/.bin/nodeunit.cmd
 build/lib
 build/logread
 build/logappend
+
+# Course test files
+check_test.py
+dist_tests
