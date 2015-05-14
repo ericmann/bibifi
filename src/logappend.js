@@ -12,6 +12,7 @@
  * Module dependencies
  */
 var _ = require( 'lodash' ),
+	fs = require( 'fs' ),
 	cli = new (require( './lib/cli' )),
 	util = require( './lib/util' ),
 	Entry = require( './lib/entry' ),
@@ -53,11 +54,49 @@ function appendEntry( entry, logfile, secret, handleError ) {
 }
 
 // Determine if we have a batchfile or not
-if ( _.contains( argv, '-B' ) ) {
+if ( _.find( argv, function( item ) { return item.indexOf( '-B' ) == 0; } ) ) {
+	var batch, file, i, l;
+
+	// Get the batchfile name
+	for ( i = 0, l = argv.length; i < l; i++ ) {
+		if ( argv[ i ].indexOf( '-B' ) === 0 ) {
+			continue;
+		}
+
+		batch = argv[ i ];
+		break;
+	}
+
+	// Load the batchfile
+	try {
+		file = fs.readFileSync( batch );
+		file = file.toString();
+	} catch ( e ) {
+		return util.invalid();
+	}
+
+	var lines = file.split( '\n' );
+
 	// Get an entry for each line in the batchfile
 	var entries = [];
 
 	// Validate each entry in the batchfile
+	for ( i = 0, l = lines.length; i < l; i ++ ) {
+		var line = lines[ i ];
+
+		if ( '' === line.trim() ) {
+			continue;
+		}
+
+		var line_argv = line.split( /\s/ ),
+			line_entry = cli.validate_entry( line_argv );
+
+		if ( 'invalid' === line_entry.status ) {
+			process.stdout.write( 'invalid' );
+		} else {
+			entries.push( line_entry );
+		}
+	}
 
 	// Append each entry
 	_.forEach( entries, function( entry ) {
@@ -69,7 +108,7 @@ if ( _.contains( argv, '-B' ) ) {
 			return; // Move to the next item
 		}
 
-		appendEntry( entry, entry.data.logfile, entry.data.secret, false );
+		appendEntry( sanitized, entry.data.logfile, entry.data.secret, false );
 	} );
 } else {
 	// Validate the entry

@@ -26,7 +26,7 @@ function CLI() {
 /**
  * Attempt to validate and parse an entry.
  *
- * @param {Array} [argv]
+ * @param {Array}   [argv]
  */
 CLI.prototype.validate_entry = function( argv ) {
 	if ( undefined === argv ) {
@@ -157,6 +157,9 @@ CLI.prototype.validate_entry = function( argv ) {
 				}
 
 				data.data['room'] = room;
+				break;
+			case '-B':
+				return data;
 				break;
 			default:
 				// If we're here, it means we had an illegal entry.
