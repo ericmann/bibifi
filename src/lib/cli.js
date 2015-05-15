@@ -23,6 +23,10 @@ function CLI() {
 	this.argv = process.argv.slice( 2 );
 }
 
+CLI.prototype.validate_append_args = function( argv ) {
+
+};
+
 /**
  * Attempt to validate and parse an entry.
  *

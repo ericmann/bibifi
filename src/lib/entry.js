@@ -31,6 +31,28 @@ function Entry( raw ) {
 }
 
 /**
+ * Recover an object from an encoded string.
+ *
+ * @param {String} encoded
+ *
+ * @returns {Entry}
+ */
+Entry.prototype.parse = function( encoded ) {
+	var data = encoded.split( '||' );
+
+	// Items are positional, but item 0 is a random salt
+	var raw = {
+		'time': data[1],
+		'type': data[2],
+		'name': data[3],
+		'action': data[4],
+		'room': data[5]
+	};
+
+	return new Entry( raw );
+};
+
+/**
  * Sanitize a name entry.
  *
  * @param {String} name
@@ -165,6 +187,24 @@ Entry.prototype.isValid = function() {
 	var valid_room = ! isNaN( this.room ) || 'lobby' == this.room;
 
 	return valid_museum_entry && valid_room;
+};
+
+/**
+ * Convert an object to an encoded string.
+ *
+ * @returns {string}
+ */
+Entry.prototype.toString = function() {
+	var data = [
+		util.randomString( 10 ),
+		this.time,
+		this.type,
+		this.name,
+		this.action,
+		this.room
+	];
+
+	return data.join( '||' );
 };
 
 /**
