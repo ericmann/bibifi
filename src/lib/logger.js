@@ -21,8 +21,12 @@ var fs = require( 'fs' ),
  * Module definition
  *
  * @constructor
+ *
+ * @param {Number} descriptor File descriptor
  */
-function Logger() {}
+function Logger( descriptor ) {
+	this.fd = descriptor;
+}
 
 /**
  * Open a logfile using a given key.
