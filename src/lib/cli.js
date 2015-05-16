@@ -51,6 +51,7 @@ CLI.prototype.validate_append_args = function( argv ) {
 			'name'        : null,
 			'visitor_type': null
 		},
+		log_parsed = false,
 		type_selected = false,
 		action_selected = false;
 
@@ -143,7 +144,12 @@ CLI.prototype.validate_append_args = function( argv ) {
 		}
 		// Get the logfile name
 		else {
+			if ( log_parsed ) {
+				return append_query;
+			}
+
 			append_query.file = param;
+			log_parsed = true;
 		}
 	}
 
@@ -172,6 +178,7 @@ CLI.prototype.validate_query = function( argv ) {
 			'names' : [],
 			'file'  : null
 		},
+		log_parsed = false,
 		type_selected = false,
 		param, name;
 
@@ -247,7 +254,12 @@ CLI.prototype.validate_query = function( argv ) {
 		}
 		// Get the logfile name
 		else {
+			if ( log_parsed ) {
+				return query;
+			}
+
 			query.file = param;
+			log_parsed = true;
 		}
 	}
 
