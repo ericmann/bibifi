@@ -216,6 +216,10 @@ function handleAction( log, entry ) {
 // Validate the entry arguments
 var append = cli.validate_append_args();
 
+if ( 'valid' !== append.status ) {
+	return util.invalid();
+}
+
 // Get a log file
 var log;
 try {
