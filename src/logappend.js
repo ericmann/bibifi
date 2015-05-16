@@ -217,7 +217,12 @@ function handleAction( log, entry ) {
 var append = cli.validate_append_args();
 
 // Get a log file
-var log = new LogFile( append.file, append.key );
+var log;
+try {
+	log = new LogFile( append.file, append.key );
+} catch ( e ) {
+	return util.invalid();
+}
 
 // Validate our secret key
 if ( ! log.isValidSecret() ) {

@@ -200,7 +200,12 @@ if ( ! lookup.isValid() ) {
 }
 
 // Get a log file
-var log = new LogFile( lookup.logfile, lookup.secret );
+var log;
+try {
+	log = new LogFile( lookup.logfile, lookup.secret );
+} catch ( e ) {
+	return util.integrityViolation();
+}
 
 // Validate our security key
 if ( ! log.isValidSecret() ) {

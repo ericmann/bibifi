@@ -128,6 +128,14 @@ Util.prototype.invalid = function() {
 };
 
 /**
+ * Print an error message.
+ */
+Util.prototype.integrityViolation = function() {
+	process.stdout.write( 'integrity violation' );
+	process.exit( 255 );
+};
+
+/**
  * Ascending integer sort tool.
  *
  * @param {Number} a

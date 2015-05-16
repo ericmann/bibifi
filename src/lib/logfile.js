@@ -344,7 +344,12 @@ LogFile.prototype.entriesForVisitor = function( name, type ) {
 		var encrypted = entryBuffers[i].toString( 'utf8' ),
 			encryptedBuffer = new Buffer( encrypted, 'hex' );
 
-		var decrypted = decrypt( encryptedBuffer, this.passkey );
+		var decrypted;
+		try {
+			decrypted = decrypt( encryptedBuffer, this.passkey );
+		} catch ( e ) {
+			return entries;
+		}
 
 		// Parse our entry
 		var entry = Entry.prototype.parse( decrypted.toString() );
