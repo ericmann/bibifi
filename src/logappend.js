@@ -251,8 +251,6 @@ switch( append.type ) {
 		return util.invalid();
 }
 
-console.log( log );
-
 // We're done, so let's close the logfile
 log.close();
 

@@ -253,7 +253,44 @@ LogFile.prototype.close = function() {
 		fs.writeSync( this.fd, output, 0 );
 	} else {
 		if ( this.newEntries.length > 0 ) {
-			// Write out just the new entries and update the meta object
+			var entries = '';
+
+			// Original meta index
+			var startWrite = this.metaPointer();
+
+			// Truncate the section with our meta information so we can overwrite
+			fs.ftruncateSync( this.fd, startWrite );
+
+			// Now, figure out how long our entries will be
+			var newEncrpytedEntries = [];
+			for ( var i = 0, l = this.newEntries.length; i < l; i++ ) {
+				var entry = this.newEntries[ i ],
+					entryString = entry.toString();
+
+				// Encrypt the entry
+				var encrypted = encrypt( new Buffer( entryString, 'utf8' ), this.passkey );
+				newEncrpytedEntries.push( encrypted.toString( 'hex' ) );
+			}
+			entries = newEncrpytedEntries.join( '$' );
+
+			// Update the meta length
+			var newMetaIndexBuffer = new Buffer( 4 );
+			metaIndex = startWrite + entries.length + 1;
+			newMetaIndexBuffer.writeUInt32BE( metaIndex, 0 );
+			metaIndex = newMetaIndexBuffer.toString( 'hex' );
+
+			// Write out our new meta pointer
+			fs.writeSync( this.fd, metaIndex, 141 );
+
+			// Get our meta info
+			metaInfo = this.meta.toString();
+			var encryptedMeta = encrypt( new Buffer( metaInfo, 'utf8' ), this.passkey );
+			metaInfo = encryptedMeta.toString( 'hex' );
+
+			var output = nUtil.format( '$%s$%s', entries, metaInfo );
+
+			// Write out our new data
+			fs.writeSync( this.fd, output, startWrite - 1 );
 		}
 	}
 };
@@ -271,7 +308,6 @@ LogFile.prototype.close = function() {
  * @returns {Buffer}
  */
 function encrypt( buffer, passkey ) {
-console.log( buffer.toString() );
 	// Get a cipher
 	var cipher = crypto.createCipher( algorithm, passkey );
 
