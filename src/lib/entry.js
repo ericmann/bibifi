@@ -39,7 +39,7 @@ function Entry( raw ) {
  * @returns {Entry}
  */
 Entry.prototype.parse = function( encoded ) {
-	var data = encoded.split( '||' );
+	var data = encoded.split( '|' );
 
 	// Items are positional, but item 0 is a random salt
 	var raw = {
@@ -197,7 +197,7 @@ Entry.prototype.isValid = function() {
  */
 Entry.prototype.toString = function() {
 	var data = [
-		util.randomString( 10 ),
+		util.randomString( 6 ),
 		this.time,
 		this.type,
 		this.name,
@@ -205,7 +205,7 @@ Entry.prototype.toString = function() {
 		this.room
 	];
 
-	return data.join( '||' );
+	return data.join( '|' );
 };
 
 /**

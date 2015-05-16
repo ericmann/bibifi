@@ -11,7 +11,8 @@
 /**
  * Module dependencies
  */
-var _ = require( 'lodash' );
+var _ = require( 'lodash' ),
+	util = require( './util' );
 
 /**
  * Log meta information
@@ -33,27 +34,34 @@ function LogMeta() {
  * @param {String} serialized
  */
 LogMeta.prototype.load = function( serialized ) {
-	var parts = serialized.split( '||' );
+	var parts = serialized.split( '|' );
 
 	// Create a new container
 	var meta = new LogMeta;
 
+	// Items are positional, but item 0 is a random salt
+	// 0 - salt
+	// 1 - time
+	// 2 - employees
+	// 3 - guests
+	// 4 - locations
+
 	// Get the latest timestamp
-	var time = parseInt( parts[0], 10 );
+	var time = parseInt( parts[1], 10 );
 	meta.time = isNaN( time ) ? 0 : time;
 
 	// Get employee info
-	var employees = JSON.parse( parts[1] );
+	var employees = JSON.parse( parts[2] );
 	meta.activeEmployees = employees[0];
 	meta.inactiveEmployees = employees[1];
 
 	// Get guest info
-	var guests = JSON.parse( parts[2] );
+	var guests = JSON.parse( parts[3] );
 	meta.activeGuests = guests[0];
 	meta.inactiveGuests = guests[1];
 
 	// Get location data
-	meta.locations = JSON.parse( parts[3] );
+	meta.locations = JSON.parse( parts[4] );
 
 	return meta;
 };
@@ -198,7 +206,15 @@ LogMeta.prototype.toString = function() {
 		guests = [ this.activeGuests, this.inactiveGuests ],
 		locations = JSON.stringify( this.locations );
 
-	return this.time + '||' + JSON.stringify( employees ) + '||' + JSON.stringify( guests ) + '||' + locations;
+	var data = [
+		util.randomString( 6 ),
+		this.time,
+		JSON.stringify( employees ),
+		JSON.stringify( guests ),
+		locations
+	];
+
+	return data.join( '|' );
 };
 
 /**
