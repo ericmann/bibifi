@@ -210,8 +210,13 @@ CLI.prototype.validate_query = function( argv ) {
 		}
 		// Grab the Time query
 		else if ( param.indexOf( '-T' ) === 0 ) {
-			process.stdout.write( 'unimplemented' );
-			process.exit( 0 );
+			// Only one query type is allowed
+			if ( type_selected && type_selected !== 'T' ) {
+				return query;
+			}
+
+			query.type = 'T';
+			type_selected = 'T';
 		}
 		// Grab the Collision query
 		else if ( param.indexOf( '-I' ) === 0 ) {

@@ -116,6 +116,70 @@ function getHistory( log, names ) {
 	return true;
 }
 
+/**
+ * Get the total time spent in the gallery by a specific person.
+ *
+ * @param {LogFile} log
+ * @param {Array} names
+ *
+ * @returns {Boolean}
+ */
+function getTime( log, names ) {
+	var entryTime = false,
+		exitTime = false,
+		maxTime = 0,
+		totalTime;
+
+	// This query only allows one name, so let's validate
+	if ( names.length > 1 ) {
+		return false;
+	}
+
+	// Get the type and name out of the string
+	var concatenated = names[0],
+		type = concatenated[0],
+		name = concatenated.substr( 2 );
+
+	var entries = log.entriesForVisitor( name, type );
+	for ( var i = 0, l = entries.length; i < l; i++ ) {
+		var entry = entries[ i ];
+
+		// Bump the clock, no matter what!
+		maxTime = entry.time;
+
+		// Until the visitor enters the library, we don't care about entries
+		if ( false === entryTime && name !== entry.name ) {
+			continue;
+		}
+		// When they first visit the library, we set their entry time
+		else if ( false === entryTime ) {
+			entryTime = entry.time;
+		}
+		// When they exit the library, track their exit time
+		else if ( 'L' === entry.action && 'lobby' === entry.room ) {
+			exitTime = entry.time;
+			break;
+		}
+	}
+
+	// They much never have entered the gallery. We have an error!
+	if ( false === entryTime ) {
+		return false;
+	}
+	// If they're still in the gallery, print the max time (now) - their entry time.
+	else if ( false === exitTime ) {
+		totalTime = maxTime - entryTime;
+	}
+	// Print out the total time they were around
+	else {
+		totalTime = exitTime - entryTime;
+	}
+
+	process.stdout.write( totalTime.toString() );
+
+	return true;
+}
+
 // Validate the query
 var query = cli.validate_query();
 
@@ -155,6 +219,9 @@ switch( lookup.query ) {
 		}
 		break;
 	case 'T':
+		if ( ! getTime( log, query.names ) ) {
+			return util.invalid();
+		}
 		break;
 	case 'I':
 		break;
