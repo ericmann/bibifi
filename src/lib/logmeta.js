@@ -79,7 +79,7 @@ LogMeta.prototype.activateVisitor = function( type, name ) {
 
 			// Update the arrays
 			active.push( name );
-			inactive = _.remove( inactive, function( i ) { return i === name } );
+			_.remove( inactive, function( i ) { return i === name } );
 
 			// Update
 			this.activeEmployees = _.uniq( active );
@@ -95,7 +95,7 @@ LogMeta.prototype.activateVisitor = function( type, name ) {
 
 			// Update the arrays
 			active.push( name );
-			inactive = _.remove( inactive, function( i ) { return i === name } );
+			_.remove( inactive, function( i ) { return i === name } );
 
 			// Update
 			this.activeGuests = _.uniq( active );
@@ -139,7 +139,7 @@ LogMeta.prototype.deactivateVisitor = function( type, name ) {
 
 			// Update the arrays
 			inactive.push( name );
-			active = _.remove( active, function( i ) { return i === name } );
+			_.remove( active, function( i ) { return i === name } );
 
 			// Update
 			this.activeEmployees = active;
@@ -151,7 +151,7 @@ LogMeta.prototype.deactivateVisitor = function( type, name ) {
 
 			// Update the arrays
 			inactive.push( name );
-			active = _.remove( active, function( i ) { return i === name } );
+			_.remove( active, function( i ) { return i === name } );
 
 			// Update
 			this.activeGuests = active;
