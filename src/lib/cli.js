@@ -155,157 +155,6 @@ CLI.prototype.validate_append_args = function( argv ) {
 };
 
 /**
- * Attempt to validate and parse an entry.
- *
- * @param {Array}   [argv]
- */
-CLI.prototype.validate_entry = function( argv ) {
-	if ( undefined === argv ) {
-		// Allow a global array if needed
-		argv = this.argv;
-	}
-
-	var data = {
-			'status': 'invalid',
-			'data': {
-				'room': 'lobby' // Default behavior
-			}
-		},
-		loaded = {
-			'time'   : false,
-			'secret' : false,
-			'type'   : false,
-			'name'   : false,
-			'action' : false,
-			'room'   : false,
-			'logfile': false,
-		},
-		time, secret, name, room, logfile;
-
-	// Get the logfile first
-	logfile = argv.pop();
-	logfile = logfile.replace( /[^(a-zA-Z0-9_)]/g, '' );
-	if ( '' === logfile ) {
-		return data;
-	}
-
-	data.data['logfile'] = logfile;
-
-	// Loop through the array of args
-	do {
-		var param = argv.shift();
-		switch( param ) {
-			case '-T':
-				if ( loaded.time ) {
-					return data;
-				}
-
-				loaded.time = true;
-
-				// Get the next parameter and assume it's the time
-				time = argv.shift();
-				time = parseInt( time, 10 );
-				if ( isNaN( time ) ) {
-					return data;
-				}
-
-				data.data['time'] = Math.abs( time );
-				break;
-			case '-K':
-				if ( loaded.secret ) {
-					return data;
-				}
-
-				loaded.secret = true;
-
-				// Get the next parameter and assume it's the key
-				secret = argv.shift();
-				secret = secret.replace( /[^(a-zA-Z0-9)]/g, '' );
-				if ( '' === secret ) {
-					return data;
-				}
-
-				data.data['secret'] = secret;
-				break;
-			case '-E':
-				if ( loaded.type ) {
-					return data;
-				}
-				loaded.type = true;
-
-				name = argv.shift();
-				name = name.replace( /[^(a-zA-Z)]/g, '' );
-				if ( '' === name ) {
-					return data;
-				}
-
-				data.data['type'] = 'E';
-				data.data['name'] = name;
-				break;
-			case '-G':
-				if ( loaded.type ) {
-					return data;
-				}
-				loaded.type = true;
-
-				name = argv.shift();
-				name = name.replace( /[^(a-zA-Z)]/g, '' );
-				if ( '' === name ) {
-					return data;
-				}
-
-				data.data['type'] = 'G';
-				data.data['name'] = name;
-				break;
-			case '-A':
-				if ( loaded.action ) {
-					return data;
-				}
-				loaded.action = true;
-
-				data.data['action'] = 'A';
-				break;
-			case '-L':
-				if ( loaded.action ) {
-					return data;
-				}
-				loaded.action = true;
-
-				data.data['action'] = 'L';
-				break;
-			case '-R':
-				if ( loaded.room ) {
-					return data;
-				}
-
-				loaded.room = true;
-
-				// Get the next parameter and assume it's the key
-				room = argv.shift();
-				room = parseInt( room, 10 );
-				if ( isNaN( room ) ) {
-					return data;
-				}
-
-				data.data['room'] = room;
-				break;
-			case '-B':
-				return data;
-				break;
-			default:
-				// If we're here, it means we had an illegal entry.
-				return data;
-		}
-	} while ( argv.length > 0 );
-
-	// If we're good, we're valid
-	data['status'] = 'valid';
-
-	// Return our processed entry
-	return data;
-};
-
-/**
  * Attempt to validate and parse a query.
  *
  * @param {Array} [argv]
@@ -317,118 +166,87 @@ CLI.prototype.validate_query = function( argv ) {
 	}
 
 	var query = {
+			'type'  : 'S',
 			'status': 'invalid',
-			'params': {}
+			'key'   : null,
+			'names' : [],
+			'file'  : null
 		},
-		parsed = {
-			'secret': false,
-			'name'  : false,
-			'type'  : false,
-			'query' : false
-		},
-		logfile, name, secret;
+		type_selected = false,
+		param, name;
 
-	// Get the logfile first
-	logfile = argv.pop();
-	logfile = logfile.replace( /[^(a-zA-Z0-9_)]/g, '' );
-	if ( '' === logfile ) {
-		return data;
+	for ( var i = 0, l = argv.length; i < l; i ++ ) {
+		param = argv[i];
+
+		// Grab a key parameter
+		if ( param.indexOf( '-K' ) === 0 ) {
+			// If the key is standalone
+			if ( param === '-K' ) {
+				i += 1;
+				query.key = argv[ i ];
+			} else {
+				query.key = param.replace( '-K', '' );
+			}
+		}
+		// Grab the Status query
+		else if ( param.indexOf( '-S' ) === 0 ) {
+			// Only one query type is allowed
+			if ( type_selected && type_selected !== 'S' ) {
+				return query;
+			}
+
+			query.type = 'S';
+			type_selected = 'S';
+		}
+		// Grab the Room query
+		else if ( param.indexOf( '-R' ) === 0 ) {
+			// Only one query type is allowed
+			if ( type_selected && type_selected !== 'R' ) {
+				return query;
+			}
+
+			query.type = 'R';
+			type_selected = 'R';
+		}
+		// Grab the Time query
+		else if ( param.indexOf( '-T' ) === 0 ) {
+			process.stdout.write( 'unimplemented' );
+			process.exit( 0 );
+		}
+		// Grab the Collision query
+		else if ( param.indexOf( '-I' ) === 0 ) {
+			process.stdout.write( 'unimplemented' );
+			process.exit( 0 );
+		}
+		// Grab an employee
+		else if ( param.indexOf( '-E' ) === 0 ) {
+			if ( param === '-E' ) {
+				i += 1;
+				name = argv[i];
+			} else {
+				name = param.replace( '-E', '' );
+			}
+
+			query.names.push( 'E-' + name )
+		}
+		// Grab a guest
+		else if ( param.indexOf( '-G' ) === 0 ) {
+			if ( param === '-G' ) {
+				i += 1;
+				name = argv[i];
+			} else {
+				name = param.replace( '-G', '' );
+			}
+
+			query.names.push( 'G-' + name )
+		}
+		// Get the logfile name
+		else {
+			query.file = param;
+		}
 	}
 
-	query.params['logfile'] = logfile;
-
-	// Loop through the array of args
-	do {
-		var param = argv.shift();
-		switch( param ) {
-			case '-K':
-				if ( parsed.secret ) {
-					return query;
-				}
-
-				parsed.secret = true;
-
-				// Get the next parameter and assume it's the key
-				secret = argv.shift();
-				secret = secret.replace( /[^(a-zA-Z0-9)]/g, '' );
-				if ( '' === secret ) {
-					return query;
-				}
-
-				query.params['secret'] = secret;
-				break;
-			case '-E':
-				if ( parsed.type ) {
-					return query;
-				}
-				parsed.type = true;
-
-				name = argv.shift();
-				name = name.replace( /[^(a-zA-Z)]/g, '' );
-				if ( '' === name ) {
-					return parsed;
-				}
-
-				query.params['type'] = 'E';
-				query.params['name'] = name;
-				break;
-			case '-G':
-				if ( parsed.type ) {
-					return query;
-				}
-				parsed.type = true;
-
-				name = argv.shift();
-				name = name.replace( /[^(a-zA-Z)]/g, '' );
-				if ( '' === name ) {
-					return query;
-				}
-
-				query.params['type'] = 'G';
-				query.params['name'] = name;
-				break;
-			case '-S':
-				if ( parsed.query ) {
-					return query;
-				}
-				parsed.query = true;
-				query.params['query'] = 'S';
-
-
-				break;
-			case '-R':
-				if ( parsed.query ) {
-					return query;
-				}
-				parsed.query = true;
-				query.params['query'] = 'R';
-
-				break;
-			case '-T':
-				if ( parsed.query ) {
-					return query;
-				}
-				parsed.query = true;
-				query.params['query'] = 'T';
-
-				process.stdout.write( 'unimplemented' ); process.exit();
-				break;
-			case '-I':
-				if ( parsed.query ) {
-					return query;
-				}
-				parsed.query = true;
-				query.params['query'] = 'I';
-
-				process.stdout.write( 'unimplemented' ); process.exit();
-				break;
-			default:
-				// If we're here, it means we had an illegal entry.
-				return query;
-		}
-	} while ( argv.length > 0 );
-
-	// If we're good, we're valid
+	// If we're good, we're valid!
 	query['status'] = 'valid';
 
 	// Return our processed query

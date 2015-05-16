@@ -293,6 +293,16 @@ LogFile.prototype.close = function() {
 			fs.writeSync( this.fd, output, startWrite - 1 );
 		}
 	}
+
+	// Close the file
+	fs.closeSync( this.fd );
+};
+
+/**
+ * Close out the file without writing any data.
+ */
+LogFile.prototype.exit = function() {
+	fs.closeSync( this.fd );
 };
 
 /***********************************************************/
