@@ -227,8 +227,13 @@ CLI.prototype.validate_query = function( argv ) {
 		}
 		// Grab the Collision query
 		else if ( param.indexOf( '-I' ) === 0 ) {
-			process.stdout.write( 'unimplemented' );
-			process.exit( 0 );
+			// Only one query type is allowed
+			if ( type_selected && type_selected !== 'I' ) {
+				return query;
+			}
+
+			query.type = 'I';
+			type_selected = 'I';
 		}
 		// Grab an employee
 		else if ( param.indexOf( '-E' ) === 0 ) {

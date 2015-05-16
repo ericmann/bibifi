@@ -95,7 +95,8 @@ function getHistory( log, names ) {
 		type = concatenated[0],
 		name = concatenated.substr( 2 );
 
-	var entries = log.entriesForVisitor( name, type );
+	// Get our entries - we only have one visitor, so life is easy!
+	var entries = log.entriesForVisitors( [[name,type]] );
 	for ( var i = 0, l = entries.length; i < l; i++ ) {
 		var entry = entries[ i ];
 
@@ -180,6 +181,76 @@ function getTime( log, names ) {
 	return true;
 }
 
+/**
+ * Get a list of all rooms occupied by everyone in the names array.
+ *
+ * @param {LogFile} log
+ * @param {Array}   names
+ *
+ * Wreturns {Boolean}
+ */
+function getCollisions( log, names ) {
+	var visitors = [],
+		testCollection = [];
+
+	// Get our names out of the array
+	_.forEach( names, function( concatenated ) {
+		var type = concatenated[0],
+			name = concatenated.substr( 2 );
+
+		visitors.push( [name, type] );
+		testCollection.push( name );
+	} );
+
+	// Get our entries so we can replay a subset of history
+	var entries = log.entriesForVisitors( visitors );
+
+	// Will contain a list of all occupants in a given room at a given time in our following iteration.
+	// For example: {'lobby': ['Mark'], '2': ['Tina','Tony']}
+	// Visitors not in the `names` array above will be ignored
+	var placeholder = {};
+
+	// Array of rooms occupied by all specified visitors at the same time. Will be push()ed when we find a collision.
+	var rooms = [];
+
+	_.forEach( entries, function( entry ) {
+		// Make sure the placeholder exists
+		placeholder[ entry.room ] = placeholder[ entry.room ] || [];
+
+		// If this is an entry, add the visitor
+		if ( 'A' === entry.action ) {
+			placeholder[ entry.room ].push( entry.name );
+
+			if ( 'lobby' !== entry.room ) {
+				// Remove them from the lobby
+				_.remove( placeholder['lobby'], function( item ) { return entry.name === item; } );
+
+				// Do we have a collision? If so, let's record it
+				var collection_contains_everyone = _.every( testCollection, function( item ) { return _.contains( placeholder[ entry.room ], item ); } );
+				if ( collection_contains_everyone ) {
+					rooms.push( entry.room );
+				}
+			}
+		}
+		// If it's an exit, remove the visitor
+		else if ( 'L' === entry.action ) {
+			_.remove( placeholder[ entry.room ], function( item ) { return entry.name === item; } );
+
+			if ( 'lobby' !== entry.room ) {
+				// Add them back to the lobby
+				placeholder['lobby'].push( entry.name );
+			}
+		}
+	} );
+
+	rooms = _.uniq( rooms );
+	rooms = rooms.sort( util.numOrderA );
+
+	process.stdout.write( rooms.join( ',' ) );
+
+	return true;
+}
+
 // Validate the query
 var query = cli.validate_query();
 
@@ -229,6 +300,9 @@ switch( lookup.query ) {
 		}
 		break;
 	case 'I':
+		if ( ! getCollisions( log, query.names ) ) {
+			return util.invalid();
+		}
 		break;
 	default:
 		return util.invalid();

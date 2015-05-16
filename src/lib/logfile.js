@@ -308,6 +308,75 @@ LogFile.prototype.exit = function() {
 };
 
 /**
+ * Get all entries from the log
+ *
+ * @param {Array} visitors Array of [name,type] sub-arrays
+ *
+ * @returns {[Entry]}
+ */
+LogFile.prototype.entriesForVisitors = function( visitors ) {
+	var entries = [];
+
+	// First, verify we have an accurate query
+	var valid = true,
+		log = this; // Safety first within the loop!
+
+	// Build lists of guests and employees
+	var employees = [],
+		guests = [];
+
+	_.forEach( visitors, function( visitor ) {
+		switch( visitor[1] ) {
+			case 'E':
+				if ( ! _.contains( log.meta.activeEmployees, visitor[0] ) && ! _.contains( log.meta.inactiveEmployees, visitor[0] ) ) {
+					valid = false;
+				} else {
+					employees.push( visitor[0] );
+				}
+				break;
+			case 'G':
+				if ( ! _.contains( log.meta.activeGuests, visitor[0] ) && ! _.contains( log.meta.inactiveGuests, visitor[0] ) ) {
+					valid = false;
+				} else {
+					guests.push( visitor[0] );
+				}
+				break;
+			default:
+				valid = false;
+		}
+	} );
+
+	if ( ! valid ) {
+		return entries;
+	}
+
+	// Now, we iterate through all of the log entries, skipping any not for our visitors
+	var bufferLength = this.metaIndex - 150 - 1,
+		entryBuffer = new Buffer( bufferLength );
+
+	fs.readSync( this.fd, entryBuffer, 0, bufferLength, 150 );
+	var entryBuffers = util.splitBuffer( entryBuffer, '$' );
+	for ( var i = 0, l = entryBuffers.length; i < l; i++ ) {
+		// Decrypt our buffer
+		var encrypted = entryBuffers[i].toString( 'utf8' ),
+			encryptedBuffer = new Buffer( encrypted, 'hex' );
+
+		var decrypted = decrypt( encryptedBuffer, this.passkey );
+
+		// Parse our entry
+		var entry = Entry.prototype.parse( decrypted.toString() );
+
+		// If this is a good entry, let's keep it
+		if ( ( 'E' === entry.type && _.contains( employees, entry.name ) ) || ( 'G' === entry.type && _.contains( guests, entry.name ) ) ) {
+			entries.push( entry );
+		}
+	}
+
+	// Return our collection
+	return entries;
+};
+
+/**
  * Get all entries for a specific visitor from the log.
  *
  * @param {String} name
