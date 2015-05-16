@@ -41,6 +41,11 @@ if ( ! lookup.isValid() ) {
 // Get a log file
 var log = new LogFile( lookup.logfile, lookup.secret );
 
+// Validate our security key
+if ( ! log.isValidSecret() ) {
+	return util.invalid();
+}
+
 switch( lookup.query ) {
 	case 'S':
 		// Print out 3 or more lines:
@@ -89,6 +94,33 @@ switch( lookup.query ) {
 		process.stdout.write( employees + '\n' + guests + '\n' + rooms );
 		break;
 	case 'R':
+		var rooms = [];
+
+		// This query only allows one name, so let's validate
+		if ( query.names.length > 1 ) {
+			return util.invalid();
+		}
+
+		// Get the type and name out of the string
+		var concatenated = query.names[0],
+			type = concatenated[0],
+			name = concatenated.substr( 2 );
+
+		var entries = log.entriesForVisitor( name, type );
+		for ( var i = 0, l = entries.length; i < l; i++ ) {
+			var room = entries[ i ].room;
+
+			if ( 'lobby' === room ) {
+				continue;
+			}
+
+			rooms.push( entries[ i ].room );
+		}
+
+		// Concatenate room data
+		rooms = rooms.join( ',' );
+
+		process.stdout.write( rooms );
 		break;
 	case 'T':
 		break;

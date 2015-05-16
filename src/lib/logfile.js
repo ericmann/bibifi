@@ -14,8 +14,10 @@
 var fs = require( 'fs' ),
 	crypto = require( 'crypto' ),
 	nUtil = require( 'util' ),
+	_ = require( 'lodash' ),
 	util = require( './util' ),
-	LogMeta = require( './logmeta' );
+	LogMeta = require( './logmeta' ),
+	Entry = require( './entry' );
 
 /**
  * Useful constants for encryption
@@ -120,7 +122,7 @@ LogFile.prototype.isValidSecret = function() {
 	var hashed = secretBuffer.toString();
 
 	// Recreate the expected hash
-	var expected = util.createHash( this.secret, salt );
+	var expected = util.createHash( this.passkey, salt );
 
 	return hashed === expected;
 };
@@ -303,6 +305,58 @@ LogFile.prototype.close = function() {
  */
 LogFile.prototype.exit = function() {
 	fs.closeSync( this.fd );
+};
+
+/**
+ * Get all entries for a specific visitor from the log.
+ *
+ * @param {String} name
+ * @param {String} type
+ *
+ * @returns {[Entry]}
+ */
+LogFile.prototype.entriesForVisitor = function( name, type ) {
+	var entries = [];
+
+	// First, verify we have an accurate query
+	var valid = false;
+	switch( type ) {
+		case 'E':
+			valid = _.contains( this.meta.activeEmployees, name ) || _.contains( this.meta.inactiveEmployees, name );
+			break;
+		case 'G':
+			valid = _.contains( this.meta.activeGuests, name ) || _.contains( this.meta.inactiveGuests, name );
+			break;
+	}
+
+	if ( ! valid ) {
+		return entries;
+	}
+
+	// Now, we iterate through all of the log entries, skipping any not for our visitor
+	var bufferLength = this.metaIndex - 150 - 1,
+		entryBuffer = new Buffer( bufferLength );
+
+	fs.readSync( this.fd, entryBuffer, 0, bufferLength, 150 );
+	var entryBuffers = util.splitBuffer( entryBuffer, '$' );
+	for ( var i = 0, l = entryBuffers.length; i < l; i++ ) {
+		// Decrypt our buffer
+		var encrypted = entryBuffers[i].toString( 'utf8' ),
+			encryptedBuffer = new Buffer( encrypted, 'hex' );
+
+		var decrypted = decrypt( encryptedBuffer, this.passkey );
+
+		// Parse our entry
+		var entry = Entry.prototype.parse( decrypted.toString() );
+
+		// If this is a good entry, let's keep it
+		if ( name === entry.name ) {
+			entries.push( entry );
+		}
+	}
+
+	// Return our collection
+	return entries;
 };
 
 /***********************************************************/

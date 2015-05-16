@@ -152,6 +152,75 @@ Util.prototype.numOrderD = function( a, b ) {
 };
 
 /**
+ * Find the index of an element in a buffer.
+ *
+ * @param {Buffer} buffer
+ * @param {*}      search
+ * @param {Number} [offset]
+ *
+ * @returns {Number}
+ */
+Util.prototype.bufferIndexOf = function( buffer, search, offset ) {
+	offset = offset || 0;
+
+	var m = 0,
+		position = -1;
+
+	for ( var i = offset; i < buffer.length; i++ ) {
+		if ( buffer[i] == search[m] ) {
+			if ( -1 == position ) {
+				position = i;
+			}
+			++m;
+
+			if ( m == search.length ) {
+				break;
+			}
+		} else {
+			position = -1;
+			m = 0;
+		}
+	}
+
+	if ( position > -1 && buffer.length - position < search.length ) {
+		return -1;
+	}
+
+	return position;
+};
+
+/**
+ * Split a buffer based on a delimeter that appears in the buffer.
+ *
+ * @param {Buffer} buffer
+ * @param {String} delimiter
+ *
+ * @return {[Buffer]}
+ */
+Util.prototype.splitBuffer = function( buffer, delimiter ) {
+	// Container for split-up lines.
+	var lines = [];
+
+	// Some useful variables
+	var search = -1;
+
+	// Make our delimiter a buffer as well
+	var delimiterBuffer = new Buffer( delimiter );
+
+	while ( ( search = this.bufferIndexOf( buffer, delimiterBuffer ) ) > -1 ) {
+		lines.push( buffer.slice( 0, search ) );
+		buffer = buffer.slice( search + delimiterBuffer.length, buffer.length );
+	}
+
+	if ( buffer.length ) {
+		lines.push( buffer );
+	}
+
+	// Return our split up buffer
+	return lines;
+};
+
+/**
  * Export the module
  */
 module.exports = new Util;

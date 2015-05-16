@@ -219,6 +219,11 @@ var append = cli.validate_append_args();
 // Get a log file
 var log = new LogFile( append.file, append.key );
 
+// Validate our secret key
+if ( ! log.isValidSecret() ) {
+	return util.invalid();
+}
+
 switch( append.type ) {
 	case 'entry':
 		// Parse our entry
