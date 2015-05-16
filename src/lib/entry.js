@@ -11,7 +11,8 @@
 /**
  * Module dependencies
  */
-var _ = require( 'lodash' );
+var _ = require( 'lodash' ),
+	util = require( './util' );
 
 /**
  * Module constructor
@@ -115,7 +116,7 @@ Entry.prototype.sanitizeType = function( type ) {
  */
 Entry.prototype.sanitizeRoom = function( room ) {
 	// Use 'lobby' to represent being in the museum, but not a room
-	if ( 'lobby' === room ) {
+	if ( 'lobby' === room || null === room || undefined === room ) {
 		return 'lobby';
 	}
 

@@ -109,6 +109,20 @@ LogMeta.prototype.activateVisitor = function( type, name ) {
 };
 
 /**
+ * Check whether or not a visitor is active.
+ *
+ * @param {String} name
+ *
+ * @returns {Boolean}
+ */
+LogMeta.prototype.visitorIsActive = function( name ) {
+	var activeEmployee = _.contains( this.activeEmployees, name ),
+		activeGuest = _.contains( this.activeGuests, name );
+
+	return activeEmployee || activeGuest;
+};
+
+/**
  * Deactivate a visitor by removing them from the correct array, if possible
  *
  * @param {String} type

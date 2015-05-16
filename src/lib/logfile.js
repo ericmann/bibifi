@@ -63,7 +63,7 @@ LogFile.prototype.open = function() {
 
 	// Go ahead and queue up the salt and meta
 	this.salt = this.getSalt( fd );
-	this.getMeta();
+	this.getMeta( fd );
 
 	return fd;
 };
@@ -128,13 +128,20 @@ LogFile.prototype.isValidSecret = function() {
 /**
  * Read the meta index from the header of the logfile.
  *
+ * @param {Number} [fd] File descriptor
+ *
  * @returns {Number}
  */
-LogFile.prototype.metaPointer = function() {
+LogFile.prototype.metaPointer = function( fd ) {
+	if ( undefined === fd ) {
+		fd = this.fd;
+	}
+
 	if ( null === this.metaIndex ) {
 		var indexBuffer = new Buffer( 8 );
 
-		fs.readSync( this.fd, indexBuffer, 0, 8, 141 );
+		fs.readSync( fd, indexBuffer, 0, 8, 141 );
+
 		var indexString = indexBuffer.toString();
 		this.metaIndex = parseInt( indexString, 16 );
 	}
@@ -145,9 +152,15 @@ LogFile.prototype.metaPointer = function() {
 /**
  * Either get the meta from the logfile or create a new meta array.
  *
+ *  @param {Number} [fd] File descriptor
+ *
  * @returns {LogMeta}
  */
-LogFile.prototype.getMeta = function() {
+LogFile.prototype.getMeta = function( fd ) {
+	if ( undefined === fd ) {
+		fd = this.fd;
+	}
+
 	if ( null === this.meta ) {
 		if ( this.newFile ) {
 			this.meta = new LogMeta;
@@ -157,12 +170,12 @@ LogFile.prototype.getMeta = function() {
 			// Queue an empty buffer to store our meta
 			var metaBuffer = new Buffer(0),
 				intermediateBuffer,
-				position = this.metaPointer,
+				position = this.metaPointer( fd ),
 				bytesRead;
 
 			do {
 				intermediateBuffer = new Buffer( 128 );
-				bytesRead = fs.readSync( this.fd, intermediateBuffer, 0, 128, position );
+				bytesRead = fs.readSync( fd, intermediateBuffer, 0, 128, position );
 				intermediateBuffer = intermediateBuffer.slice( 0, bytesRead );
 
 				// Concatenate everything
@@ -174,7 +187,9 @@ LogFile.prototype.getMeta = function() {
 			} while ( 128 === bytesRead );
 
 			// Decrypt our buffer
-			var decryptedMeta = decrypt( metaBuffer, this.passkey );
+			var encrypted = metaBuffer.toString( 'utf8' ),
+				encryptedBuffer = new Buffer( encrypted, 'hex' );
+			var decryptedMeta = decrypt( encryptedBuffer, this.passkey );
 
 			// Load our meta
 			var metaString = decryptedMeta.toString( 'utf8' );
@@ -204,11 +219,11 @@ LogFile.prototype.close = function() {
 		// First, figure out how long our entries will be
 		var encryptedEntries = [];
 		for ( var i = 0, l = this.newEntries.length; i < l; i++ ) {
-			var entry = this.newEntries[ i],
+			var entry = this.newEntries[ i ],
 				entryString = entry.toString();
 
 			// Encrypt the entry
-			var encrypted = encrypt( new Buffer( entryString ), this.passkey );
+			var encrypted = encrypt( new Buffer( entryString, 'utf8' ), this.passkey );
 			encryptedEntries.push( encrypted.toString( 'hex' ) );
 		}
 		entries = encryptedEntries.join( '$' );
@@ -221,7 +236,7 @@ LogFile.prototype.close = function() {
 
 		// Get our meta info
 		metaInfo = this.meta.toString();
-		var encryptedMeta = encrypt( new Buffer( metaInfo ), this.passkey );
+		var encryptedMeta = encrypt( new Buffer( metaInfo, 'utf8' ), this.passkey );
 		metaInfo = encryptedMeta.toString( 'hex' );
 
 		var output = nUtil.format( '$%s$%s$%s$%s$%s', salt, hashed, metaIndex, entries, metaInfo );
@@ -256,6 +271,7 @@ LogFile.prototype.close = function() {
  * @returns {Buffer}
  */
 function encrypt( buffer, passkey ) {
+console.log( buffer.toString() );
 	// Get a cipher
 	var cipher = crypto.createCipher( algorithm, passkey );
 
