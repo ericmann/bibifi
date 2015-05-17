@@ -29,6 +29,7 @@ function Entry( raw ) {
 	this.room = this.sanitizeRoom( raw.room );
 	this.time = this.sanitizeTime( raw.time );
 	this.secret = raw.secret;
+	this.logfile = raw.logfile;
 }
 
 /**

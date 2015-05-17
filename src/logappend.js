@@ -15,6 +15,7 @@ var _ = require( 'lodash' ),
 	fs = require( 'fs' ),
 	cli = new (require( './lib/cli' )),
 	LogFile = require( './lib/logfile' ),
+	BatchFile = require( './lib/batchfile' ),
 	util = require( './lib/util' ),
 	Entry = require( './lib/entry' );
 
@@ -220,21 +221,21 @@ if ( 'valid' !== append.status ) {
 	return util.invalid();
 }
 
-// Get a log file
-var log;
-try {
-	log = new LogFile( append.file, append.key );
-} catch ( e ) {
-	return util.invalid();
-}
-
-// Validate our secret key
-if ( ! log.isValidSecret() ) {
-	return util.invalid();
-}
-
 switch( append.type ) {
 	case 'entry':
+		// Get a log file
+		var log;
+		try {
+			log = new LogFile( append.file, append.key );
+		} catch ( e ) {
+			return util.invalid();
+		}
+
+		// Validate our secret key
+		if ( ! log.isValidSecret() ) {
+			return util.invalid();
+		}
+
 		// Parse our entry
 		var entry = new Entry( {
 			'name'  : append.name,
@@ -257,16 +258,55 @@ switch( append.type ) {
 		// Append the log
 		log.newEntries.push( entry );
 
+		// We're done, so let's close the logfile
+		log.close();
+
 		break;
 	case 'batch':
+		// Get the batchfile first
+		var batch;
+		try {
+			batch = new BatchFile( append.file );
+		} catch ( e ) {
+			return util.invalid();
+		}
+
+		// We have a batchfile, let's populate it
+		if ( ! batch.getData() ) {
+			return util.invalid();
+		}
+
+		// Handle entries
+		_.forEach( batch.entries, function( entry ) {
+			// If it's an invalid entry, or if the timestamp fails to validate, err
+			if ( ! entry.isValid() || entry.time <= batch.log.meta.time ) {
+				process.stdout.write( 'invalid' );
+				return;
+			}
+
+			// Make sure the entry is for this log
+			if ( entry.logfile !== batch.logPath || entry.secret !== batch.key ) {
+				process.stdout.write( 'invalid' );
+				return;
+			}
+
+			// Handle the action
+			if ( ! handleAction( batch.log, entry ) ) {
+				process.stdout.write( 'invalid' );
+				return;
+			}
+
+			// Append the log
+			batch.log.newEntries.push( entry );
+		} );
+
+		// We're done, so let's close the logfile
+		batch.log.close();
 
 		break;
 	default:
 		return util.invalid();
 }
-
-// We're done, so let's close the logfile
-log.close();
 
 // Fin
 process.exit( 0 );
