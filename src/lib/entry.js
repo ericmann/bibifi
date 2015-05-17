@@ -41,21 +41,39 @@ function Entry( raw ) {
  * @returns {Entry}
  */
 Entry.prototype.parse = function( encoded, log ) {
-	var data = encoded.split( '|' );
+	// Extract our encoded data. Encoded strings are of the format:
+	// XXYZ123|123|123
+	// The first two characters are random
+	// Y is the visitor type (E or G)
+	// Z is the visitor action (A or L)
+	// The first number is a base36-encoded timestamp
+	// Second number is a base36-encoded room ID or 'L'
+	// Third number is a base36-encoded visitor ID
 
-	// Items are positional, but item 0 is a random salt
-	var raw = {
-		'time': data[1],
-		'type': data[2],
-		'action': data[4],
-		'room': data[5]
-	};
+	var type = encoded[2],
+		action = encoded[3],
+		data = encoded.substr( 4 );
 
-	// Get the name of the visitor
-	var index = parseInt( data[3], 10 ),
+	// Split our data
+	data = data.split( '|' );
+
+	// Parse the timestamp
+	var time = parseInt( data[0], 36 );
+
+	// Parse the room
+	var room = ( 'L' === data[1] ) ? 'L' : parseInt( data[1], 36 );
+
+	// Parse the visitor ID
+	var index = parseInt( data[2], 36 ),
 		name = log.meta.dictionary[index];
 
-	raw['name'] = name;
+	var raw = {
+		'time': time,
+		'type': type,
+		'action': action,
+		'room': room,
+		'name': name
+	};
 
 	return new Entry( raw );
 };
@@ -208,16 +226,20 @@ Entry.prototype.toString = function( log ) {
 	// Get the ID of the name from the dictionary
 	var visitor_id = log.meta.visitorID( this.name );
 
-	var data = [
-		util.randomString( 2 ),
-		this.time,
-		this.type,
-		visitor_id,
-		this.action,
-		this.room
-	];
+	// Encode our integer values as base36
+	var time = this.time.toString( 36 ),
+		room = ( 'L' === this.room ) ? 'L' : this.room.toString( 36 );
+	visitor_id = visitor_id.toString( 36 );
 
-	return data.join( '|' );
+	// Encode our data
+	var positional = util.randomString( 2 ) + this.type + this.action,
+		dynamic = [
+			time,
+			room,
+			visitor_id
+		];
+
+	return positional + dynamic.join( '|' );
 };
 
 /**
