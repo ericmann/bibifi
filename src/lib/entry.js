@@ -35,21 +35,27 @@ function Entry( raw ) {
 /**
  * Recover an object from an encoded string.
  *
- * @param {String} encoded
+ * @param {String}  encoded
+ * @param {LogFile} log     Logfile from which the data was extracted
  *
  * @returns {Entry}
  */
-Entry.prototype.parse = function( encoded ) {
+Entry.prototype.parse = function( encoded, log ) {
 	var data = encoded.split( '|' );
 
 	// Items are positional, but item 0 is a random salt
 	var raw = {
 		'time': data[1],
 		'type': data[2],
-		'name': data[3],
 		'action': data[4],
 		'room': data[5]
 	};
+
+	// Get the name of the visitor
+	var index = parseInt( data[3], 10 ),
+		name = log.meta.dictionary[index];
+
+	raw['name'] = name;
 
 	return new Entry( raw );
 };
@@ -116,9 +122,9 @@ Entry.prototype.sanitizeType = function( type ) {
  * @returns {String|Number}
  */
 Entry.prototype.sanitizeRoom = function( room ) {
-	// Use 'lobby' to represent being in the museum, but not a room
-	if ( 'lobby' === room || null === room || undefined === room ) {
-		return 'lobby';
+	// Use 'L' to represent being in the museum, but not a room
+	if ( 'L' === room || null === room || undefined === room ) {
+		return 'L';
 	}
 
 	// Cast as an integer
@@ -186,7 +192,7 @@ Entry.prototype.isValid = function() {
 		'' !== this.action &&
 		! isNaN( this.time ) && 0 < this.time;
 
-	var valid_room = ! isNaN( this.room ) || 'lobby' == this.room;
+	var valid_room = ! isNaN( this.room ) || 'L' == this.room;
 
 	return valid_museum_entry && valid_room;
 };
@@ -194,14 +200,19 @@ Entry.prototype.isValid = function() {
 /**
  * Convert an object to an encoded string.
  *
+ * @param {LogFile} log Logfile for which we're encoding the entry
+ *
  * @returns {string}
  */
-Entry.prototype.toString = function() {
+Entry.prototype.toString = function( log ) {
+	// Get the ID of the name from the dictionary
+	var visitor_id = log.meta.visitorID( this.name );
+
 	var data = [
-		util.randomString( 6 ),
+		util.randomString( 2 ),
 		this.time,
 		this.type,
-		this.name,
+		visitor_id,
 		this.action,
 		this.room
 	];

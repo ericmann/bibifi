@@ -90,7 +90,7 @@ Logger.prototype.getLogFile = function( logfile ) {
 		this.logData = {
 			'employees': { 'known': [], 'active': [] },
 			'guests': { 'known': [], 'active': [] },
-			'occupants': { 'lobby': {} },
+			'occupants': { 'L': {} },
 			'locations': {},
 			'last': 0
 		};
@@ -306,11 +306,11 @@ Logger.prototype.enterGallery = function( name, type, timestamp ) {
 	}
 
 	// Add an occupant entry for the lobby
-	this.addToRoom( name, 'lobby', timestamp );
+	this.addToRoom( name, 'L', timestamp );
 
 	// Add a location entry
 	this.logData.locations[ name ] = this.logData.locations[ name ] || {};
-	this.logData.locations[ name ][ timestamp ] = 'lobby';
+	this.logData.locations[ name ][ timestamp ] = 'L';
 
 	// Update the timestamp
 	this.logData.last = timestamp;
@@ -353,7 +353,7 @@ Logger.prototype.enterRoom = function( name, room, timestamp ) {
 
 	// Make sure they're not in another room
 	var sorted = _.sortBy( this.logData.locations[ name ], function( index ) { return index; } );
-	if ( 'lobby' !== _.last( sorted ) ) {
+	if ( 'L' !== _.last( sorted ) ) {
 		return false;
 	}
 
@@ -361,7 +361,7 @@ Logger.prototype.enterRoom = function( name, room, timestamp ) {
 	this.addToRoom( name, room, timestamp );
 
 	// Remove the occupant from the lobby
-	this.removeFromRoom( name, 'lobby', timestamp );
+	this.removeFromRoom( name, 'L', timestamp );
 
 	// Update location history
 	this.logData.locations[ name ][ timestamp ] = room;
@@ -413,13 +413,13 @@ Logger.prototype.exitRoom = function( name, room, timestamp ) {
 	}
 
 	// Add an occupant entry for the lobby
-	this.addToRoom( name, 'lobby', timestamp );
+	this.addToRoom( name, 'L', timestamp );
 
 	// Remove an occupant from the room
 	this.removeFromRoom( name, room, timestamp );
 
 	// Update location history
-	this.logData.locations[ name ][ timestamp ] = 'lobby';
+	this.logData.locations[ name ][ timestamp ] = 'L';
 
 	// Update the timestamp
 	this.logData.last = timestamp;
@@ -454,7 +454,7 @@ Logger.prototype.exitGallery = function( name, type, timestamp ) {
 	// Make sure they're in the lobby
 	var sorted = _.sortBy( this.logData.locations[ name ], function( index ) { return index; } );
 
-	if ( 'lobby' !== _.last( sorted ) ) {
+	if ( 'L' !== _.last( sorted ) ) {
 		return false;
 	}
 
@@ -464,7 +464,7 @@ Logger.prototype.exitGallery = function( name, type, timestamp ) {
 	}
 
 	// Remove the occupant from the lobby
-	this.removeFromRoom( name, 'lobby', timestamp );
+	this.removeFromRoom( name, 'L', timestamp );
 
 	// Update the timestamp
 	this.logData.last = timestamp;
@@ -556,14 +556,14 @@ Logger.prototype.append = function( entry, handleError ) {
 	var success;
 	switch( entry.action ) {
 		case 'A':
-			if ( null === entry.room || 'lobby' === entry.room ) {
+			if ( null === entry.room || 'L' === entry.room ) {
 				success = this.enterGallery( entry.name, entry.type, entry.time );
 			} else {
 				success = this.enterRoom( entry.name, entry.room, entry.time );
 			}
 			break;
 		case 'L':
-			if ( null === entry.room || 'lobby' === entry.room ) {
+			if ( null === entry.room || 'L' === entry.room ) {
 				success = this.exitGallery( entry.name, entry.type, entry.time );
 			} else {
 				success = this.exitRoom( entry.name, entry.room, entry.time );
@@ -624,7 +624,7 @@ Logger.prototype.query = function( query ) {
 
 			var rooms = [];
 			_.forEach( this.logData.occupants, function( data, room ) {
-				if ( 'lobby' === room ) {
+				if ( 'L' === room ) {
 					// Skip the lobby
 					return;
 				}
@@ -679,7 +679,7 @@ Logger.prototype.query = function( query ) {
 				var room_key = keys[ i ],
 					room = history[ room_key ];
 
-				if ( 'lobby' !== room ) {
+				if ( 'L' !== room ) {
 					room = parseInt( room, 10 );
 					if ( ! isNaN( room ) ) {
 						rooms.push( room );

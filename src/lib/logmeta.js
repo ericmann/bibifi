@@ -26,6 +26,7 @@ function LogMeta() {
 	this.activeGuests = [];
 	this.inactiveGuests = [];
 	this.locations = {};
+	this.dictionary = [];
 }
 
 /**
@@ -45,6 +46,7 @@ LogMeta.prototype.load = function( serialized ) {
 	// 2 - employees
 	// 3 - guests
 	// 4 - locations
+	// 5 - dictionary
 
 	// Get the latest timestamp
 	var time = parseInt( parts[1], 10 );
@@ -63,7 +65,27 @@ LogMeta.prototype.load = function( serialized ) {
 	// Get location data
 	meta.locations = JSON.parse( parts[4] );
 
+	// Get dictionary data
+	meta.dictionary = JSON.parse( parts[5] );
+
 	return meta;
+};
+
+/**
+ * Get a visitor's ID from the dictionary.
+ *
+ * @param {String} name
+ *
+ * @returns {Number}
+ */
+LogMeta.prototype.visitorID = function( name ) {
+	var visitor_id;
+	if ( -1 === ( visitor_id = this.dictionary.indexOf( name ) ) ) {
+		this.dictionary.push( name );
+		visitor_id = this.dictionary.length - 1;
+	}
+
+	return visitor_id;
 };
 
 /**
@@ -75,10 +97,13 @@ LogMeta.prototype.load = function( serialized ) {
  * @return {Boolean}
  */
 LogMeta.prototype.activateVisitor = function( type, name ) {
+	// Get the ID of the name from the dictionary
+	var visitor_id = this.visitorID( name );
+
 	var active, inactive;
 	switch( type ) {
 		case 'E':
-			if ( _.contains( this.activeGuests, name ) || _.contains( this.inactiveGuests, name ) ) {
+			if ( _.contains( this.activeGuests, visitor_id ) || _.contains( this.inactiveGuests, visitor_id ) ) {
 				return false;
 			}
 
@@ -86,15 +111,15 @@ LogMeta.prototype.activateVisitor = function( type, name ) {
 			inactive = this.inactiveEmployees;
 
 			// Update the arrays
-			active.push( name );
-			_.remove( inactive, function( i ) { return i === name } );
+			active.push( visitor_id );
+			_.remove( inactive, function( i ) { return i === visitor_id } );
 
 			// Update
 			this.activeEmployees = _.uniq( active );
 			this.inactiveEmployees = inactive;
 			break;
 		case 'G':
-			if ( _.contains( this.activeEmployees, name ) || _.contains( this.inactiveEmployees, name ) ) {
+			if ( _.contains( this.activeEmployees, visitor_id ) || _.contains( this.inactiveEmployees, visitor_id ) ) {
 				return false;
 			}
 
@@ -102,8 +127,8 @@ LogMeta.prototype.activateVisitor = function( type, name ) {
 			inactive = this.inactiveGuests;
 
 			// Update the arrays
-			active.push( name );
-			_.remove( inactive, function( i ) { return i === name } );
+			active.push( visitor_id );
+			_.remove( inactive, function( i ) { return i === visitor_id } );
 
 			// Update
 			this.activeGuests = _.uniq( active );
@@ -124,8 +149,11 @@ LogMeta.prototype.activateVisitor = function( type, name ) {
  * @returns {Boolean}
  */
 LogMeta.prototype.visitorIsActive = function( name ) {
-	var activeEmployee = _.contains( this.activeEmployees, name ),
-		activeGuest = _.contains( this.activeGuests, name );
+	// Get the ID of the name from the dictionary
+	var visitor_id = this.visitorID( name );
+
+	var activeEmployee = _.contains( this.activeEmployees, visitor_id ),
+		activeGuest = _.contains( this.activeGuests, visitor_id );
 
 	return activeEmployee || activeGuest;
 };
@@ -139,6 +167,9 @@ LogMeta.prototype.visitorIsActive = function( name ) {
  * @return {Boolean}
  */
 LogMeta.prototype.deactivateVisitor = function( type, name ) {
+	// Get the ID of the name from the dictionary
+	var visitor_id = this.visitorID( name );
+
 	var active, inactive;
 	switch( type ) {
 		case 'E':
@@ -146,8 +177,8 @@ LogMeta.prototype.deactivateVisitor = function( type, name ) {
 			inactive = this.inactiveEmployees;
 
 			// Update the arrays
-			inactive.push( name );
-			_.remove( active, function( i ) { return i === name } );
+			inactive.push( visitor_id );
+			_.remove( active, function( i ) { return i === visitor_id } );
 
 			// Update
 			this.activeEmployees = active;
@@ -158,8 +189,8 @@ LogMeta.prototype.deactivateVisitor = function( type, name ) {
 			inactive = this.inactiveGuests;
 
 			// Update the arrays
-			inactive.push( name );
-			_.remove( active, function( i ) { return i === name } );
+			inactive.push( visitor_id );
+			_.remove( active, function( i ) { return i === visitor_id } );
 
 			// Update
 			this.activeGuests = active;
@@ -182,8 +213,11 @@ LogMeta.prototype.deactivateVisitor = function( type, name ) {
  * @returns {Boolean}
  */
 LogMeta.prototype.updateLocation = function( name, from, to ) {
+	// Get the ID of the name from the dictionary
+	var visitor_id = this.visitorID( name );
+
 	// Get their current location
-	var location = this.locations[ name ];
+	var location = this.locations[ visitor_id ];
 
 	// If they're not where we said they were, err
 	if ( from !== location ) {
@@ -191,7 +225,7 @@ LogMeta.prototype.updateLocation = function( name, from, to ) {
 	}
 
 	// Update the location
-	this.locations[ name ] = to;
+	this.locations[ visitor_id ] = to;
 
 	return true;
 };
@@ -204,14 +238,16 @@ LogMeta.prototype.updateLocation = function( name, from, to ) {
 LogMeta.prototype.toString = function() {
 	var employees = [ this.activeEmployees, this.inactiveEmployees ],
 		guests = [ this.activeGuests, this.inactiveGuests ],
-		locations = JSON.stringify( this.locations );
+		locations = JSON.stringify( this.locations ),
+		dictionary = JSON.stringify( this.dictionary );
 
 	var data = [
 		util.randomString( 6 ),
 		this.time,
 		JSON.stringify( employees ),
 		JSON.stringify( guests ),
-		locations
+		locations,
+		dictionary
 	];
 
 	return data.join( '|' );
