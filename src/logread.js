@@ -30,13 +30,25 @@ var argv = process.argv.slice( 2 );
  * @returns {Boolean}
  */
 function getStatus( log ) {
-	var employees = log.meta.activeEmployees.sort().join( ',' ),
-		guests = log.meta.activeGuests.sort().join( ',' );
+	// Get real names
+	var employees = [], guests = [],
+		employee_ids = log.meta.activeEmployees,
+		guest_ids = log.meta.activeGuests;
+
+	_.forEach( employee_ids, function( employee ) {
+		employees.push( log.meta.dictionary[ employee ] );
+	} );
+	_.forEach( guest_ids, function( guest ) {
+		guests.push( log.meta.dictionary[ guest ] );
+	} );
+
+	employees = employees.sort().join( ',' );
+	guests = guests.sort().join( ',' );
 
 	// Massage our occupant data
 	var rooms = {};
 	_.forEach( log.meta.locations, function( room, occupant ) {
-		if ( 'lobby' === room ) {
+		if ( 'L' === room ) {
 			// Skip the lobby
 			return;
 		}
@@ -51,7 +63,7 @@ function getStatus( log ) {
 			rooms[ room ] = [];
 		}
 
-		rooms[ room ].push( occupant );
+		rooms[ room ].push( log.meta.dictionary[ occupant ] );
 	} );
 
 	// Get ordered room keys
@@ -102,7 +114,7 @@ function getHistory( log, names ) {
 
 		// We only want arrivals to rooms, exists are duplicates
 		// Also, skip the lobby
-		if ( 'lobby' === entry.room || 'L' === entry.action ) {
+		if ( 'L' === entry.room || 'L' === entry.action ) {
 			continue;
 		}
 
@@ -141,7 +153,8 @@ function getTime( log, names ) {
 		type = concatenated[0],
 		name = concatenated.substr( 2 );
 
-	var entries = log.entriesForVisitor( name, type );
+	var entries = log.entriesForVisitors( [[name, type]] );
+
 	for ( var i = 0, l = entries.length; i < l; i++ ) {
 		var entry = entries[ i ];
 
@@ -157,7 +170,7 @@ function getTime( log, names ) {
 			entryTime = entry.time;
 		}
 		// When they exit the library, track their exit time
-		else if ( 'L' === entry.action && 'lobby' === entry.room ) {
+		else if ( 'L' === entry.action && 'L' === entry.room ) {
 			exitTime = entry.time;
 			break;
 		}
@@ -206,7 +219,7 @@ function getCollisions( log, names ) {
 	var entries = log.entriesForVisitors( visitors );
 
 	// Will contain a list of all occupants in a given room at a given time in our following iteration.
-	// For example: {'lobby': ['Mark'], '2': ['Tina','Tony']}
+	// For example: {'L': ['Mark'], '2': ['Tina','Tony']}
 	// Visitors not in the `names` array above will be ignored
 	var placeholder = {};
 
@@ -221,9 +234,9 @@ function getCollisions( log, names ) {
 		if ( 'A' === entry.action ) {
 			placeholder[ entry.room ].push( entry.name );
 
-			if ( 'lobby' !== entry.room ) {
+			if ( 'L' !== entry.room ) {
 				// Remove them from the lobby
-				_.remove( placeholder['lobby'], function( item ) { return entry.name === item; } );
+				_.remove( placeholder['L'], function( item ) { return entry.name === item; } );
 
 				// Do we have a collision? If so, let's record it
 				var collection_contains_everyone = _.every( testCollection, function( item ) { return _.contains( placeholder[ entry.room ], item ); } );
@@ -236,9 +249,9 @@ function getCollisions( log, names ) {
 		else if ( 'L' === entry.action ) {
 			_.remove( placeholder[ entry.room ], function( item ) { return entry.name === item; } );
 
-			if ( 'lobby' !== entry.room ) {
+			if ( 'L' !== entry.room ) {
 				// Add them back to the lobby
-				placeholder['lobby'].push( entry.name );
+				placeholder['L'].push( entry.name );
 			}
 		}
 	} );

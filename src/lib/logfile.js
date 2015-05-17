@@ -222,7 +222,7 @@ LogFile.prototype.close = function() {
 		var encryptedEntries = [];
 		for ( var i = 0, l = this.newEntries.length; i < l; i++ ) {
 			var entry = this.newEntries[ i ],
-				entryString = entry.toString();
+				entryString = entry.toString( this );
 
 			// Encrypt the entry
 			var encrypted = encrypt( new Buffer( entryString, 'utf8' ), this.passkey );
@@ -267,7 +267,7 @@ LogFile.prototype.close = function() {
 			var newEncrpytedEntries = [];
 			for ( var i = 0, l = this.newEntries.length; i < l; i++ ) {
 				var entry = this.newEntries[ i ],
-					entryString = entry.toString();
+					entryString = entry.toString( this );
 
 				// Encrypt the entry
 				var encrypted = encrypt( new Buffer( entryString, 'utf8' ), this.passkey );
@@ -310,7 +310,7 @@ LogFile.prototype.exit = function() {
 /**
  * Get all entries from the log
  *
- * @param {Array} visitors Array of [name,type] sub-arrays
+ * @param {Array}   visitors Array of [name,type] sub-arrays
  *
  * @returns {[Entry]}
  */
@@ -326,16 +326,19 @@ LogFile.prototype.entriesForVisitors = function( visitors ) {
 		guests = [];
 
 	_.forEach( visitors, function( visitor ) {
+		// Get the ID of the name from the dictionary
+		var visitor_id = log.meta.visitorID( visitor[0] );
+
 		switch( visitor[1] ) {
 			case 'E':
-				if ( ! _.contains( log.meta.activeEmployees, visitor[0] ) && ! _.contains( log.meta.inactiveEmployees, visitor[0] ) ) {
+				if ( ! _.contains( log.meta.activeEmployees, visitor_id ) && ! _.contains( log.meta.inactiveEmployees, visitor_id ) ) {
 					valid = false;
 				} else {
 					employees.push( visitor[0] );
 				}
 				break;
 			case 'G':
-				if ( ! _.contains( log.meta.activeGuests, visitor[0] ) && ! _.contains( log.meta.inactiveGuests, visitor[0] ) ) {
+				if ( ! _.contains( log.meta.activeGuests, visitor_id ) && ! _.contains( log.meta.inactiveGuests, visitor_id ) ) {
 					valid = false;
 				} else {
 					guests.push( visitor[0] );
@@ -364,7 +367,7 @@ LogFile.prototype.entriesForVisitors = function( visitors ) {
 		var decrypted = decrypt( encryptedBuffer, this.passkey );
 
 		// Parse our entry
-		var entry = Entry.prototype.parse( decrypted.toString() );
+		var entry = Entry.prototype.parse( decrypted.toString(), this );
 
 		// If this is a good entry, let's keep it
 		if ( ( 'E' === entry.type && _.contains( employees, entry.name ) ) || ( 'G' === entry.type && _.contains( guests, entry.name ) ) ) {
@@ -421,7 +424,7 @@ LogFile.prototype.entriesForVisitor = function( name, type ) {
 		}
 
 		// Parse our entry
-		var entry = Entry.prototype.parse( decrypted.toString() );
+		var entry = Entry.prototype.parse( decrypted.toString(), this );
 
 		// If this is a good entry, let's keep it
 		if ( name === entry.name ) {

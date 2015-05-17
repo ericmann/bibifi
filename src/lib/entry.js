@@ -35,20 +35,44 @@ function Entry( raw ) {
 /**
  * Recover an object from an encoded string.
  *
- * @param {String} encoded
+ * @param {String}  encoded
+ * @param {LogFile} log     Logfile from which the data was extracted
  *
  * @returns {Entry}
  */
-Entry.prototype.parse = function( encoded ) {
-	var data = encoded.split( '|' );
+Entry.prototype.parse = function( encoded, log ) {
+	// Extract our encoded data. Encoded strings are of the format:
+	// XXYZ123|123|123
+	// The first two characters are random
+	// Y is the visitor type (E or G)
+	// Z is the visitor action (A or L)
+	// The first number is a base36-encoded timestamp
+	// Second number is a base36-encoded room ID or 'L'
+	// Third number is a base36-encoded visitor ID
 
-	// Items are positional, but item 0 is a random salt
+	var type = encoded[2],
+		action = encoded[3],
+		data = encoded.substr( 4 );
+
+	// Split our data
+	data = data.split( '|' );
+
+	// Parse the timestamp
+	var time = parseInt( data[0], 36 );
+
+	// Parse the room
+	var room = ( 'L' === data[1] ) ? 'L' : parseInt( data[1], 36 );
+
+	// Parse the visitor ID
+	var index = parseInt( data[2], 36 ),
+		name = log.meta.dictionary[index];
+
 	var raw = {
-		'time': data[1],
-		'type': data[2],
-		'name': data[3],
-		'action': data[4],
-		'room': data[5]
+		'time': time,
+		'type': type,
+		'action': action,
+		'room': room,
+		'name': name
 	};
 
 	return new Entry( raw );
@@ -116,9 +140,9 @@ Entry.prototype.sanitizeType = function( type ) {
  * @returns {String|Number}
  */
 Entry.prototype.sanitizeRoom = function( room ) {
-	// Use 'lobby' to represent being in the museum, but not a room
-	if ( 'lobby' === room || null === room || undefined === room ) {
-		return 'lobby';
+	// Use 'L' to represent being in the museum, but not a room
+	if ( 'L' === room || null === room || undefined === room ) {
+		return 'L';
 	}
 
 	// Cast as an integer
@@ -186,7 +210,7 @@ Entry.prototype.isValid = function() {
 		'' !== this.action &&
 		! isNaN( this.time ) && 0 < this.time;
 
-	var valid_room = ! isNaN( this.room ) || 'lobby' == this.room;
+	var valid_room = ! isNaN( this.room ) || 'L' == this.room;
 
 	return valid_museum_entry && valid_room;
 };
@@ -194,19 +218,28 @@ Entry.prototype.isValid = function() {
 /**
  * Convert an object to an encoded string.
  *
+ * @param {LogFile} log Logfile for which we're encoding the entry
+ *
  * @returns {string}
  */
-Entry.prototype.toString = function() {
-	var data = [
-		util.randomString( 6 ),
-		this.time,
-		this.type,
-		this.name,
-		this.action,
-		this.room
-	];
+Entry.prototype.toString = function( log ) {
+	// Get the ID of the name from the dictionary
+	var visitor_id = log.meta.visitorID( this.name );
 
-	return data.join( '|' );
+	// Encode our integer values as base36
+	var time = this.time.toString( 36 ),
+		room = ( 'L' === this.room ) ? 'L' : this.room.toString( 36 );
+	visitor_id = visitor_id.toString( 36 );
+
+	// Encode our data
+	var positional = util.randomString( 2 ) + this.type + this.action,
+		dynamic = [
+			time,
+			room,
+			visitor_id
+		];
+
+	return positional + dynamic.join( '|' );
 };
 
 /**

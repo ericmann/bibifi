@@ -53,7 +53,7 @@ function enterGallery( log, name, type, timestamp ) {
 	}
 
 	// Add a location entry
-	if ( ! log.meta.updateLocation( name, undefined, 'lobby' ) ) {
+	if ( ! log.meta.updateLocation( name, undefined, 'L' ) ) {
 		return false;
 	}
 
@@ -94,7 +94,7 @@ function enterRoom( log, name, room, timestamp ) {
 	}
 
 	// Update their location
-	if ( ! log.meta.updateLocation( name, 'lobby', room ) ) {
+	if ( ! log.meta.updateLocation( name, 'L', room ) ) {
 		return false;
 	}
 
@@ -132,7 +132,7 @@ function exitRoom( log, name, room, timestamp ) {
 	}
 
 	// Update their location
-	if ( ! log.meta.updateLocation( name, room, 'lobby' ) ) {
+	if ( ! log.meta.updateLocation( name, room, 'L' ) ) {
 		return false;
 	}
 
@@ -165,7 +165,7 @@ function exitGallery( log, name, type, timestamp ) {
 	}
 
 	// Remove them from the lobby
-	if ( ! log.meta.updateLocation( name, 'lobby', undefined ) ) {
+	if ( ! log.meta.updateLocation( name, 'L', undefined ) ) {
 		return false;
 	}
 
@@ -193,14 +193,14 @@ function handleAction( log, entry ) {
 	var success;
 	switch( entry.action ) {
 		case 'A':
-			if ( null === entry.room || 'lobby' === entry.room ) {
+			if ( null === entry.room || 'L' === entry.room ) {
 				success = enterGallery( log, entry.name, entry.type, entry.time );
 			} else {
 				success = enterRoom( log, entry.name, entry.room, entry.time );
 			}
 			break;
 		case 'L':
-			if ( null === entry.room || 'lobby' === entry.room ) {
+			if ( null === entry.room || 'L' === entry.room ) {
 				success = exitGallery( log, entry.name, entry.type, entry.time );
 			} else {
 				success = exitRoom( log, entry.name, entry.room, entry.time );
