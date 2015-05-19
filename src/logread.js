@@ -49,7 +49,7 @@ function getStatus( log ) {
 
 	// Massage our occupant data
 	var rooms = {},
-		people = Object.getOwnPropertyNames( log.meta.locations );
+		people = Object.keys( log.meta.locations );
 
 	for ( var i = 0, l = people.length; i < l; i++ ) {
 		var occupant = people[ i ],
@@ -74,7 +74,7 @@ function getStatus( log ) {
 	}
 
 	// Get ordered room keys
-	var roomKeys = _.keys( rooms ).sort( util.numOrderA );
+	var roomKeys = Object.keys( rooms ).sort( util.numOrderA );
 
 	// Build out our output
 	var roomOutput = [];
