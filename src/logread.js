@@ -48,17 +48,22 @@ function getStatus( log ) {
 	guests = guests.sort().join( ',' );
 
 	// Massage our occupant data
-	var rooms = {};
-	_.forEach( log.meta.locations, function( room, occupant ) {
+	var rooms = {},
+		people = Object.getOwnPropertyNames( log.meta.locations );
+
+	for ( var i = 0, l = people.length; i < l; i++ ) {
+		var occupant = people[ i ],
+			room = log.meta.locations[ occupant ];
+
 		if ( 'L' === room ) {
 			// Skip the lobby
-			return;
+			continue;
 		}
 
 		room = parseInt( room, 10 );
 		if ( isNaN( room ) ) {
 			// Error checking
-			return;
+			continue;
 		}
 
 		if ( undefined === rooms[ room ] ) {
@@ -66,7 +71,7 @@ function getStatus( log ) {
 		}
 
 		rooms[ room ].push( log.meta.dictionary[ occupant ] );
-	} );
+	}
 
 	// Get ordered room keys
 	var roomKeys = _.keys( rooms ).sort( util.numOrderA );

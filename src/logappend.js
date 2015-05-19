@@ -282,19 +282,19 @@ switch( append.type ) {
 			// If it's an invalid entry, or if the timestamp fails to validate, err
 			if ( ! entry.isValid() || entry.time <= batch.log.meta.time ) {
 				process.stdout.write( 'invalid' );
-				return;
+				continue;
 			}
 
 			// Make sure the entry is for this log
 			if ( entry.logfile !== batch.logPath || entry.secret !== batch.key ) {
 				process.stdout.write( 'invalid' );
-				return;
+				continue;
 			}
 
 			// Handle the action
 			if ( ! handleAction( batch.log, entry ) ) {
 				process.stdout.write( 'invalid' );
-				return;
+				continue;
 			}
 
 			// Append the log

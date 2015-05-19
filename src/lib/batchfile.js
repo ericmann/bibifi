@@ -97,7 +97,7 @@ BatchFile.prototype.getData = function() {
 		// If we've got a batch in a batch, report invalid and skip
 		if ( 'entry' !== append.type ) {
 			process.stdout.write( 'invalid' );
-			return;
+			continue;
 		}
 
 		// If we don't have a log, let's get one!
