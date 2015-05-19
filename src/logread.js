@@ -33,14 +33,16 @@ function getStatus( log ) {
 	// Get real names
 	var employees = [], guests = [],
 		employee_ids = log.meta.activeEmployees,
-		guest_ids = log.meta.activeGuests;
+		guest_ids = log.meta.activeGuests,
+		i, l;
 
-	_.forEach( employee_ids, function( employee ) {
-		employees.push( log.meta.dictionary[ employee ] );
-	} );
-	_.forEach( guest_ids, function( guest ) {
-		guests.push( log.meta.dictionary[ guest ] );
-	} );
+	for ( i = 0, l = employee_ids.length; i < l; i++ ) {
+		employees.push( log.meta.dictionary[ employee_ids[ i ] ] );
+	}
+
+	for ( i = 0, l = guest_ids.length; i < l; i++ ) {
+		guests.push( log.meta.dictionary[ guest_ids[ i ] ] );
+	}
 
 	employees = employees.sort().join( ',' );
 	guests = guests.sort().join( ',' );
@@ -71,7 +73,7 @@ function getStatus( log ) {
 
 	// Build out our output
 	var roomOutput = [];
-	for ( var i = 0, l = roomKeys.length; i < l; i++ ) {
+	for ( i = 0, l = roomKeys.length; i < l; i++ ) {
 		var key = roomKeys[ i],
 			room = rooms[ key ];
 
@@ -204,16 +206,19 @@ function getTime( log, names ) {
  */
 function getCollisions( log, names ) {
 	var visitors = [],
-		testCollection = [];
+		testCollection = [],
+		i, l;
 
 	// Get our names out of the array
-	_.forEach( names, function( concatenated ) {
+	for ( i = 0, l = names.length; i < l; i++ ) {
+		var concatenated = names[ i ];
+
 		var type = concatenated[0],
 			name = concatenated.substr( 2 );
 
 		visitors.push( [name, type] );
 		testCollection.push( name );
-	} );
+	}
 
 	// Get our entries so we can replay a subset of history
 	var entries = log.entriesForVisitors( visitors );
@@ -226,7 +231,9 @@ function getCollisions( log, names ) {
 	// Array of rooms occupied by all specified visitors at the same time. Will be push()ed when we find a collision.
 	var rooms = [];
 
-	_.forEach( entries, function( entry ) {
+	for ( i = 0, l = entries.length; i < l; i++ ) {
+		var entry = entries[ i ];
+
 		// Make sure the placeholder exists
 		placeholder[ entry.room ] = placeholder[ entry.room ] || [];
 
@@ -254,7 +261,7 @@ function getCollisions( log, names ) {
 				placeholder['L'].push( entry.name );
 			}
 		}
-	} );
+	}
 
 	rooms = _.uniq( rooms );
 	rooms = rooms.sort( util.numOrderA );

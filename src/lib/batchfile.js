@@ -12,7 +12,6 @@
  * Module dependencies
  */
 var fs = require( 'fs' ),
-	_ = require( 'lodash' ),
 	cli = new (require( './cli' )),
 	util = require( './util' ),
 	Entry = require( './entry' ),
@@ -86,7 +85,9 @@ BatchFile.prototype.getData = function() {
 	// Split our entries up
 	var lineBuffers = util.splitBuffer( dataBuffer, '\n' ),
 		batch = this; // Safety outside of the closure!
-	_.forEach( lineBuffers, function( line ) {
+	for ( var i = 0, l = lineBuffers.length; i < l; i++ ) {
+		var line = lineBuffers[ i ];
+
 		var lineString = line.toString(),
 			lineArgv = lineString.split( ' ' );
 
@@ -125,7 +126,7 @@ BatchFile.prototype.getData = function() {
 		} );
 
 		batch.entries.push( entry );
-	} );
+	}
 
 	// Set up our key based on the first item
 	var first = this.entries[0];

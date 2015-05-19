@@ -11,8 +11,7 @@
 /**
  * Module dependencies
  */
-var _ = require( 'lodash' ),
-	fs = require( 'fs' ),
+var fs = require( 'fs' ),
 	cli = new (require( './lib/cli' )),
 	LogFile = require( './lib/logfile' ),
 	BatchFile = require( './lib/batchfile' ),
@@ -277,7 +276,9 @@ switch( append.type ) {
 		}
 
 		// Handle entries
-		_.forEach( batch.entries, function( entry ) {
+		for ( var i = 0, l = batch.entries.length; i < l; i++ ) {
+			var entry = batch.entries[ i ];
+
 			// If it's an invalid entry, or if the timestamp fails to validate, err
 			if ( ! entry.isValid() || entry.time <= batch.log.meta.time ) {
 				process.stdout.write( 'invalid' );
@@ -298,7 +299,7 @@ switch( append.type ) {
 
 			// Append the log
 			batch.log.newEntries.push( entry );
-		} );
+		}
 
 		// We're done, so let's close the logfile
 		batch.log.close();

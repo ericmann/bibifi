@@ -315,7 +315,8 @@ LogFile.prototype.exit = function() {
  * @returns {[Entry]}
  */
 LogFile.prototype.entriesForVisitors = function( visitors ) {
-	var entries = [];
+	var entries = [],
+		i, l;
 
 	// First, verify we have an accurate query
 	var valid = true,
@@ -325,7 +326,9 @@ LogFile.prototype.entriesForVisitors = function( visitors ) {
 	var employees = [],
 		guests = [];
 
-	_.forEach( visitors, function( visitor ) {
+	for ( i = 0, l = visitors.length; i < l; i++ ) {
+		var visitor = visitors[ i ];
+
 		// Get the ID of the name from the dictionary
 		var visitor_id = log.meta.visitorID( visitor[0] );
 
@@ -347,7 +350,7 @@ LogFile.prototype.entriesForVisitors = function( visitors ) {
 			default:
 				valid = false;
 		}
-	} );
+	}
 
 	if ( ! valid ) {
 		return entries;
@@ -359,7 +362,7 @@ LogFile.prototype.entriesForVisitors = function( visitors ) {
 
 	fs.readSync( this.fd, entryBuffer, 0, bufferLength, 150 );
 	var entryBuffers = util.splitBuffer( entryBuffer, '$' );
-	for ( var i = 0, l = entryBuffers.length; i < l; i++ ) {
+	for ( i = 0, l = entryBuffers.length; i < l; i++ ) {
 		// Decrypt our buffer
 		var encrypted = entryBuffers[i].toString( 'utf8' ),
 			encryptedBuffer = new Buffer( encrypted, 'hex' );

@@ -11,8 +11,7 @@
 /**
  * Module dependencies
  */
-var _ = require( 'lodash' ),
-	util = require( './util' );
+var util = require( './util' );
 
 /**
  * Object constructor and arg parser.
