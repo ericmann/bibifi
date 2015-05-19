@@ -229,6 +229,45 @@ Util.prototype.splitBuffer = function( buffer, delimiter ) {
 };
 
 /**
+ * Remove an element from an arry
+ *
+ * @param {Array}  array
+ * @param {*}      equals
+ * @param {String} [property] If the array contains object, match this property instead of the element
+ *
+ * @returns {*} Removed element
+ */
+Util.prototype.remove = function( array, equals, property ) {
+	// Containers
+	var removed = null;
+
+	// Iterators
+	var index = 0,
+		length = array.length;
+
+	for( ;index < length; index ++ ) {
+		var item = array[ index ];
+
+		if ( undefined === property ) {
+			if ( equals === item ) {
+				removed = item;
+				array.splice( index, 1 );
+				break;
+			}
+		} else {
+			if ( equals === item[ property ] ) {
+				removed = item;
+				array.splice( index, 1 );
+				break;
+			}
+		}
+	}
+
+	// Return our collection
+	return removed;
+};
+
+/**
  * Export the module
  */
 module.exports = new Util;

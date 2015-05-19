@@ -248,7 +248,7 @@ function getCollisions( log, names ) {
 
 			if ( 'L' !== entry.room ) {
 				// Remove them from the lobby
-				_.remove( placeholder['L'], function( item ) { return entry.name === item; } );
+				util.remove( placeholder['L'], entry.name, 'name' );
 
 				// Do we have a collision? If so, let's record it
 				var collection_contains_everyone = _.every( testCollection, function( item ) { return _.contains( placeholder[ entry.room ], item ); } );
@@ -259,7 +259,7 @@ function getCollisions( log, names ) {
 		}
 		// If it's an exit, remove the visitor
 		else if ( 'L' === entry.action ) {
-			_.remove( placeholder[ entry.room ], function( item ) { return entry.name === item; } );
+			util.remove( placeholder[ entry.room ], entry.name, 'name' );
 
 			if ( 'L' !== entry.room ) {
 				// Add them back to the lobby
