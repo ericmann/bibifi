@@ -12,9 +12,9 @@
  * Module dependencies
  */
 var fs = require( 'fs' ),
+	LineStream = require( 'byline' ).LineStream,
 	cli = new (require( './lib/cli' )),
 	LogFile = require( './lib/logfile' ),
-	BatchFile = require( './lib/batchfile' ),
 	util = require( './lib/util' ),
 	Entry = require( './lib/entry' );
 
@@ -213,6 +213,92 @@ function handleAction( log, entry ) {
 	return success;
 }
 
+function readBatch( readable ) {
+
+}
+
+/**
+ * Handle a batchfile.
+ *
+ *
+ */
+function handleBatch( file ) {
+	var lineStream = new LineStream(),
+		logfile = false;
+
+	return new Promise( function( fulfill, reject ) {
+		fs.createReadStream( file )
+			.pipe( lineStream );
+
+		lineStream.on( 'readable', function() {
+			var line;
+			while( null !== ( line = lineStream.read() ) ) {
+				var lineArgv = line.toString().match( /\S+/g ),
+					append = cli.validate_append_args( lineArgv );
+
+				if ( 'entry' !== append.type ) {
+					process.stdout.write( 'invalid' );
+					continue;
+				}
+
+				// If we don't have a log, let's get one!
+				if ( false === logfile ) {
+					try {
+						logfile = new LogFile( append.file, append.key );
+					} catch ( e ) {
+						return util.invalid();
+					}
+
+					// Validate our secret key
+					if ( ! logfile.isValidSecret() ) {
+						return util.invalid();
+					}
+				}
+
+				// Parse the entry
+				var entry = new Entry( {
+					'name'   : append.name,
+					'type'   : append.visitor_type,
+					'action' : append.action,
+					'room'   : append.room,
+					'time'   : append.time,
+					'secret' : append.key,
+					'logfile': append.file
+				} );
+
+				// If it's an invalid entry, or if the timestamp fails to validate, err
+				if ( ! entry.isValid() || entry.time <= logfile.meta.time ) {
+					process.stdout.write( 'invalid' );
+					continue;
+				}
+
+				// Make sure the entry is for this log
+				if ( entry.logfile !== logfile.path || entry.secret !== logfile.passkey ) {
+					process.stdout.write( 'invalid' );
+					continue;
+				}
+
+				// Handle the action
+				if ( ! handleAction( logfile, entry ) ) {
+					process.stdout.write( 'invalid' );
+					continue;
+				}
+
+				// Append the log
+				logfile.newEntries.push( entry );
+			}
+		} );
+
+		lineStream.on( 'end', function() {
+//			console.log( logfile.newEntries.length );
+			if ( logfile ) {
+				logfile.close();
+			}
+			fulfill();
+		} );
+	} );
+}
+
 // Validate the entry arguments
 var append = cli.validate_append_args();
 
@@ -262,13 +348,12 @@ switch( append.type ) {
 
 		break;
 	case 'batch':
-		// Get the batchfile first
-		var batch;
-		try {
-			batch = new BatchFile( append.file );
-		} catch ( e ) {
-			return util.invalid();
-		}
+		handleBatch( append.file ).then(
+			function() {
+				process.exit( 0 );
+			}
+		);
+		return;
 
 		// We have a batchfile, let's populate it
 		if ( ! batch.getData() ) {

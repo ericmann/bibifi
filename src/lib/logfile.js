@@ -22,7 +22,8 @@ var fs = require( 'fs' ),
 /**
  * Useful constants for encryption
  */
-var algorithm = 'aes-256-cbc';
+//var algorithm = 'aes-256-cbc';
+var algorithm = 'rc4';
 
 /**
  * Logfile container
