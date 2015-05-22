@@ -12,7 +12,9 @@
  * Module dependencies
  */
 var fs = require( 'fs' ),
+	zlib = require( 'zlib' ),
 	crypto = require( 'crypto' ),
+	stream = require( 'stream' ),
 	nUtil = require( 'util' ),
 	_ = require( 'lodash' ),
 	util = require( './util' ),
@@ -22,8 +24,7 @@ var fs = require( 'fs' ),
 /**
  * Useful constants for encryption
  */
-//var algorithm = 'aes-256-cbc';
-var algorithm = 'rc4';
+var algorithm = 'aes-128-cbc';
 
 /**
  * Logfile container
@@ -41,8 +42,71 @@ function LogFile( file, passkey ) {
 	this.newEntries = [];
 
 	// Either open the existing log or create a new one
-	this.fd = this.open();
+	//this.fd = this.open();
 }
+
+/**
+ * Pull the log file in to a buffer.
+ *
+ * The file is an encrypted GZip string, so we first decrypt, then we decompress, then we populate a buffer.
+ *
+ * @returns {Promise}
+ */
+LogFile.prototype.read = function() {
+	var decipher = crypto.createDecipher( algorithm, this.passkey ),
+		unzip = zlib.createGunzip(),
+		logFile = this;
+
+	return new Promise( function( fulfill, reject ) {
+		var dataStream;
+		try {
+			dataStream = fs.createReadStream( logFile.path );
+				//.pipe( unzip )
+				//.pipe( decipher );
+			//dataStream.setEncoding( 'hex' );
+
+		} catch ( e ) {
+			return util.invalid();
+		}
+
+		var dataBuffers = [];
+
+		dataStream.on( 'readable', function() {
+			var buff;
+			while( null !== ( buff = dataStream.read() ) ) {
+				dataBuffers.push( buff );
+			}
+		} );
+
+		dataStream.on( 'end', function() {
+			// Store the entire buffer for later
+			logFile.dataBuffer = Buffer.concat( dataBuffers );
+			console.log( logFile.dataBuffer );
+			fulfill();
+		} );
+	} );
+};
+
+/**
+ * Write the log buffer to disk.
+ *
+ * @returns {Promise}
+ */
+LogFile.prototype.write = function() {
+	var cipher = crypto.createCipher( algorithm, this.passkey ),
+		gzip = zlib.createGzip(),
+		logFile = this;
+
+	return new Promise( function( fulfill, reject ) {
+		var outputStream = fs.createWriteStream( logFile.path, { encoding: 'hex' } ),
+			bufferStream = new stream.PassThrough();
+
+		bufferStream.end( logFile.dataBuffer );
+		bufferStream.pipe( gzip )
+			//.pipe( cipher )
+			.pipe( outputStream );
+	} );
+};
 
 /**
  * Get a handle on the logfile.

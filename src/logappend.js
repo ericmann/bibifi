@@ -220,7 +220,7 @@ function readBatch( readable ) {
 /**
  * Handle a batchfile.
  *
- *
+ * @param {String} file
  */
 function handleBatch( file ) {
 	var lineStream = new LineStream(),
@@ -290,7 +290,6 @@ function handleBatch( file ) {
 		} );
 
 		lineStream.on( 'end', function() {
-//			console.log( logfile.newEntries.length );
 			if ( logfile ) {
 				logfile.close();
 			}
