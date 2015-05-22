@@ -87,6 +87,8 @@ LogFile.prototype.read = function() {
 				// We have a buffer, let's get our salt and whatnot
 				logFile.newFile = false;
 
+				logFile.getMeta();
+
 				// Continue
 				resolve();
 			} );
@@ -159,15 +161,9 @@ LogFile.prototype.open = function() {
 /**
  * Get the cryptographic salt used to hash the secret key
  *
- * @param {Number} [fd] File descriptor
- *
  * @returns {String}
  */
-LogFile.prototype.getSalt = function( fd ) {
-	if ( undefined === fd ) {
-		fd = this.fd;
-	}
-
+LogFile.prototype.getSalt = function() {
 	if ( ! this.salt ) {
 		// If it's a new file, create a salt and return it
 		if ( this.newFile ) {
@@ -175,10 +171,8 @@ LogFile.prototype.getSalt = function( fd ) {
 		}
 		// Otherwise, grab the salt from the logfile
 		else {
-			var saltBuffer = new Buffer( 10 );
+			var saltBuffer = this.dataBuffer.slice( 1, 11 );
 
-			// Read in the salt
-			fs.readSync( fd, saltBuffer, 0, 10, 1 );
 			this.salt = saltBuffer.toString();
 		}
 	}
@@ -201,10 +195,9 @@ LogFile.prototype.isValidSecret = function() {
 	var salt = this.getSalt();
 
 	// Queue a buffer
-	var secretBuffer = new Buffer( 128 );
+	var secretBuffer = this.dataBuffer.slice( 12, 140 );
 
 	// Get the hashed secret
-	fs.readSync( this.fd, secretBuffer, 0, 128, 12 );
 	var hashed = secretBuffer.toString();
 
 	// Recreate the expected hash
@@ -216,19 +209,11 @@ LogFile.prototype.isValidSecret = function() {
 /**
  * Read the meta index from the header of the logfile.
  *
- * @param {Number} [fd] File descriptor
- *
  * @returns {Number}
  */
-LogFile.prototype.metaPointer = function( fd ) {
-	if ( undefined === fd ) {
-		fd = this.fd;
-	}
-
+LogFile.prototype.metaPointer = function() {
 	if ( null === this.metaIndex ) {
-		var indexBuffer = new Buffer( 8 );
-
-		fs.readSync( fd, indexBuffer, 0, 8, 141 );
+		var indexBuffer = this.dataBuffer.slice( 141, 149 );
 
 		var indexString = indexBuffer.toString();
 		this.metaIndex = parseInt( indexString, 16 );
@@ -240,15 +225,9 @@ LogFile.prototype.metaPointer = function( fd ) {
 /**
  * Either get the meta from the logfile or create a new meta array.
  *
- *  @param {Number} [fd] File descriptor
- *
  * @returns {LogMeta}
  */
-LogFile.prototype.getMeta = function( fd ) {
-	if ( undefined === fd ) {
-		fd = this.fd;
-	}
-
+LogFile.prototype.getMeta = function() {
 	if ( null === this.meta ) {
 		if ( this.newFile ) {
 			this.meta = new LogMeta;
@@ -256,31 +235,10 @@ LogFile.prototype.getMeta = function( fd ) {
 		// Pull our meta from the file
 		else {
 			// Queue an empty buffer to store our meta
-			var metaBuffer = new Buffer(0),
-				intermediateBuffer,
-				position = this.metaPointer( fd ),
-				bytesRead;
-
-			do {
-				intermediateBuffer = new Buffer( 128 );
-				bytesRead = fs.readSync( fd, intermediateBuffer, 0, 128, position );
-				intermediateBuffer = intermediateBuffer.slice( 0, bytesRead );
-
-				// Concatenate everything
-				var oldBuffer = new Buffer( metaBuffer );
-				metaBuffer = Buffer.concat( [ oldBuffer, intermediateBuffer ] );
-
-				// Increment by a chunk
-				position += 128;
-			} while ( 128 === bytesRead );
-
-			// Decrypt our buffer
-			var encrypted = metaBuffer.toString( 'utf8' ),
-				encryptedBuffer = new Buffer( encrypted, 'hex' );
-			var decryptedMeta = decrypt( encryptedBuffer, this.passkey );
+			var metaBuffer = this.dataBuffer.slice( this.metaPointer() );
 
 			// Load our meta
-			var metaString = decryptedMeta.toString( 'utf8' );
+			var metaString = metaBuffer.toString();
 			this.meta = LogMeta.prototype.load( metaString );
 		}
 
@@ -434,20 +392,15 @@ LogFile.prototype.entriesForVisitors = function( visitors ) {
 	}
 
 	// Now, we iterate through all of the log entries, skipping any not for our visitors
-	var bufferLength = this.metaIndex - 150 - 1,
-		entryBuffer = new Buffer( bufferLength );
+	var entryBuffer = this.dataBuffer.slice( 150, this.metaIndex - 1 );
 
-	fs.readSync( this.fd, entryBuffer, 0, bufferLength, 150 );
 	var entryBuffers = util.splitBuffer( entryBuffer, '$' );
-	for ( i = 0, l = entryBuffers.length; i < l; i++ ) {
-		// Decrypt our buffer
-		var encrypted = entryBuffers[i].toString( 'utf8' ),
-			encryptedBuffer = new Buffer( encrypted, 'hex' );
 
-		var decrypted = decrypt( encryptedBuffer, this.passkey );
+	for ( i = 0, l = entryBuffers.length; i < l; i++ ) {
+		var entry = entryBuffers[ i ];
 
 		// Parse our entry
-		var entry = Entry.prototype.parse( decrypted.toString(), this );
+		entry = Entry.prototype.parse( entry.toString(), this );
 
 		// If this is a good entry, let's keep it
 		if ( ( 'E' === entry.type && _.contains( employees, entry.name ) ) || ( 'G' === entry.type && _.contains( guests, entry.name ) ) ) {
