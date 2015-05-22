@@ -62,9 +62,9 @@ LogFile.prototype.read = function() {
 
 			var dataStream;
 			try {
-				dataStream = fs.createReadStream( logFile.path );
-					//.pipe( decipher )
-					//.pipe( unzip );
+				dataStream = fs.createReadStream( logFile.path )
+					.pipe( decipher )
+					.pipe( unzip );
 
 			} catch ( e ) {
 				console.log( e );
@@ -120,8 +120,8 @@ LogFile.prototype.write = function() {
 			bufferStream = new stream.PassThrough();
 
 		bufferStream.end( logFile.dataBuffer );
-		bufferStream//.pipe( gzip )
-			//.pipe( cipher )
+		bufferStream.pipe( gzip )
+			.pipe( cipher )
 			.pipe( outputStream );
 
 		// Make sure the file is finished writing before we continue
