@@ -411,42 +411,6 @@ LogFile.prototype.entriesForVisitors = function( visitors ) {
 	return entries;
 };
 
-/***********************************************************/
-/*                 Private utility methods                 */
-/***********************************************************/
-
-/**
- * Encrypt a buffer of data.
- *
- * @param {Buffer} buffer
- * @param {String} passkey
- *
- * @returns {Buffer}
- */
-function encrypt( buffer, passkey ) {
-	// Get a cipher
-	var cipher = crypto.createCipher( algorithm, passkey );
-
-	// Encrypt
-	return Buffer.concat( [ cipher.update( buffer ), cipher.final() ] );
-}
-
-/**
- * Decrypt a buffer of data.
- *
- * @param {Buffer} buffer
- * @param {String} passkey
- *
- * @returns {Buffer}
- */
-function decrypt( buffer, passkey ) {
-	// Get a cipher
-	var decipher = crypto.createDecipher( algorithm, passkey );
-
-	// Decrypt
-	return Buffer.concat( [ decipher.update( buffer ), decipher.final() ] );
-}
-
 /**
  * Export the module
  */
