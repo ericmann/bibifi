@@ -60,10 +60,9 @@ LogFile.prototype.read = function() {
 	return new Promise( function( fulfill, reject ) {
 		var dataStream;
 		try {
-			dataStream = fs.createReadStream( logFile.path );
-				//.pipe( unzip )
-				//.pipe( decipher );
-			//dataStream.setEncoding( 'hex' );
+			dataStream = fs.createReadStream( logFile.path )
+				.pipe( decipher )
+				.pipe( unzip );
 
 		} catch ( e ) {
 			return util.invalid();
@@ -81,7 +80,6 @@ LogFile.prototype.read = function() {
 		dataStream.on( 'end', function() {
 			// Store the entire buffer for later
 			logFile.dataBuffer = Buffer.concat( dataBuffers );
-			console.log( logFile.dataBuffer );
 			fulfill();
 		} );
 	} );
@@ -98,13 +96,18 @@ LogFile.prototype.write = function() {
 		logFile = this;
 
 	return new Promise( function( fulfill, reject ) {
-		var outputStream = fs.createWriteStream( logFile.path, { encoding: 'hex' } ),
+		var outputStream = fs.createWriteStream( logFile.path ),
 			bufferStream = new stream.PassThrough();
 
 		bufferStream.end( logFile.dataBuffer );
 		bufferStream.pipe( gzip )
-			//.pipe( cipher )
+			.pipe( cipher )
 			.pipe( outputStream );
+
+		// Make sure the file is finished writing before we continue
+		outputStream.on( 'close', function() {
+			fulfill();
+		} );
 	} );
 };
 
