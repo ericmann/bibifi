@@ -213,8 +213,62 @@ function handleAction( log, entry ) {
 	return success;
 }
 
-function readBatch( readable ) {
+/**
+ * Validate entry.
+ *
+ * @param {LogFile} logFile
+ * @param {Entry}   entry
+ *
+ * @returns {Boolean}
+ */
+function validateEntry( logFile, entry ) {
+	// Validate our secret key
+	if ( ! logFile.isValidSecret() ) {
+		return false;
+	}
 
+	// If it's an invalid entry, or if the timestamp fails to validate, err
+	if ( ! entry.isValid() || entry.time < logFile.meta.time ) {
+		return false;
+	}
+
+	return true;
+}
+
+/**
+ * Handle a specific entry.
+ *
+ * @param {Object} append
+ *
+ * @returns {Promise}
+ */
+function handleEntry( append ) {
+	var logFile = new LogFile( append.file, append.key );
+
+	// Parse our entry
+	var entry = new Entry( {
+		'name'  : append.name,
+		'type'  : append.visitor_type,
+		'action': append.action,
+		'room'  : append.room,
+		'time'  : append.time
+	} );
+
+	return new Promise( function ( fulfill, reject ) {
+		logFile.read().then( function () {
+			// Handle the action
+			if ( ! validateEntry( logFile, entry ) || ! handleAction( logFile, entry ) ) {
+				return util.invalid();
+			}
+
+			// Append the log
+			logFile.newEntries.push( entry );
+
+			// We're done, so let's close the logfile
+			logFile.close().then( fulfill );
+		} );
+
+	} );
 }
 
 /**
@@ -236,25 +290,6 @@ function handleBatch( file ) {
 				var lineArgv = line.toString().match( /\S+/g ),
 					append = cli.validate_append_args( lineArgv );
 
-				if ( 'entry' !== append.type ) {
-					process.stdout.write( 'invalid' );
-					continue;
-				}
-
-				// If we don't have a log, let's get one!
-				if ( false === logfile ) {
-					try {
-						logfile = new LogFile( append.file, append.key );
-					} catch ( e ) {
-						return util.invalid();
-					}
-
-					// Validate our secret key
-					if ( ! logfile.isValidSecret() ) {
-						return util.invalid();
-					}
-				}
-
 				// Parse the entry
 				var entry = new Entry( {
 					'name'   : append.name,
@@ -266,34 +301,57 @@ function handleBatch( file ) {
 					'logfile': append.file
 				} );
 
-				// If it's an invalid entry, or if the timestamp fails to validate, err
-				if ( ! entry.isValid() || entry.time <= logfile.meta.time ) {
+				if ( 'entry' !== append.type ) {
 					process.stdout.write( 'invalid' );
 					continue;
 				}
 
-				// Make sure the entry is for this log
-				if ( entry.logfile !== logfile.path || entry.secret !== logfile.passkey ) {
-					process.stdout.write( 'invalid' );
-					continue;
-				}
+				Promise.resolve(
+					function() {
+						if ( false === logfile ) {
+							logfile = new LogFile( append.file, append.key );
 
-				// Handle the action
-				if ( ! handleAction( logfile, entry ) ) {
-					process.stdout.write( 'invalid' );
-					continue;
-				}
+							try {
+								logfile.read().then( function() {
+									// Validate our secret key
+									if ( ! logfile.isValidSecret() ) {
+										return util.invalid();
+									}
 
-				// Append the log
-				logfile.newEntries.push( entry );
+									return true;
+								} );
+							} catch ( e ) {
+								return util.invalid();
+							}
+						}
+
+						return true;
+					}
+				).then(
+					function() {
+						// Make sure the entry is for this log
+						if ( ! validateEntry( logfile, entry ) || entry.logfile !== logfile.path || entry.secret !== logfile.passkey ) {
+							process.stdout.write( 'invalid' );
+						}
+						// Handle the action
+						else if ( !handleAction( logfile, entry ) ) {
+							process.stdout.write( 'invalid' );
+						}
+						// Append the log
+						else {
+							logfile.newEntries.push( entry );
+						}
+					}
+				);
 			}
 		} );
 
 		lineStream.on( 'end', function() {
 			if ( logfile ) {
-				logfile.close();
+				logfile.close().then( fulfill );
+			} else {
+				fulfill();
 			}
-			fulfill();
 		} );
 	} );
 }
@@ -307,91 +365,17 @@ if ( 'valid' !== append.status ) {
 
 switch( append.type ) {
 	case 'entry':
-		// Get a log file
-		var log;
-		try {
-			log = new LogFile( append.file, append.key );
-		} catch ( e ) {
-			return util.invalid();
-		}
-
-		// Validate our secret key
-		if ( ! log.isValidSecret() ) {
-			return util.invalid();
-		}
-
-		// Parse our entry
-		var entry = new Entry( {
-			'name'  : append.name,
-			'type'  : append.visitor_type,
-			'action': append.action,
-			'room'  : append.room,
-			'time'  : append.time
+		handleEntry( append ).then( function() {
+			process.exit( 0 );
 		} );
-
-		// If it's an invalid entry, or if the timestamp fails to validate, err
-		if ( ! entry.isValid() || entry.time <= log.meta.time ) {
-			return util.invalid();
-		}
-
-		// Handle the action
-		if ( ! handleAction( log, entry ) ) {
-			return util.invalid();
-		}
-
-		// Append the log
-		log.newEntries.push( entry );
-
-		// We're done, so let's close the logfile
-		log.close();
 
 		break;
 	case 'batch':
-		handleBatch( append.file ).then(
-			function() {
-				process.exit( 0 );
-			}
-		);
-		return;
-
-		// We have a batchfile, let's populate it
-		if ( ! batch.getData() ) {
-			return util.invalid();
-		}
-
-		// Handle entries
-		for ( var i = 0, l = batch.entries.length; i < l; i++ ) {
-			var entry = batch.entries[ i ];
-
-			// If it's an invalid entry, or if the timestamp fails to validate, err
-			if ( ! entry.isValid() || entry.time <= batch.log.meta.time ) {
-				process.stdout.write( 'invalid' );
-				continue;
-			}
-
-			// Make sure the entry is for this log
-			if ( entry.logfile !== batch.logPath || entry.secret !== batch.key ) {
-				process.stdout.write( 'invalid' );
-				continue;
-			}
-
-			// Handle the action
-			if ( ! handleAction( batch.log, entry ) ) {
-				process.stdout.write( 'invalid' );
-				continue;
-			}
-
-			// Append the log
-			batch.log.newEntries.push( entry );
-		}
-
-		// We're done, so let's close the logfile
-		batch.log.close();
+		handleBatch( append.file ).then( function() {
+			process.exit( 0 );
+		} );
 
 		break;
 	default:
 		return util.invalid();
 }
-
-// Fin
-process.exit( 0 );

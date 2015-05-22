@@ -41,8 +41,6 @@ function LogFile( file, passkey ) {
 	this.meta = null;
 	this.newEntries = [];
 
-	// Either open the existing log or create a new one
-	//this.fd = this.open();
 }
 
 /**
@@ -53,35 +51,55 @@ function LogFile( file, passkey ) {
  * @returns {Promise}
  */
 LogFile.prototype.read = function() {
-	var decipher = crypto.createDecipher( algorithm, this.passkey ),
-		unzip = zlib.createGunzip(),
-		logFile = this;
+	var logFile = this;
 
-	return new Promise( function( fulfill, reject ) {
-		var dataStream;
+	return new Promise( function( resolve, reject ) {
 		try {
-			dataStream = fs.createReadStream( logFile.path )
-				.pipe( decipher )
-				.pipe( unzip );
+			fs.statSync( logFile.path );
 
+			var decipher = crypto.createDecipher( algorithm, logFile.passkey ),
+				unzip = zlib.createGunzip();
+
+			var dataStream;
+			try {
+				dataStream = fs.createReadStream( logFile.path )
+					.pipe( decipher )
+					.pipe( unzip );
+
+			} catch ( e ) {
+				console.log( e );
+				return util.invalid();
+			}
+
+			var dataBuffers = [];
+
+			dataStream.on( 'readable', function() {
+				var buff;
+				while( null !== ( buff = dataStream.read() ) ) {
+					dataBuffers.push( buff );
+				}
+			} );
+
+			dataStream.on( 'end', function() {
+				// Store the entire buffer for later
+				logFile.dataBuffer = Buffer.concat( dataBuffers );
+
+				// We have a buffer, let's get our salt and whatnot
+				logFile.newFile = false;
+
+				// Continue
+				resolve();
+			} );
 		} catch ( e ) {
-			return util.invalid();
+			// No file exists! Populate defaults!
+			logFile.newFile = true;
+			logFile.salt = util.randomString( 10 );
+			logFile.meta = new LogMeta;
+
+			// Continue
+			resolve();
 		}
 
-		var dataBuffers = [];
-
-		dataStream.on( 'readable', function() {
-			var buff;
-			while( null !== ( buff = dataStream.read() ) ) {
-				dataBuffers.push( buff );
-			}
-		} );
-
-		dataStream.on( 'end', function() {
-			// Store the entire buffer for later
-			logFile.dataBuffer = Buffer.concat( dataBuffers );
-			fulfill();
-		} );
 	} );
 };
 
@@ -276,27 +294,21 @@ LogFile.prototype.getMeta = function( fd ) {
  *
  * If this is a new logfile, then everything will be written. Otherwise, just new entries and the meta information
  * will be updated
+ *
+ * @returns {Promise}
  */
 LogFile.prototype.close = function() {
 	if ( this.newFile ) {
 		// Collect our data variables
 		var salt = this.salt,
 			hashed = util.createHash( this.passkey, this.salt ),
-			metaIndex = '',
-			entries = '',
-			metaInfo = '';
+			metaIndex, entries = [], metaInfo;
 
 		// First, figure out how long our entries will be
-		var encryptedEntries = [];
-		for ( var i = 0, l = this.newEntries.length; i < l; i++ ) {
-			var entry = this.newEntries[ i ],
-				entryString = entry.toString( this );
-
-			// Encrypt the entry
-			var encrypted = encrypt( new Buffer( entryString, 'utf8' ), this.passkey );
-			encryptedEntries.push( encrypted.toString( 'hex' ) );
+		for ( var i = 0, l = this.newEntries.length; i < l; i ++ ) {
+			entries.push( this.newEntries[ i ].toString( this ) );
 		}
-		entries = encryptedEntries.join( '$' );
+		entries = entries.join( '$' );
 
 		// Update the meta length
 		var metaIndexBuffer = new Buffer( 4 );
@@ -306,8 +318,6 @@ LogFile.prototype.close = function() {
 
 		// Get our meta info
 		metaInfo = this.meta.toString();
-		var encryptedMeta = encrypt( new Buffer( metaInfo, 'utf8' ), this.passkey );
-		metaInfo = encryptedMeta.toString( 'hex' );
 
 		var output = nUtil.format( '$%s$%s$%s$%s$%s', salt, hashed, metaIndex, entries, metaInfo );
 		//                           salt
@@ -316,14 +326,13 @@ LogFile.prototype.close = function() {
 		//                                    entries
 		//                                       metaInfo
 
-		// Not strictly necessary, but a good safeguard
-		fs.ftruncateSync( this.fd, 0 );
+		// Create our databuffer
+		this.dataBuffer = new Buffer( output );
 
-		// Write out our new data
-		fs.writeSync( this.fd, output, 0 );
+		return this.write();
 	} else {
 		if ( this.newEntries.length > 0 ) {
-			var entries = '';
+			var entries;
 
 			// Original meta index
 			var startWrite = this.metaPointer();
