@@ -256,6 +256,7 @@ function handleEntry( append ) {
 
 	return new Promise( function ( fulfill, reject ) {
 		logFile.read().then( function () {
+
 			// Handle the action
 			if ( ! validateEntry( logFile, entry ) || ! handleAction( logFile, entry ) ) {
 				return util.invalid();

@@ -62,9 +62,9 @@ LogFile.prototype.read = function() {
 
 			var dataStream;
 			try {
-				dataStream = fs.createReadStream( logFile.path )
-					.pipe( decipher )
-					.pipe( unzip );
+				dataStream = fs.createReadStream( logFile.path );
+					//.pipe( decipher )
+					//.pipe( unzip );
 
 			} catch ( e ) {
 				console.log( e );
@@ -120,8 +120,8 @@ LogFile.prototype.write = function() {
 			bufferStream = new stream.PassThrough();
 
 		bufferStream.end( logFile.dataBuffer );
-		bufferStream.pipe( gzip )
-			.pipe( cipher )
+		bufferStream//.pipe( gzip )
+			//.pipe( cipher )
 			.pipe( outputStream );
 
 		// Make sure the file is finished writing before we continue
@@ -290,44 +290,43 @@ LogFile.prototype.close = function() {
 		return this.write();
 	} else {
 		if ( this.newEntries.length > 0 ) {
-			var entries;
+			// Collect our data variables
+			var entries = [];
 
 			// Original meta index
 			var startWrite = this.metaPointer();
 
-			// Truncate the section with our meta information so we can overwrite
-			fs.ftruncateSync( this.fd, startWrite );
-
-			// Now, figure out how long our entries will be
-			var newEncrpytedEntries = [];
-			for ( var i = 0, l = this.newEntries.length; i < l; i++ ) {
-				var entry = this.newEntries[ i ],
-					entryString = entry.toString( this );
-
-				// Encrypt the entry
-				var encrypted = encrypt( new Buffer( entryString, 'utf8' ), this.passkey );
-				newEncrpytedEntries.push( encrypted.toString( 'hex' ) );
-			}
-			entries = newEncrpytedEntries.join( '$' );
-
-			// Update the meta length
+			// Get our entries and our meta buffer length
 			var newMetaIndexBuffer = new Buffer( 4 );
+			for( var ix = 0; ix < this.newEntries.length; ix++ ) {
+				entries.push( this.newEntries[ ix ].toString( this ) );
+			}
+
+			entries = entries.join( '$' );
+
 			metaIndex = startWrite + entries.length + 1;
 			newMetaIndexBuffer.writeUInt32BE( metaIndex, 0 );
 			metaIndex = newMetaIndexBuffer.toString( 'hex' );
 
-			// Write out our new meta pointer
-			fs.writeSync( this.fd, metaIndex, 141 );
+			var indexBuffer = this.dataBuffer.slice( 141, 149 );
+
+			for ( var i = 0, l = metaIndex.length; i < l; i ++ ) {
+				indexBuffer[ i ] = metaIndex.charCodeAt( i );
+			}
+
+			// Get a new, truncated buffer to which we can append our new data
+			var newBuffer = this.dataBuffer.slice( 0, this.metaPointer() );
 
 			// Get our meta info
 			metaInfo = this.meta.toString();
-			var encryptedMeta = encrypt( new Buffer( metaInfo, 'utf8' ), this.passkey );
-			metaInfo = encryptedMeta.toString( 'hex' );
 
 			var output = nUtil.format( '$%s$%s', entries, metaInfo );
 
 			// Write out our new data
-			fs.writeSync( this.fd, output, startWrite - 1 );
+			var outputBuffer = new Buffer( output );
+			this.dataBuffer = Buffer.concat( [ newBuffer, outputBuffer ] );
+
+			return this.write();
 		}
 	}
 
@@ -404,63 +403,6 @@ LogFile.prototype.entriesForVisitors = function( visitors ) {
 
 		// If this is a good entry, let's keep it
 		if ( ( 'E' === entry.type && _.contains( employees, entry.name ) ) || ( 'G' === entry.type && _.contains( guests, entry.name ) ) ) {
-			entries.push( entry );
-		}
-	}
-
-	// Return our collection
-	return entries;
-};
-
-/**
- * Get all entries for a specific visitor from the log.
- *
- * @param {String} name
- * @param {String} type
- *
- * @returns {[Entry]}
- */
-LogFile.prototype.entriesForVisitor = function( name, type ) {
-	var entries = [];
-
-	// First, verify we have an accurate query
-	var valid = false;
-	switch( type ) {
-		case 'E':
-			valid = _.contains( this.meta.activeEmployees, name ) || _.contains( this.meta.inactiveEmployees, name );
-			break;
-		case 'G':
-			valid = _.contains( this.meta.activeGuests, name ) || _.contains( this.meta.inactiveGuests, name );
-			break;
-	}
-
-	if ( ! valid ) {
-		return entries;
-	}
-
-	// Now, we iterate through all of the log entries, skipping any not for our visitor
-	var bufferLength = this.metaIndex - 150 - 1,
-		entryBuffer = new Buffer( bufferLength );
-
-	fs.readSync( this.fd, entryBuffer, 0, bufferLength, 150 );
-	var entryBuffers = util.splitBuffer( entryBuffer, '$' );
-	for ( var i = 0, l = entryBuffers.length; i < l; i++ ) {
-		// Decrypt our buffer
-		var encrypted = entryBuffers[i].toString( 'utf8' ),
-			encryptedBuffer = new Buffer( encrypted, 'hex' );
-
-		var decrypted;
-		try {
-			decrypted = decrypt( encryptedBuffer, this.passkey );
-		} catch ( e ) {
-			return entries;
-		}
-
-		// Parse our entry
-		var entry = Entry.prototype.parse( decrypted.toString(), this );
-
-		// If this is a good entry, let's keep it
-		if ( name === entry.name ) {
 			entries.push( entry );
 		}
 	}
