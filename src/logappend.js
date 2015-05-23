@@ -285,9 +285,12 @@ function handleBatch( file ) {
 		fs.createReadStream( file )
 			.pipe( lineStream );
 
+		var entries = [];
+
 		lineStream.on( 'readable', function() {
 			var line;
 			while( null !== ( line = lineStream.read() ) ) {
+
 				var lineArgv = line.toString().match( /\S+/g ),
 					append = cli.validate_append_args( lineArgv );
 
@@ -307,52 +310,49 @@ function handleBatch( file ) {
 					continue;
 				}
 
-				Promise.resolve(
-					function() {
-						if ( false === logfile ) {
-							logfile = new LogFile( append.file, append.key );
-
-							try {
-								logfile.read().then( function() {
-									// Validate our secret key
-									if ( ! logfile.isValidSecret() ) {
-										return util.invalid();
-									}
-
-									return true;
-								} );
-							} catch ( e ) {
-								return util.invalid();
-							}
-						}
-
-						return true;
-					}
-				).then(
-					function() {
-						// Make sure the entry is for this log
-						if ( ! validateEntry( logfile, entry ) || entry.logfile !== logfile.path || entry.secret !== logfile.passkey ) {
-							process.stdout.write( 'invalid' );
-						}
-						// Handle the action
-						else if ( !handleAction( logfile, entry ) ) {
-							process.stdout.write( 'invalid' );
-						}
-						// Append the log
-						else {
-							logfile.newEntries.push( entry );
-						}
-					}
-				);
+				if ( 0 === entries.length ) {
+					entries.push( append );
+				} else {
+					entries.push( entry );
+				}
 			}
 		} );
 
 		lineStream.on( 'end', function() {
-			if ( logfile ) {
-				logfile.close().then( fulfill );
-			} else {
-				fulfill();
-			}
+			// Process the first entry
+			var first = entries.shift();
+
+			handleEntry( first ).then( function() {
+				return new Promise( function( fulfill, reject ) {
+
+					var logFile = new LogFile( first.file, first.key );
+
+					logFile.read().then( function() {
+
+						for ( var i = 0, l = entries.length; i < l; i ++ ) {
+							var entry = entries[ i ];
+
+							// Make sure the entry is for this log
+							if ( ! validateEntry( logFile, entry ) || entry.logfile !== logFile.path || entry.secret !== logFile.passkey ) {
+								process.stdout.write( 'invalid' );
+							}
+							// Handle the action
+							else if ( ! handleAction( logFile, entry ) ) {
+								process.stdout.write( 'invalid' );
+							}
+							// Append the log
+							else {
+								logFile.newEntries.push( entry );
+							}
+						}
+
+						fulfill( logFile );
+					} );
+				} ).then( function ( log ) {
+						log.close();
+					} );
+			} );
+
 		} );
 	} );
 }
