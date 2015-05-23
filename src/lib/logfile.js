@@ -130,8 +130,11 @@ LogFile.prototype.write = function() {
 
 		bufferStream.end( logFile.dataBuffer );
 		bufferStream.pipe( gzip )
+			.on( 'error', util.invalid )
 			.pipe( cipher )
-			.pipe( outputStream );
+			.on( 'error', util.invalid )
+			.pipe( outputStream )
+			.on( 'error', util.invalid );
 
 		// Make sure the file is finished writing before we continue
 		outputStream.on( 'close', function() {
