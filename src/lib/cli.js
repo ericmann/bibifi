@@ -152,6 +152,11 @@ CLI.prototype.validate_append_args = function( argv ) {
 		}
 	}
 
+	// Make sure a logfile is specified
+	if ( undefined === append_query.file ) {
+		return append_query;
+	}
+
 	// If we're good, we're valid
 	append_query['status'] = 'valid';
 
