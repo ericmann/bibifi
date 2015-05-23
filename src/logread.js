@@ -296,45 +296,40 @@ if ( ! lookup.isValid() ) {
 }
 
 // Get a log file
-var log;
-try {
-	log = new LogFile( lookup.logfile, lookup.secret );
-} catch ( e ) {
-	return util.integrityViolation();
-}
+var log = new LogFile( lookup.logfile, lookup.secret );
 
-// Validate our security key
-if ( ! log.isValidSecret() ) {
-	return util.invalid();
-}
-
-switch( lookup.query ) {
-	case 'S':
-		if ( ! getStatus( log ) ) {
-			return util.invalid();
-		}
-		break;
-	case 'R':
-		if ( ! getHistory( log, query.names ) ) {
-			return util.invalid();
-		}
-		break;
-	case 'T':
-		if ( ! getTime( log, query.names ) ) {
-			return util.invalid();
-		}
-		break;
-	case 'I':
-		if ( ! getCollisions( log, query.names ) ) {
-			return util.invalid();
-		}
-		break;
-	default:
+// Read in the logfile
+log.read().then( function() {
+	// Validate our security key
+	if ( ! log.isValidSecret() ) {
 		return util.invalid();
-}
+	}
 
-// Close the file
-log.exit();
+	switch( lookup.query ) {
+		case 'S':
+			if ( ! getStatus( log ) ) {
+				return util.invalid();
+			}
+			break;
+		case 'R':
+			if ( ! getHistory( log, query.names ) ) {
+				return util.invalid();
+			}
+			break;
+		case 'T':
+			if ( ! getTime( log, query.names ) ) {
+				return util.invalid();
+			}
+			break;
+		case 'I':
+			if ( ! getCollisions( log, query.names ) ) {
+				return util.invalid();
+			}
+			break;
+		default:
+			return util.invalid();
+	}
 
-// Fin
-process.exit( 0 );
+	// Fin
+	process.exit( 0 );
+} );
