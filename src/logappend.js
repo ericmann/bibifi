@@ -71,12 +71,13 @@ function enterGallery( log, name, type, timestamp ) {
  *
  * @param {LogFile} log
  * @param {String}  name
+ * @param {String}  type
  * @param {Number}  room
  * @param {Number}  timestamp
  *
  * @returns {Boolean}
  */
-function enterRoom( log, name, room, timestamp ) {
+function enterRoom( log, name, type, room, timestamp ) {
 	// Sanitize arguments
 	name = name.replace( /[^(a-zA-Z)]/g, '' );
 	room = parseInt( room, 10 );
@@ -88,7 +89,7 @@ function enterRoom( log, name, room, timestamp ) {
 	}
 
 	// Make sure the visitor is active
-	if ( ! log.meta.visitorIsActive( name ) ) {
+	if ( ! log.meta.visitorIsActive( name, type) ) {
 		return false;
 	}
 
@@ -109,12 +110,13 @@ function enterRoom( log, name, room, timestamp ) {
  *
  * @param {LogFile} log
  * @param {String}  name
+ * @param {String}  type
  * @param {Number}  room
  * @param {Number}  timestamp
  *
  * @return {Boolean}
  */
-function exitRoom( log, name, room, timestamp ) {
+function exitRoom( log, name, type, room, timestamp ) {
 	// Sanitize arguments
 	name = name.replace( /[^(a-zA-Z)]/g, '' );
 	room = parseInt( room, 10 );
@@ -126,7 +128,7 @@ function exitRoom( log, name, room, timestamp ) {
 	}
 
 	// Make sure the visitor is active
-	if ( ! log.meta.visitorIsActive( name ) ) {
+	if ( ! log.meta.visitorIsActive( name, type ) ) {
 		return false;
 	}
 
@@ -195,14 +197,14 @@ function handleAction( log, entry ) {
 			if ( null === entry.room || 'L' === entry.room ) {
 				success = enterGallery( log, entry.name, entry.type, entry.time );
 			} else {
-				success = enterRoom( log, entry.name, entry.room, entry.time );
+				success = enterRoom( log, entry.name, entry.type, entry.room, entry.time );
 			}
 			break;
 		case 'L':
 			if ( null === entry.room || 'L' === entry.room ) {
 				success = exitGallery( log, entry.name, entry.type, entry.time );
 			} else {
-				success = exitRoom( log, entry.name, entry.room, entry.time );
+				success = exitRoom( log, entry.name, entry.type, entry.room, entry.time );
 			}
 			break;
 		default:
