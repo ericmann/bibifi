@@ -63,11 +63,15 @@ LogFile.prototype.read = function() {
 			var dataStream;
 			try {
 				dataStream = fs.createReadStream( logFile.path )
+					.on( 'error', util.invalid )
 					.pipe( decipher )
-					.pipe( unzip );
+					.on( 'error', util.invalid )
+					.pipe( unzip )
+					.on( 'error', util.invalid );
 
 			} catch ( e ) {
-				console.log( e );
+				console.log( '--------' );
+				//console.log( e );
 				return util.invalid();
 			}
 
@@ -75,8 +79,13 @@ LogFile.prototype.read = function() {
 
 			dataStream.on( 'readable', function() {
 				var buff;
-				while( null !== ( buff = dataStream.read() ) ) {
-					dataBuffers.push( buff );
+				try{
+					while( null !== ( buff = dataStream.read() ) ) {
+						dataBuffers.push( buff );
+					}
+				} catch ( e ) {
+					console.log( '++++' );
+					console.log( e );
 				}
 			} );
 
