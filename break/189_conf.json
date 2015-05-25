@@ -1,0 +1,12 @@
+{
+  "target_team": 9,
+  "type": "confidentiality",
+  "logfile": "conf8",
+  "commands": [
+    {
+      "program": "logread",
+      "args": ["-R", "-G", "ZULMA"],
+      "output": "8"
+    }
+  ]
+}
