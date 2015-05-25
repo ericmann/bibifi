@@ -1,7 +1,7 @@
 {
-  "target_team": 9,
+  "target_team": 189,
   "type": "confidentiality",
-  "logfile": "conf8",
+  "logfile": "UBVSXDZI",
   "commands": [
     {
       "program": "logread",
