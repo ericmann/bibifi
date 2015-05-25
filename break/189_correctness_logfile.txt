@@ -1,0 +1,1 @@
+Omitting the logfile from `logappend` should return "invalid" but instead throws an exception.
