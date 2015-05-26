@@ -1,0 +1,12 @@
+{
+  "target_team": 112,
+  "type": "confidentiality",
+  "logfile": "BITSEPUG",
+  "commands": [
+    {
+      "program": "logread",
+      "args": ["-R", "-E", "KENDRICK"],
+      "output": "10"
+    }
+  ]
+}
