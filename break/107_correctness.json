@@ -1,0 +1,14 @@
+{
+  "target_team": 107,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-T", "1", "-G", "GERDA", "-A"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-T", "2", "-E", "GERDA", "-A"]
+    }
+  ]
+}
