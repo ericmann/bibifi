@@ -4,11 +4,11 @@
   "commands": [
     {
       "program": "logappend",
-      "args": ["-K", "secret", "-T", "1", "-G", "GERDA", "-A"]
+      "args": ["-K", "secret", "-T", "1", "-G", "GERDA", "-A", "log1"]
     },
     {
       "program": "logappend",
-      "args": ["-K", "secret", "-T", "2", "-E", "GERDA", "-A"]
+      "args": ["-K", "secret", "-T", "2", "-E", "GERDA", "-A", "log1" ]
     }
   ]
 }
