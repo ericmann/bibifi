@@ -1,0 +1,1 @@
+Names should be case-sensitive; in this case a second entry is created but also given immediate entry into the gallery!
