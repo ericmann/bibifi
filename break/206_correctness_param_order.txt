@@ -1,0 +1,1 @@
+Logappend parameters (including the logfile) should be valid in any order.
