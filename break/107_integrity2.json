@@ -1,0 +1,12 @@
+{
+  "target_team": 107,
+  "type": "integrity",
+  "commands": [
+    {
+      "program": "logread",
+      "args": ["-S"]
+    }
+  ],
+  "logfile": "SKBOXXLZ",
+  "replacement": "DF6RFl6EeB98UuZvZcpLw8ajJm64SC9MfSDmYw=="
+}
