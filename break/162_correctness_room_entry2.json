@@ -1,5 +1,5 @@
 {
-  "target_team": 204,
+  "target_team": 162,
   "type": "correctness",
   "commands": [
     {
@@ -12,7 +12,7 @@
     },
     {
       "program": "logappend",
-      "args": ["-K", "secret", "-T", "2", "-G", "GERDA", "-R", "1", "-A", "log1" ]
+      "args": ["-K", "secret", "-T", "3", "-G", "GERDA", "-R", "1", "-A", "log1" ]
     }
   ]
 }
