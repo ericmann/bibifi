@@ -1,0 +1,1 @@
+Visitors cannot exit the gallery without first exiting the room.
