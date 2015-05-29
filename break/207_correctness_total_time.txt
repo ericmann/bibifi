@@ -1,0 +1,1 @@
+After a visitor leaves the gallery, the time spent outside should not be added to their total. This test should print "3"
