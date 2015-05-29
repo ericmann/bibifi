@@ -8,7 +8,7 @@
     },
     {
       "program": "logappend",
-      "args": ["-K", "secret", "-T", "2", "-G", "GERDA", "-A", "-R', "5" ""log1" ]
+      "args": ["-K", "secret", "-T", "2", "-G", "GERDA", "-A", "-R", "5", "log1" ]
     },
     {
       "program": "logappend",
