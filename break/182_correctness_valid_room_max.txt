@@ -1,0 +1,1 @@
+Room IDs should be no greater than 1073741823.
