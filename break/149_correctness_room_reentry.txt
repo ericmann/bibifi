@@ -1,0 +1,1 @@
+Visitors cannot enter a new room without first leaving the room they're in.
