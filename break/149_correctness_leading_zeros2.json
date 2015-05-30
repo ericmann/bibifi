@@ -1,5 +1,5 @@
 {
-  "target_team": 162,
+  "target_team": 149,
   "type": "correctness",
   "commands": [
     {
@@ -24,7 +24,7 @@
     },
     {
       "program": "logappend",
-      "args": ["-K", "secret", "-T", "6", "-E", "BILL", "-A", "-R", "5" "log1" ]
+      "args": ["-K", "secret", "-T", "6", "-E", "BILL", "-A", "-R", "5", "log1" ]
     },
     {
       "program": "logread",
