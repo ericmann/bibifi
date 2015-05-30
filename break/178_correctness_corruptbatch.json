@@ -1,0 +1,15 @@
+{
+  "target_team": 178,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-B", "batch"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "SECRET", "-S", "LOGFILE"]
+    }
+  ],
+  "batch": "LUsgU0VDUkVUIC1UIDEgLUUgQk9CIC1BIExPR0ZJTEUNClRoaXMgaXMganVuayBkYXRhDQotSyBTRUNSRVQgLVQgMyAtRSBCT0IgLUEgLVIgNSBMT0dGSUxF"
+}

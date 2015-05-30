@@ -1,0 +1,1 @@
+Individual broken lines in a batchfile should print "invalid," but the batch should otherwise continue processing.
