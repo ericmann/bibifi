@@ -1,0 +1,10 @@
+{
+  "target_team": 172,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-B", "nobatch"]
+    }
+  ]
+}
