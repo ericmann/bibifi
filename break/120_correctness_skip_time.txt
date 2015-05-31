@@ -1,0 +1,1 @@
+Time always increases - cannot revisit old timestamps that haven't been populated.
