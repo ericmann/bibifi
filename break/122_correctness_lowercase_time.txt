@@ -1,0 +1,1 @@
+Time flag should be upper case.
