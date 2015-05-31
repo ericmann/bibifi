@@ -1,0 +1,11 @@
+{
+  "target_team": 109,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-B", "batch"]
+    }
+  ],
+  "batch": "Cz=="
+}
