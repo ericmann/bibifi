@@ -1,0 +1,1 @@
+If the time parameter appears twice, the second value should be used.
