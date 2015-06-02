@@ -1,0 +1,1 @@
+Names are required for the logread -R query.
