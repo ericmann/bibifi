@@ -1,0 +1,11 @@
+{
+  "target_team": 145,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-B", "batch"]
+    }
+  ],
+  "batch": "LUIgYmF0Y2g="
+}
