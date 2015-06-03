@@ -1,0 +1,12 @@
+{
+  "target_team": 119,
+  "type": "integrity",
+  "commands": [
+    {
+      "program": "logread",
+      "args": ["-T", "-G", "ONA"]
+    }
+  ],
+  "logfile": "CXNDZCSA",
+  "replacement": "KovHatuLETyokMFW+etoqVOUxAMZ9yAu6EQBvElgj58HcgGHK2hhtqB0g2KrXtKNq6AZoWzYvr/xOjyXhsysP0kEDUjC9sN+4VZI8Kn+ZFD3zqgqms7CZIxPIVGfKPRFVqXOtG46Pe+2KTyloIFRbC9h5fsdVdE1Ony1rR6CFqu07/DeZH6hGJ3yUwV2FDNWlTmoUnBvdJhvz+jJlxlGTqpg0LeeX4HpcxNwOuo4lVzSyQryDhMnwhzoZJ9l/8hliit1elAZCVGUcjfUVk+HEMSbvgxdequvAofPuPmG5QH83fXhiTfCBiODvbEhOqHRkU+hLbivqcCH+ob88Ez20CqKgjMrDQC4+Ln/2AfeaAiQEFiYhS3viUGvUHw2ah77KXuqgzX9VK7Vr+/ta69a5u84HKQ2Hv+XNc9A+7BkDnUrmEFMYBmh4tdMzPYXQ7znYn0twoYvsxbVFQXxsemXzaTqiOIgh47xYJx3+x/XQKHAbCSnE7bFvse9fNDmn+fWptATG8resqTajKBwn/MkHXwmYX2I0iFuivgyUVjIydJYKsIxGKFK8NFaQcvPoktRQEIlsrUx+JaYAm50jwxW9vDZOMLsCpjGpMcdqf3M+35wdtn1Cmc7Cg8Bk9RHT77932ZqRuCZyXjuStkhgVo1imoyk+ImyVRjyaXn+PONqO6BHLvvAcqOhmih1OHgMWRQVVKQJNZBocLWGICUyt9GNZ3VW5nXcjxb6E5lD3oHjecVIr6dLdBiDH65VR6lnZArgNNeXPn3mu5jINMlIE9Rc4dK/DraFnNzCbvMWO6rWmdHW+phhlEKamLs2ENdtXmo90UzoTOHbsmtpvoldileZ99I+D7QsNaCIoGThGEg3xFF/y4NYg6Haffg5T1W3/QVR03fW1ib+9We7ZvTp4lNvglL2AsLh57wEcLegpd8GUcRI8yvIYYyuidK/LjiKxKItDcA53hVejHkNcVIU33umxM7o+bWPverHyuHa6IzvP+Hm8Hu09qp5XLHN9DWSjBgQ/N21AFNqM4dtnkfCkm8ELel/vHrQS/sswSsrtPVfgelCzaRuAUuTiuePohTrVhE6qKSflFwWytX+cDo5diaIfkLvRKqOVI9IaChW98GnhWAeBczyIMgGjkXgePchB+G"
+}
