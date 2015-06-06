@@ -1,0 +1,40 @@
+
+{
+  "target_team": 157,
+  "type": "correctness",
+  "commands": [
+   
+   
+    {
+      "program": "logappend",
+      "args": ["-K", "pw1", "-T", "2", "-E", "Fred", "-A", "log1"]
+    },
+     
+     {
+      "program": "logappend",
+      "args": ["-K", "pw2", "-T", "1", "-E", "Fred", "-A", "log2"]
+    },
+
+    {
+      "program": "logappend",
+      "args": ["-B", "log1"]
+    },
+    {
+      "program": "logread",
+      "args": [ "-K", "pw1", "-S", "log1"]
+    },
+    {
+      "program": "logread",
+      "args": [ "-K", "pw2", "-S" ,"log2"]
+    },
+     {
+      "program": "logread",
+      "args": [ "-K", "pw2", "-S", "log1"]
+    },
+    {
+      "program": "logread",
+      "args": [ "-K", "pw1", "-S" ,"log2"]
+    }
+ ]
+ 
+}

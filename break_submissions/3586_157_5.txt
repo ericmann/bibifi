@@ -1,0 +1,1 @@
+According to the specification changlog entry "[5/19/15 12:00PM EST] An employee and a guest can have the same name." (http://www.builditbreakit.org/static/doc/spring2015/spec/SPEC.html).

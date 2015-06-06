@@ -1,0 +1,1 @@
+no room should report on logread -I because there is no overlap. Program reports room 5.

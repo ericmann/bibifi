@@ -1,0 +1,11 @@
+This is a valid test case of a person (with a long name) entering the
+gallery and then a room.
+
+Both logappend calls seemingly succeed, but then the logread -S call
+returns "integrity violation" and exit code 255.
+
+The spec does not pose any limits on the length of arguments, and the length
+used should be easily handleable on 32 bit systems (as other implementations
+prove). If an implementation poses a smaller limit, it should be an explicit
+error during logappend, and not a failure during logread.
+

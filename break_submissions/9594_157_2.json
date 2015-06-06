@@ -1,0 +1,23 @@
+{
+    "target_team": 157,
+    "type": "correctness",
+    "commands": [
+        {
+	        "program": "logappend",
+            "args": [
+                "-B",
+                "batch"
+            ]
+        },
+        {
+	        "program": "logread",
+            "args": [
+                "-K",
+                "FYDDSIWV",
+                "-S",
+                "HHFNPRAJ"
+            ]
+        }
+    ],
+    "batch": "LVQgMSAtSyBGWUREU0lXViAtRyBQRVJSWSAtQSBISEZOUFJBSgotVCAyIC1LIEZZRERTSVdWIC1HIEFOSVRSQSAtQSBISEZOUFJBSgotVCAzIC1LIEZZRERTSVdWIC1HIFBFUlJZIC1BIC1SIDEgLi9ISEZOUFJBSgo="
+}

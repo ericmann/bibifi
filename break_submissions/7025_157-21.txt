@@ -1,0 +1,2 @@
+Tests on several wrong uses of the A/L parameters, being used at the same time and not used at all.
+For any of these situations, the correct output would be "invalid".

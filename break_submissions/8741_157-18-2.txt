@@ -1,0 +1,3 @@
+A basic "T" operation test set: users that left the gallery have a defined time spent,
+and users still inside the gallery have their time based on the last gallery event
+by any user. Room visits are irrelevant.

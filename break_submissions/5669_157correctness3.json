@@ -1,0 +1,17 @@
+{
+  "target_team": 157,
+  "type": "correctness",
+  "commands": [
+	{
+	    "program": "logappend",
+            "args": ["-T", "1", "-K", "thisKEY", "-G", "Jennifer", "-A", "logfiledata"]
+        },
+        {"program": "logappend",
+            "args": ["-T", "2", "-K", "thisKEY", "-G", "Laura", "-A", "logfiledata" ]
+        },
+        {
+	    "program": "logread",
+            "args": ["-K", "thisKEY", "-G", "Jennifer", "logfile"]
+        }
+    ]
+}

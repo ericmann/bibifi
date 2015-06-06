@@ -1,0 +1,2 @@
+Valid query: person entered and left the gallery repeatedly, expecting no error.
+Details: Expected '16' got '2' on ./logread -K secret -T -E Fred log1 (error? <nil>)

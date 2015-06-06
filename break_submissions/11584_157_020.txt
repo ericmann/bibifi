@@ -1,0 +1,1 @@
+Logappend bug: Two valid statements but given out of order in terms of time decreasing.  Expected output is 'invalid'

@@ -1,0 +1,1 @@
+Names are alphabetic characters (a-z, A-Z) in upper and lower case.

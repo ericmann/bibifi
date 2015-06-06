@@ -1,0 +1,5 @@
+This test calculates the time a user spends in the gallery.
+A user may enter and leave the gallery multiple times, only the time he actually spent inside should count.
+If a user didn't leave yet, it's expected that he was there up to the most recent timestamp (of any user).
+
+This test relies on spec conformity on guests/employees with the same name.

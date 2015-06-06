@@ -1,0 +1,93 @@
+{
+    "target_team": 157,
+    "type": "correctness", 
+    "commands": [
+        {
+            "args": [
+                "-T", 
+                "1", 
+                "-K", 
+                "NBNDEOEW", 
+                "-G", 
+                "JIM", 
+                "-A", 
+                "DSCVASPO"
+            ], 
+            "program": "logappend"
+        }, 
+        {
+            "args": [
+                "-T", 
+                "2", 
+                "-K", 
+                "NBNDEOEW", 
+                "-G", 
+                "JIM", 
+                "-A", 
+                "-R", 
+                "0", 
+                "DSCVASPO"
+            ], 
+            "program": "logappend"
+        }, 
+        {
+            "args": [
+                "-T", 
+                "3", 
+                "-K", 
+                "NBNDEOEW", 
+                "-G", 
+                "BONES", 
+                "-A", 
+                "DSCVASPO"
+            ], 
+            "program": "logappend"
+        }, 
+        {
+            "args": [
+                "-T", 
+                "4", 
+                "-K", 
+                "NBNDEOEW", 
+                "-G", 
+                "BONES", 
+                "-A", 
+                "-R", 
+                "-1", 
+                "DSCVASPO"
+            ], 
+            "program": "logappend"
+        }, 
+        {
+            "args": [
+                "-K", 
+                "NBNDEOEW", 
+                "-S", 
+                "DSCVASPO"
+            ], 
+            "program": "logread"
+        }, 
+        {
+            "args": [
+                "-K", 
+                "NBNDEOEW", 
+                "-R", 
+                "-G", 
+                "JIM", 
+                "DSCVASPO"
+            ], 
+            "program": "logread"
+        }, 
+        {
+            "args": [
+                "-K", 
+                "NBNDEOEW", 
+                "-R", 
+                "-G", 
+                "BONES", 
+                "DSCVASPO"
+            ], 
+            "program": "logread"
+        }
+    ]
+}

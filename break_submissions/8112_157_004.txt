@@ -1,0 +1,1 @@
+Time is while in gallery. If someone leaves and then comes back, both times should be counted and the time they were gone should not be counted.  The expected output in this test case is 6.

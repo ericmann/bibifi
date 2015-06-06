@@ -1,0 +1,2 @@
+logappend can accept 1073741824 as a room id,
+which is bigger than the upper bound.

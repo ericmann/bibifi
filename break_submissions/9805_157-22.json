@@ -1,0 +1,79 @@
+{
+  "target_team": 157,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-T", "1", "-A", "-E", "EmpA", "LOGREADOPS"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-T", "2", "-A", "-R", "10", "-E", "EmpA", "LOGREADOPS"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-T", "3", "-L", "-R", "10", "-E", "EmpA", "LOGREADOPS"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-T", "4", "-A", "-R", "4", "-E", "EmpA", "LOGREADOPS"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-T", "5", "-A", "-E", "EmpB", "LOGREADOPS"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-T", "6", "-A", "-R", "4", "-E", "EmpB", "LOGREADOPS"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-T", "7", "-L", "-R", "4", "-E", "EmpA", "LOGREADOPS"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-T", "8", "-A", "-R", "99", "-E", "EmpA", "LOGREADOPS"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-T", "9", "-A", "-G", "GstA", "LOGREADOPS"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-T", "10", "-A", "-R", "99", "-G", "GstA", "LOGREADOPS"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-T", "11", "-A", "-G", "GstB", "LOGREADOPS"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-T", "12", "-L", "-R", "99", "-G", "GstA", "LOGREADOPS"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-T", "13", "-A", "-R", "10", "-G", "GstA", "LOGREADOPS"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-T", "14", "-A", "-G", "GstC", "LOGREADOPS"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "secret", "LOGREADOP"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "secret", "-R", "LOGREADOPS"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "secret", "-T", "LOGREADOPS"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "secret", "-I", "LOGREADOPS"]
+    }
+  ]
+}
+

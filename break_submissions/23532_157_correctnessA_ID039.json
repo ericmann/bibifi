@@ -1,0 +1,230 @@
+{
+  "target_team": 157, 
+  "type": "correctness", 
+  "commands": [
+    {
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "1", 
+        "-K", 
+        "UBSVZGIX", 
+        "-E", 
+        "JOSHUA", 
+        "-A", 
+        "room_idslog"
+      ]
+    }, 
+    {
+      "output": "invalid", 
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "2", 
+        "-K", 
+        "UBSVZGIX", 
+        "-E", 
+        "JOSHUA", 
+        "-A", 
+        "-R", 
+        "-2", 
+        "room_idslog"
+      ]
+    }, 
+    {
+      "output": "invalid", 
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "2", 
+        "-K", 
+        "UBSVZGIX", 
+        "-E", 
+        "JOSHUA", 
+        "-A", 
+        "-R", 
+        "2.3", 
+        "room_idslog"
+      ]
+    }, 
+    {
+      "output": "invalid", 
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "2", 
+        "-K", 
+        "UBSVZGIX", 
+        "-E", 
+        "JOSHUA", 
+        "-A", 
+        "-R", 
+        "2,3", 
+        "room_idslog"
+      ]
+    }, 
+    {
+      "output": "invalid", 
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "2", 
+        "-K", 
+        "UBSVZGIX", 
+        "-E", 
+        "JOSHUA", 
+        "-A", 
+        "-R", 
+        "2d", 
+        "room_idslog"
+      ]
+    }, 
+    {
+      "output": "invalid", 
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "2", 
+        "-K", 
+        "UBSVZGIX", 
+        "-E", 
+        "JOSHUA", 
+        "-A", 
+        "-R", 
+        "1073741824", 
+        "room_idslog"
+      ]
+    }, 
+    {
+      "output": "invalid", 
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "2", 
+        "-K", 
+        "UBSVZGIX", 
+        "-E", 
+        "JOSHUA", 
+        "-A", 
+        "-R", 
+        "fruit", 
+        "room_idslog"
+      ]
+    }, 
+    {
+      "output": "invalid", 
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "2", 
+        "-K", 
+        "UBSVZGIX", 
+        "-E", 
+        "JOSHUA", 
+        "-A", 
+        "-R", 
+        "-1", 
+        "room_idslog"
+      ]
+    }, 
+    {
+      "output": "invalid", 
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "2", 
+        "-K", 
+        "UBSVZGIX", 
+        "-E", 
+        "JIM", 
+        "-A", 
+        "-R", 
+        "-1", 
+        "room_idslog"
+      ]
+    }, 
+    {
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "2", 
+        "-K", 
+        "UBSVZGIX", 
+        "-E", 
+        "JOSHUA", 
+        "-A", 
+        "-R", 
+        "1073741823", 
+        "room_idslog"
+      ]
+    }, 
+    {
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "3", 
+        "-K", 
+        "UBSVZGIX", 
+        "-E", 
+        "JANE", 
+        "-A", 
+        "room_idslog"
+      ]
+    }, 
+    {
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "4", 
+        "-K", 
+        "UBSVZGIX", 
+        "-E", 
+        "JANE", 
+        "-A", 
+        "-R", 
+        "0", 
+        "room_idslog"
+      ]
+    }, 
+    {
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "5", 
+        "-K", 
+        "UBSVZGIX", 
+        "-E", 
+        "JANE", 
+        "-L", 
+        "-R", 
+        "0", 
+        "room_idslog"
+      ]
+    }, 
+    {
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "6", 
+        "-K", 
+        "UBSVZGIX", 
+        "-E", 
+        "JANE", 
+        "-A", 
+        "-R", 
+        "003", 
+        "room_idslog"
+      ]
+    }, 
+    {
+      "output": "JANE,JOSHUA\n3:JANE\n1073741823:JOSHUA", 
+      "program": "logread", 
+      "args": [
+        "-K", 
+        "UBSVZGIX", 
+        "-S", 
+        "room_idslog"
+      ]
+    }
+  ]
+}

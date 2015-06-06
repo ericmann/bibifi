@@ -1,0 +1,25 @@
+{
+  "target_team": 157,
+  "type": "correctness",
+  "batch": "LUsgcGFzczEgLVQgMSAtRyBCQVJORVkgLUEgbG9nMQ0KLUsgcGFzczIgLVQgMiAtRyBmcmVkIC1BIGxvZzINCi1LIHBhc3MxIC1UIDMgLUcgQkFSTkVZIC1BIC1SIDEwMSBsb2cxDQotSyBwYXNzMiAtVCA0IC1FIHdpbG1hIC1BIGxvZzINCi1LIHBhc3MxIC1UIDUgLUcgQkFSTkVZIC1MIC1SIDEwMSBsb2cxDQotSyBwYXNzMSAtVCA2IC1HIEJBUk5FWSAtQSAtUiAxMDIgbG9nMQ0KLUsgcGFzczIgLVQgNyAtRSB3aWxtYSAtQSAtUiAzMDMgbG9nMg0KLUsgcGFzczIgLVQgOCAtRSB3aWxtYSAtTCAtUiAzMDMgbG9nMg0KLUsgcGFzczEgLVQgOSAtRyBTQUxMWSAtQSBsb2cxDQotSyBwYXNzMiAtVCAxMCAtRyBmcmVkIC1BIC1SIDEwMyBsb2cyDQotSyBwYXNzMSAtVCAxMSAtRyBTQUxMWSAtQSAtUiAyMDEgbG9nMQ0KLUsgcGFzczEgLVQgMTIgLUcgU0FMTFkgLUwgLVIgMjAxIGxvZzENCi1LIHBhc3MyIC1UIDEzIC1FIHdpbG1hIC1BIC1SIDEwMyBsb2cyDQotSyBwYXNzMSAtVCAxNCAtRyBCQVJORVkgLUwgLVIgMTAyIGxvZzENCi1LIHBhc3MxIC1UIDE1IC1HIFNBTExZIC1BIC1SIDIwMSBsb2cxDQotSyBwYXNzMiAtVCAxNiAtRSB3aWxtYSAtTCAtUiAxMDMgbG9nMg0KLUsgcGFzczEgLVQgMTcgLUcgQkFSTkVZIC1BIC1SIDIwMSBsb2cxDQotSyBwYXNzMSAtVCAxOCAtRyBCQVJORVkgLUwgLVIgMjAxIGxvZzENCg==",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-B", "batch"],
+      "output": "",
+      "exit": 0
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "pass1", "-S", "log1"],
+      "output": "BARNEY,SALLY\n201:SALLY",
+      "exit": 0
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "pass2", "-S", "log2"],
+      "output": "wilma\nfred\n103:fred",
+      "exit": 0
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "target_team": 157,
+  "type": "correctness",
+  "batch": "LUsgcGFzczEgLVQgMSAtRyBCQVJORVkgLUEgbG9nMQ0KLUsgcGFzczIgLVQgMiAtRyBmcmVkIC1BIGxvZzINCi1LIHBhc3MxIC1UIDMgLUcgQkFSTkVZIC1BIC1SIDEwMSBsb2cxDQotSyBwYXNzMiAtVCA0IC1FIHdpbG1hIC1BIGxvZzINCi1LIHBhc3MxIC1UIDUgLUcgQkFSTkVZIC1MIC1SIDEwMSBsb2cxDQotSyBwYXNzMSAtVCA2IC1HIEJBUk5FWSAtQSAtUiAxMDIgbG9nMQ0KLUsgcGFzczEgLVQgNyAtRSBTQUxMWSAtQSBsb2cxDQotSyBwYXNzMiAtVCA4IC1FIHBlYmJsZXMgLUEgbG9nMQ0KLUsgcGFzczEgLVQgOSAtRSBCQU1CQU0gLUEgbG9nMg0K",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-B", "batch"],
+      "output": "invalid\ninvalid",
+      "exit": 0
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "pass1", "-S", "log1"],
+      "output": "SALLY\nBARNEY\n102:BARNEY",
+      "exit": 0
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "pass2", "-S", "log2"],
+      "output": "wilma\nfred",
+      "exit": 0
+    }
+  ]
+}

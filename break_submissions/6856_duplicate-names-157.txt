@@ -1,0 +1,1 @@
+Employees and guests can have the same name.

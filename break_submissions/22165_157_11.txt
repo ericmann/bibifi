@@ -1,0 +1,1 @@
+logread'ing a non-existent user should not exit with code 255.

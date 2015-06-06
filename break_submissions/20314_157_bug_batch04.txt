@@ -1,0 +1,1 @@
+bad argument in batch file should respond invalid and return 0, but returns error

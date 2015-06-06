@@ -1,0 +1,1 @@
+{"target_team":157,"type":"correctness","commands":[{"program":"logappend","args":["-K","secret","-T","1","-G","cdx","-A","log"]},{"program":"logappend","args":["-K","secret","-T","2","-G","cdx","-A","-R","1073741824","log"]}]}

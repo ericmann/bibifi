@@ -1,0 +1,16 @@
+
+[ "logappend -B /dev/null" ]
+
+should printout:
+
+[
+    {
+        "exit": 255,
+        "output": "invalid\n"
+    }
+]
+
+instead we get:
+
+ubuntu@bibivm:~/breakit/157/code/build$ ./logappend -B /dev/null
+ubuntu@/

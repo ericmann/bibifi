@@ -1,0 +1,1 @@
+A batch file can include commands that alter multiple different log files.

@@ -1,0 +1,18 @@
+{
+ "target_team": 157,
+ "type": "correctness",
+ "commands": [
+  {
+   "program": "logappend",
+   "args": ["-K", "secret", "-T", "1", "-E", "personA", "-A", "LOGFILE"]
+  },
+  {
+   "program": "logappend",
+   "args": ["-K", "secret", "-T", "2", "-E", "personB", "-A", "LOGFILE"]
+  },
+  {
+   "program": "logread",
+   "args": ["-K", "secret", "-T", "-E", "personA", "LOGFILE"]
+  }
+ ]
+}

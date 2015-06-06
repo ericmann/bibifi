@@ -1,0 +1,1 @@
+when processing a batch with 2 logfiles, must ensure that passwords are used consistently for each

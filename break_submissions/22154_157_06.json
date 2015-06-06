@@ -1,0 +1,14 @@
+{
+  "target_team": 157,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-T", "1", "-K", "secret", "-A", "-E", "Jill", "log_157_02"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-T", "2", "-K", "secret", "-A", "-G", "Jill", "log_157_02"]
+    }
+  ]
+}

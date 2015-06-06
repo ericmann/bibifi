@@ -1,0 +1,4 @@
+Given a set of room visits, it is tested the correctness of the response to the "I" operation
+in different situations: just one visitor, multiple visitors that shared a room, multiple
+visitors that did not shared a room, and invalid visitors. The submission failed to provide
+correct responses for all those situations.

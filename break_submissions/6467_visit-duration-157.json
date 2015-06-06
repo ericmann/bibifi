@@ -1,0 +1,46 @@
+{
+"target_team": 157,
+"type": "correctness",
+"commands": [
+
+
+{
+"program": "logappend",
+"args": ["-K", "secret", "-T", "1", "-G", "GERDA", "-A", "log"]
+},
+{
+"program": "logappend",
+"args": ["-K", "secret", "-T", "2", "-G", "GERDA", "-A", "-R", "99", "log"]
+},
+{
+"program": "logappend",
+"args": ["-K", "secret", "-T", "3", "-G", "GERDA", "-L", "-R", "99", "log"]
+},
+{
+"program": "logappend",
+"args": ["-K", "secret", "-T", "4", "-G", "GERDA", "-A", "-R", "22", "log"]
+},
+{
+"program": "logappend",
+"args": ["-K", "secret", "-T", "5", "-G", "GERDA", "-L", "-R", "22", "log"]
+},
+{
+"program": "logappend",
+"args": ["-K", "secret", "-T", "6", "-G", "GERDA", "-L", "log"]
+},
+{
+"program": "logappend",
+"args": ["-K", "secret", "-T", "77", "-G", "GERDA", "-A", "log"]
+},
+{
+"program": "logappend",
+"args": ["-K", "secret", "-T", "99", "-G", "GERDA", "-A", "-R", "77", "log"]
+},
+
+
+{
+"program": "logread",
+"args": ["-K", "secret", "-T", "-G", "GERDA", "log"]
+}
+]
+}

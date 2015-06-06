@@ -1,0 +1,34 @@
+{
+  "target_team": 157, 
+  "type": "correctness", 
+  "commands": [
+    {
+      "program": "logappend", 
+      "args": [
+        "-B", 
+        "batch"
+      ]
+    }, 
+    {
+      "output": "Bob,Sam", 
+      "program": "logread", 
+      "args": [
+        "-K", 
+        "sec1", 
+        "-S", 
+        "batchlogAlog"
+      ]
+    }, 
+    {
+      "output": "Jim,Lar", 
+      "program": "logread", 
+      "args": [
+        "-K", 
+        "sec2", 
+        "-S", 
+        "batchlogBlog"
+      ]
+    }
+  ], 
+  "batch": "IC1UIDEgLUsgc2VjMSAtRSBCb2IgLUEgYmF0Y2hsb2dBLmxvZwogLVQgMSAtSyBzZWMyIC1FIEppbSAtQSBiYXRjaGxvZ0IubG9nCiAtVCAyIC1LIHNlYzEgLUUgU2FtIC1BIGJhdGNobG9nQS5sb2cKIC1UIDIgLUsgc2VjMiAtRSBMYXIgLUEgYmF0Y2hsb2dCLmxvZw=="
+}

@@ -1,0 +1,43 @@
+{
+  "target_team": 157, 
+  "type": "correctness", 
+  "commands": [
+    {
+      "output": "invalid", 
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "2", 
+        "-K", 
+        "..", 
+        "-E", 
+        "sam", 
+        "-A", 
+        "badcharstokenlog"
+      ]
+    }, 
+    {
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "3", 
+        "-K", 
+        "sec", 
+        "-E", 
+        "Bob", 
+        "-A", 
+        "badcharstokenlog"
+      ]
+    }, 
+    {
+      "output": "invalid", 
+      "program": "logread", 
+      "args": [
+        "-K", 
+        "..", 
+        "-S", 
+        "badcharstokenlog"
+      ]
+    }
+  ]
+}

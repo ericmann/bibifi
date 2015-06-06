@@ -1,0 +1,1 @@
+The same log file can be referred to in different ways: with the absolute path, relative, or just a log name. This submission considers the same log (ie: log and ./log) to be different files, reporting wrong state for the gallery.

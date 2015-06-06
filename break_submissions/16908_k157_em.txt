@@ -1,0 +1,6 @@
+
+
+treatment of empty but exiting  batch file is incorrect
+
+
+

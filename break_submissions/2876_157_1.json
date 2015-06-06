@@ -1,0 +1,97 @@
+{
+    "commands": [
+        {
+            "args": [
+                "-T",
+                "1",
+                "-K",
+                "SECRET",
+                "-E",
+                "MAURO",
+                "-A",
+                "log157"
+            ],
+            "program": "logappend"
+        },
+        {
+            "args": [
+                "-T",
+                "2",
+                "-K",
+                "SECRET",
+                "-G",
+                "VANESSA",
+                "-A",
+                "log157"
+            ],
+            "program": "logappend"
+        },        
+        {
+            "args": [
+                "-T",
+                "3",
+                "-K",
+                "SECRET",
+                "-E",
+                "MAURO",
+                "-A",
+                "-R",
+                "-19",
+                "log157"
+            ],
+            "program": "logappend"
+        },
+        {
+            "args": [
+                "-T",
+                "5",
+                "-K",
+                "SECRET",
+                "-G",
+                "VANESSA",
+                "-A",
+                "-R",
+                "-10",
+                "log157"
+            ],
+            "program": "logappend"
+        },
+        {
+            "args": [
+                "-T",
+                "9",
+                "-K",
+                "SECRET",
+                "-E",
+                "MAURO",
+                "-L",
+                "log157"
+            ],
+            "program": "logappend"
+        },
+        {
+            "args": [
+                "-T",
+                "9",
+                "-K",
+                "SECRET",
+                "-G",
+                "VANESSA",
+                "-L",
+                "log157"
+            ],
+            "program": "logappend"
+        },
+        {
+            "args": [
+                "-K",
+                "SECRET",
+                "-S",
+                "log157"
+            ],
+            "program": "logread"
+        }
+    ],
+    "target_team": 157,
+    "type": "correctness"
+}

@@ -1,0 +1,1 @@
+Employee Bob visits on two occasions. time reported only counts first visit.

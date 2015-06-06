@@ -1,0 +1,1 @@
+if the argument combination is incomplete or contradictory, logread should print "invalid" to stdout and exit, returning a 255. 

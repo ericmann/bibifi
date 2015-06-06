@@ -1,0 +1,1 @@
+Either a guest or employee name must be specified with logappend.

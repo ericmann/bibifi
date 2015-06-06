@@ -1,0 +1,1 @@
+Negative room IDs are not permitted. (SPEC.html, Changelog, 5/19/15.)

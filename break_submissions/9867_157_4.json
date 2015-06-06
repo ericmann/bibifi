@@ -1,0 +1,80 @@
+{
+    "target_team": 157,
+    "type": "correctness",
+    "commands": [
+        {
+            "args": [
+                "-T",
+                "-1",
+                "-K",
+                "SECRET",
+                "-E",
+                "MAURO",
+                "-A",
+                "log"
+            ],
+            "program": "logappend"
+        },
+        {
+            "args": [
+                "-T",
+                "0",
+                "-K",
+                "SECRET",
+                "-G",
+                "VANESSA",
+                "-A",
+                "log"
+            ],
+            "program": "logappend"
+        },        
+        {
+            "args": [
+                "-T",
+                "9",
+                "-K",
+                "SECRET",
+                "-E",
+                "MAURO",
+                "-A",
+                "log"
+            ],
+            "program": "logappend"
+        },
+        {
+            "args": [
+                "-T",
+                "100",
+                "-K",
+                "SECRET",
+                "-G",
+                "VANESSA",
+                "-L",
+                "log"
+            ],
+            "program": "logappend"
+        },
+        {
+            "args": [
+                "-T",
+                "-10000010",
+                "-K",
+                "SECRET",
+                "-E",
+                "MAURO",
+                "-L",
+                "log"
+            ],
+            "program": "logappend"
+        },
+        {
+            "args": [
+                "-K",
+                "SECRET",
+                "-S",
+                "log"
+            ],
+            "program": "logread"
+        }
+    ]
+}

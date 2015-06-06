@@ -1,0 +1,1 @@
+A bit tricky case. BUDDY and SNOWWHITE do not share room 1 with BUDDY and CINDERELLA at any time. We have 2 and 3 person matches but not 4-person ones.

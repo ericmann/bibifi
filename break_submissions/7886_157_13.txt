@@ -1,0 +1,1 @@
+According to the specs changelog: [5/19/15 12:00PM EST] The oracle has been updated so that names only contain (a-z, A-Z) and tokens only contain (a-z, A-Z, 0-9).

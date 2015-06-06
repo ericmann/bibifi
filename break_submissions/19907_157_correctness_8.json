@@ -1,0 +1,436 @@
+{
+    "target_team": 157,
+    "type": "correctness",
+    "commands": [
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "1",
+                "-L"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "2",
+                "-A",
+                "-R",
+                "1"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "3",
+                "-L",
+                "-R",
+                "1"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "4",
+                "-A",
+                "-R",
+                "2"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "5",
+                "-L",
+                "-R",
+                "2"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "6",
+                "-A"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "7",
+                "-A"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "8",
+                "-L",
+                "-R",
+                "1"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "9",
+                "-L",
+                "-R",
+                "2"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "10",
+                "-A",
+                "-R",
+                "1"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "11",
+                "-A"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "12",
+                "-L"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "13",
+                "-A",
+                "-R",
+                "1"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "14",
+                "-A",
+                "-R",
+                "2"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "15",
+                "-L",
+                "-R",
+                "2"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "16",
+                "-L",
+                "-R",
+                "1"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "17",
+                "-A"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "18",
+                "-L",
+                "-R",
+                "1"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "19",
+                "-L",
+                "-R",
+                "2"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "20",
+                "-A",
+                "-R",
+                "2"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "21",
+                "-A"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "22",
+                "-L"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "23",
+                "-A",
+                "-R",
+                "1"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "24",
+                "-L",
+                "-R",
+                "1"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "25",
+                "-A",
+                "-R",
+                "2"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "26",
+                "-L",
+                "-R",
+                "2"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "27",
+                "-A"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "28",
+                "-L",
+                "-R",
+                "1"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "29",
+                "-L",
+                "-R",
+                "2"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "log",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-T",
+                "30",
+                "-L"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,52 @@
+[ "logappend -K secret -T 1 -E Fred -A log23",
+"logappend -K secret -T 2 -G Fred -A log23", 
+"logappend -K secret -T 3 -E Fred -A -R 0 log23",
+"logappend -K secret -T 4 -G Fred -A -R 0 log23" , 
+"logappend -K secret -T 6 -G Fred -L -R 0 log23", 
+"logappend -K secret -T 7 -E Fred -L -R 0 log23", 
+"logread -K secret -I -E Fred -G Fred log23" ]
+
+should printout:
+
+[
+    {
+        "exit": 0,
+        "output": ""
+    },
+    {
+        "exit": 0,
+        "output": ""
+    },
+    {
+        "exit": 0,
+        "output": ""
+    },
+    {
+        "exit": 0,
+        "output": ""
+    },
+    {
+        "exit": 0,
+        "output": ""
+    },
+    {
+        "exit": 0,
+        "output": ""
+    },
+    {
+        "exit": 0,
+        "output": "0"
+    }
+]
+instead we get:
+
+
+ubuntu@bibivm:~/breakit/157/code/build$ sh ~/breakit/twofreds
+./logappend -K secret -T 1 -E Fred -A log23
+./logappend -K secret -T 2 -G Fred -A log23
+invalid./logappend -K secret -T 3 -E Fred -A -R 0 log23
+./logappend -K secret -T 4 -G Fred -A -R 0 log23
+invalid./logappend -K secret -T 6 -G Fred -L -R 0 log23
+./logappend -K secret -T 7 -E Fred -L -R 0 log23
+invalid./logread -K secret -I -E Fred -G Fred log23
+ubuntu@bibivm:~/breakit/157/code/build$

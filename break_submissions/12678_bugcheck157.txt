@@ -1,0 +1,38 @@
+
+BREAK IT BUG REPORT #1: JUSTIFICATION ON WHY THIS IS A BUG:
+BY: RAUL GARCIA, MIKKI, SANDY
+TEAM: CODE TIGERS
+DATE:  5/24/14
+TYPE: CORRECTNESS
+CAUSE: LACK OF PROPER CHECKING OF THE LOG FILE VS BATCH FILE ARE DISTINCT FILES
+ERROR: THE BATCH FILE AND THE LOG FILE ARE THE SAME
+
+JUSTIFICATION:
+The specs for the project mention for the batch file:
+[5/19/15 12:00PM EST] If -B is passed, logappend should return 0 as long as the batch file exists and valid arguments are given to the batch command. If the batch file does not exist, print "invalid" to stdout and exit, returning 255.
+
+COMMENTS: No mention in the specs is specific for the possible case when the log file used (to append records) previous to a batch command is the same file as used in the batch file to read from. It's kind of obvious that these must be two separate files.  When i coded the program I realized this posibility and tested against it (simple file names check). I also tested it in the oracle and it reported it as invalid - the logappend -B log1.
+This is a logic error in two aspects: First the batch file should be an independent file since we read from it, and the log file is meant to be the one we write/append to. 
+
+SPECS: describe these files - with the implication that they are separate files:
+log The path to the file containing the event log. The log's filename may be specified with a string of alphanumeric characters (including underscores and periods). Slashes and periods may be used to reference log files in other directories. If the log does not exist, logappend should create it. logappend should add data to the log, preserving the history of the log such that queries from logread can be answered. If the log file cannot be created due to an invalid path, or any other error, logappend should print "invalid" and return 255.
+
+-B file Specifies a batch file of commands. file contains one or more command lines, not including the logappend command itself (just its options), separated by \n (newlines). These commands should be processed by logappend individually, in order. This allows logappend to add data to the file without forking or re-invoking. Of course, option -B cannot itself appear in one of these command lines. Commands specified in a batch file include the log name. If a single line in a batch file is invalid, print the appropriate error message for that line and continue processing the rest of the batch file. Here is an example (the last one).
+COMMENT: Now another logical error is that if we have a log file with records, and we read it somehow as a batch file and try to append them - some of the records can have duplicate invalid commands - such as entering twice into a room or gallery. And the 1st batch record timestamp will be invalid since it's likely the timestamps have increased past that first record. So multiple errors can arise too. The end result would an error (invalid) or a corrupted log if processed.
+ 
+
+{
+  "target_team": ???,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-T", "1", "-G", "guest", "-A", "log1"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-B", "log1"]
+    },
+  ]
+
+}

@@ -1,0 +1,2 @@
+As per the updated specs, guests and employees may have the same name.
+They are different persons and can be in one room only at one time.

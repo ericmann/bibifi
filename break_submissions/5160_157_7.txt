@@ -1,0 +1,1 @@
+According to the specs changelog: [5/19/15 12:00PM EST] Valid times range from 1 to 1073741823 inclusively.

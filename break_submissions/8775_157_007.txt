@@ -1,0 +1,1 @@
+Logappend bug: no person (either E or G) is given.  Expected output is 'invalid'.

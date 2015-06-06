@@ -1,0 +1,2 @@
+Dots are not accepted in log name, but spec allows dots.
+

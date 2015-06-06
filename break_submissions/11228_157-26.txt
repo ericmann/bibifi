@@ -1,0 +1,1 @@
+logappend - periods - in the batch file, multiple -G enter in the gallery

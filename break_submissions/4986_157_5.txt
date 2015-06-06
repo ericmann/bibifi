@@ -1,0 +1,1 @@
+According to the specs changelog: [5/19/15 12:00PM EST] An employee and a guest can have the same name. 

@@ -1,0 +1,2 @@
+Valid query: multiple representations of the same logfile should not lead to multiple 'state of the world's in logappend.
+Details: Expected '' got 'invalid' on ./logappend -T 2 -K s -A -E Fred ./log1 (error? exit status 255)

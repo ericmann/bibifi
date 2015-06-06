@@ -1,0 +1,1 @@
+Batch files should be able to support writing to multiple log files. (logappend spec, -B parameter definition, note that entries in the batch file include the log file name.)

@@ -1,0 +1,14 @@
+{
+  "target_team": 157,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-T", "5", "-E", "Lou", "come_in_out_in_room_leave"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-T", "3", "-E", "Sou", "come_in_out_in_room_leave"]
+    }
+  ]
+}

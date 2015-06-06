@@ -1,0 +1,1 @@
+If -B is passed, logappend should return 0 as long as the batch file exists and valid arguments are given to the batch command. If the batch file does not exist, print "invalid" to stdout and exit, returning 255. See: https://www.builditbreakit.org/static/doc/spring2015/spec/SPEC.html

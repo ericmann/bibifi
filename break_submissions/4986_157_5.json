@@ -1,0 +1,35 @@
+{
+  "target_team": 157,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "1", "-G", "CINDERELLA", "-A", "log5"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "2", "-G", "CINDERELLA", "-A", "-R", "1", "log5"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "3", "-E", "CINDERELLA", "-A", "log5"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "4", "-E", "CINDERELLA", "-A", "-R", "1", "log5"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "5", "-E", "CINDERELLA", "-L", "-R", "1", "log5"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "6", "-E", "CINDERELLA", "-A", "-R", "2", "log5"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "NOTASECRET", "-R", "-G", "CINDERELLA", "log5"],
+      "output": "1"
+    }
+  ]
+}

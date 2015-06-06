@@ -1,0 +1,2 @@
+Valid query: person is still in the gallery, expecting no error.
+Details: Expected '9' got '0' on ./logread -K secret -T -E Fred log1 (error? <nil>)

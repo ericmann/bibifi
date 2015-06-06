@@ -1,0 +1,1 @@
+If person still in gallery, use the last timestamp to cal the max time

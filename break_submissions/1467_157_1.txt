@@ -1,0 +1,1 @@
+According to the specification, room IDs are non-negative integer characters with no spaces ranging from 0 to 1073741823 inclusively. See https://www.builditbreakit.org/static/doc/spring2015/spec/LOGAPPEND.html, -R option.

@@ -1,0 +1,1 @@
+logappend - periods - in the batch file, check if the program exit when periods are not at the beginnig

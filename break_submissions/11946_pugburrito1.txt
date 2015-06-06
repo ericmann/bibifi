@@ -1,0 +1,1 @@
+/dev/null is not a valid file to read from, but no logread is accepting it.

@@ -1,0 +1,1 @@
+-T option with logread should precisely count the time that a person spends in the gallery. In the event of a gallery arrival, no time increase should be accounted.

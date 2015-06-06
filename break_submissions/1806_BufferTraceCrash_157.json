@@ -1,0 +1,11 @@
+{
+  "target_team": 157,
+  "type": "crash",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-B", "batch"]
+    }
+  ],
+  "batch": "LVQgNSAtSyAxIC1BIC1HIG1pcm8gbG9nZwotVCA0IC1LIDEgLUEgLUcgbWlybyBsb2dnMQo="
+}

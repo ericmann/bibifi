@@ -1,0 +1,16 @@
+
+[ "logread -K secret -S /dev/null" ]
+
+should printout:
+
+[
+    {
+        "exit": 255,
+        "output": "integrity violation\n"
+    }
+]
+
+instead we get:
+
+ubuntu@bibivm:~/breakit/157/code/build$ ./logread -K secret -S /dev/null  
+ubuntu@/

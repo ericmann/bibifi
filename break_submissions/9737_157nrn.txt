@@ -1,0 +1,4 @@
+No negative room numbers
+
+From Spec.html
+[5/11/15 9:00PM EST] [5/19/15 12:00PM EST] Valid room ids range from 0 to 1073741823 inclusively.

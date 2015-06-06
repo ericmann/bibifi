@@ -1,0 +1,1 @@
+Valid room ids range from 0 to 1073741823 inclusively

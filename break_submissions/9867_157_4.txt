@@ -1,0 +1,2 @@
+The specification of logappend indicates that the timestamp should be a positive integer and always increase (https://www.builditbreakit.org/static/doc/spring2015/spec/LOGAPPEND.html section -T).
+This submittion returned invalid/unexpected output when invalid timestamps where provided.

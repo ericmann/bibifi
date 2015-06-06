@@ -1,0 +1,1 @@
+For person A and person B. A enters, A leaves, B enters, B leaves, A enters again. There is no overlap of both being in the room at the same time.  The expected output is for nothing to be printed.

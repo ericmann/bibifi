@@ -1,0 +1,1 @@
+Fails when -B parameter isn't provided

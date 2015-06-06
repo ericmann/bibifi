@@ -1,0 +1,18 @@
+{
+    "target_team": 157,
+    "type": "correctness",
+    "commands": [
+        {
+            "program": "logappend",
+            "args": ["-T", "0x0a", "-K", "UHWJNOJD", "-E", "JOSHUA", "-A", "WBOVNUXM"]
+        },
+        {
+            "program": "logappend",
+            "args": ["-T", "0x0F", "-K", "UHWJNOJD", "-E", "JOSHUA", "-A", "-R", "0xD1af", "WBOVNUXM"]
+        },
+        {
+            "program": "logread",
+            "args": ["logread", "-K", "MVWSEOWP", "-I", "-E", "JAMES", "HNRAETHN"]
+        }
+    ]
+}

@@ -1,0 +1,42 @@
+{
+  "target_team": 157, 
+  "type": "correctness", 
+  "commands": [
+    {
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "1", 
+        "-K", 
+        "sec", 
+        "-E", 
+        "Laura", 
+        "-A", 
+        "personkindchecklog"
+      ]
+    }, 
+    {
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "2", 
+        "-K", 
+        "sec", 
+        "-G", 
+        "Laura", 
+        "-A", 
+        "personkindchecklog"
+      ]
+    }, 
+    {
+      "output": "Laura\nLaura\n", 
+      "program": "logread", 
+      "args": [
+        "-K", 
+        "sec", 
+        "-S", 
+        "personkindchecklog"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+-I Prints the rooms, as a comma-separated list of room IDs, that were occupied by all the specified employees and guests at the same time over the complete history of the gallery. Room IDs should be printed in ascending numerical order. This feature is optional. If a specified employee or guest does not appear in the gallery, it is ignored. If no room ever contained all of the specified persons, then nothing is printed.
+See: https://www.builditbreakit.org/static/doc/spring2015/spec/LOGREAD.html

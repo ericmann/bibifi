@@ -1,0 +1,1 @@
+Should not be valid, as room is greater than 1073741823

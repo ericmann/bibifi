@@ -1,0 +1,1 @@
+Logread bug: No log file is specified.  Log file is a required argument. Expected output is 'invalid'

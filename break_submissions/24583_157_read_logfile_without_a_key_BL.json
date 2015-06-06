@@ -1,0 +1,1 @@
+{"target_team": 157, "type": "correctness", "commands": [{"program": "logappend", "args": ["-K", "xxx", "-T", "1", "-A", "-G", "Fred", "CSFZTFPZVCDE"]}, {"program": "logappend", "args": ["-K", "xxx", "-T", "2", "-A", "-G", "Fred", "-R", "16", "CSFZTFPZVCDE"]}, {"program": "logread", "args": ["-R", "-G", "Fred", "CSFZTFPZVCDE"]}]}

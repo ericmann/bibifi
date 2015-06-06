@@ -1,0 +1,2 @@
+Any form of missing token, be it no parameter, parameter without a value
+or empty value, should be refused as "invalid".

@@ -1,0 +1,22 @@
+{
+  "target_team": 157,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-T", "1", "-K", "s", "-A", "-G", "Fred", "log1"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-T", "2", "-K", "s", "-A", "-E", "Fred", "./log1"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "s", "-S", "log1"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "s", "-S", "./log1"]
+    }
+  ]
+}

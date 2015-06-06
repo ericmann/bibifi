@@ -1,0 +1,54 @@
+{
+    "target_team": 157,
+    "type": "correctness",
+    "commands": [
+{
+ "program": "logappend",
+ "args": ["-K", "secret", "-T", "100", "-A", "-G", "bob", "log"]
+},
+{
+ "program": "logappend",
+ "args": ["-K", "secret", "-T", "200", "-A", "-G", "bob", "-R", "5", "log"]
+},
+{
+ "program": "logappend",
+ "args": ["-K", "secret", "-T", "201", "-A", "-G", "Jill", "log"]
+},
+{
+ "program": "logappend",
+ "args": ["-K", "secret", "-T", "300", "-A", "-G", "Jill", "-R", "6", "log"]
+},
+{
+ "program": "logappend",
+ "args": ["-K", "secret", "-T", "310", "-A", "-E", "JACK", "log"]
+},
+{
+ "program": "logappend",
+ "args": ["-K", "secret", "-T", "320", "-A", "-E", "JACK", "-R", "7", "log"]
+},
+{
+ "program": "logappend",
+ "args": ["-K", "secret", "-T", "356", "-L", "-G", "bob", "-R", "5", "log"]
+},
+{
+ "program": "logappend",
+ "args": ["-K", "secret", "-T", "359", "-L", "-G", "Jill", "-R", "6", "log"]
+},
+{
+ "program": "logappend",
+ "args": ["-K", "secret", "-T", "360", "-A", "-G", "Jill", "-R", "5", "log"]
+},
+{
+ "program": "logappend",
+ "args": ["-K", "secret", "-T", "461", "-L", "-G", "Jill", "-R", "5", "log"]
+},
+{
+ "program": "logappend",
+ "args": ["-K", "secret", "-T", "480", "-L", "-G", "bob", "log"]
+},
+{
+ "program": "logread",
+ "args": ["-K", "secret", "-I", "-G", "bob", "-G", "Jill", "log"]
+}
+    ]
+}

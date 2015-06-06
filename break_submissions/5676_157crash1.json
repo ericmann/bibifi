@@ -1,0 +1,10 @@
+{
+  "target_team": 157,
+  "type": "crash",
+  "commands": [
+	{
+	    "program": "logappend",
+            "args": ["-T", "2", "-K", "thisKEY", "-G", "Jenn", "logfiledata3"]
+        }
+    ]
+}

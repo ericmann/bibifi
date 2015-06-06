@@ -1,0 +1,3 @@
+Specs:[5/19/15 12:00PM EST] An employee and a guest can have the same name.
+Program does not accept guest with the same name as an employee. Prints invalid and returns 255, when it should return
+0 and print nothing.

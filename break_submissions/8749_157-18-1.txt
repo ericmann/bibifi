@@ -1,0 +1,2 @@
+A basic "T" operation test set: users that left the gallery have a defined time spent,
+users that left and returned get both times summed. Room visits are irrelevant.

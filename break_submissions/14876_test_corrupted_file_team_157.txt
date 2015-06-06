@@ -1,0 +1,1 @@
+the guest enters to the room 1 and the software said that is an invalid movement, this is ok but when i tried other move the sofware said is invalid and the logread said that the file has an integrity violation, the log file is useless after a first wrong movement.

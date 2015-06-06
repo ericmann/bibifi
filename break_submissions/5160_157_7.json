@@ -1,0 +1,11 @@
+{
+  "target_team": 157,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "1073741824", "-G", "BUZZ", "-A", "log7"],
+      "output": "invalid"
+    }
+  ]
+}

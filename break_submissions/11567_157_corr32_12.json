@@ -1,0 +1,19 @@
+{
+  "target_team":  157,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-B", "batch"] 
+    },
+    {
+      "program": "logread",
+      "args": ["-S", "-K", "FOOBARBAZ", "TPWMVDMZ"] 
+    },
+    {
+      "program": "logread",
+      "args": ["-S", "-K", "FOOBAZBAR", "TPWMVDME"] 
+    }
+  ],
+ "batch": "LVQgMSAtSyBGT09CQVJCQVogLUUgSk9TSCAtQSBUUFdNVkRNWgotVCAxIC1LIEZPT0JBWkJBUiAtRSBCT1NIIC1BIFRQV01WRE1FCi1UIDIgLUsgRk9PQkFSQkFaIC1FIEpPU0ggLUEgLVIgMSBUUFdNVkRNWgotVCAyIC1LIEZPT0JBWkJBUiAtRSBCT1NIIC1BIC1SIDEgVFBXTVZETUUK"
+}

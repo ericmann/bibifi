@@ -1,0 +1,279 @@
+{
+    "target_team": 157,
+    "type": "correctness",
+    "commands": [
+        {
+            "program": "logappend",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "1",
+                "-E",
+                "ana",
+                "-A",
+                "log"
+            ]
+        },
+        {
+            "program": "logread",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "-E",
+                "ana",
+                "log"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "2",
+                "-G",
+                "jon",
+                "-A",
+                "log"
+            ]
+        },
+        {
+            "program": "logread",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "-E",
+                "ana",
+                "log"
+            ]
+        },
+        {
+            "program": "logread",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "-G",
+                "jon",
+                "log"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "3",
+                "-E",
+                "ana",
+                "-A",
+                "-R",
+                "1",
+                "log"
+            ]
+        },
+        {
+            "program": "logread",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "-E",
+                "ana",
+                "log"
+            ]
+        },
+        {
+            "program": "logread",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "-G",
+                "jon",
+                "log"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "4",
+                "-E",
+                "ana",
+                "-L",
+                "-R",
+                "1",
+                "log"
+            ]
+        },
+        {
+            "program": "logread",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "-E",
+                "ana",
+                "log"
+            ]
+        },
+        {
+            "program": "logread",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "-G",
+                "jon",
+                "log"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "5",
+                "-G",
+                "jon",
+                "-L",
+                "log"
+            ]
+        },
+        {
+            "program": "logread",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "-E",
+                "ana",
+                "log"
+            ]
+        },
+        {
+            "program": "logread",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "-G",
+                "jon",
+                "log"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "6",
+                "-G",
+                "jon",
+                "-A",
+                "log"
+            ]
+        },
+        {
+            "program": "logread",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "-E",
+                "ana",
+                "log"
+            ]
+        },
+        {
+            "program": "logread",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "-G",
+                "jon",
+                "log"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "7",
+                "-E",
+                "ana",
+                "-L",
+                "log"
+            ]
+        },
+        {
+            "program": "logread",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "-E",
+                "ana",
+                "log"
+            ]
+        },
+        {
+            "program": "logread",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "-G",
+                "jon",
+                "log"
+            ]
+        },
+        {
+            "program": "logappend",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "8",
+                "-G",
+                "jon",
+                "-L",
+                "log"
+            ]
+        },
+        {
+            "program": "logread",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "-E",
+                "ana",
+                "log"
+            ]
+        },
+        {
+            "program": "logread",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "-G",
+                "jon",
+                "log"
+            ]
+        }
+    ]
+}

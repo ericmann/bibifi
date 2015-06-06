@@ -1,0 +1,2 @@
+Invalid argument: timestamp too big, expecting an error.
+Details: Expected 'invalid' got '' on ./logappend -T 1073741824  -K secret -E Fred -A log1 (error? <nil>)

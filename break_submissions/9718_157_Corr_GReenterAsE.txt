@@ -1,0 +1,1 @@
+Guest should be allowed to leave and re-enter as employee with the same name, regardless of the specification change about employees and guests having the same name

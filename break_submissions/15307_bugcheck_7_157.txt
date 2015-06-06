@@ -1,0 +1,249 @@
+
+BREAK IT BUG REPORT #7: JUSTIFICATION FOR CRASH VIOLATION TESTS
+BY: RAUL GARCIA
+TEAM: CODE TIGERS
+DATE:  5/31/14
+TYPE: CRASH
+CAUSE: FAILURE TO DETECT MULTIPLE LOGAPPEND AND LOGREAD INVALID ARGUMENTS AND/OR INVALID DATA 
+ERROR: MULTIPLE - SEE BELOW
+
+JUSTIFICATION:
+
+The syntax rules for logappend/logread are:
+
+logappend -T <timestamp> -K <token> (-E <employee-name> | -G <guest-name>) (-A | -L) [-R <room-id>] <log>
+logread -K <token> -S <log>
+
+These are not verified by the oracle - which just gives 'error'.
+
+Here we submit the logappend and logread commands to a battery of unexpected inputs and parms - starting from
+empty inputs, spaces, escape chars of many types, invlid employees names, rooms id, spaces in names etc.
+
+We choose a set of escape sequences that tends to trip many languages - specially single quotes in the data etc.
+
+Then we folow the same for loappend to a batch file.
+
+Then we create a valid log file and try the same approach for logreads on that log.
+Specially the optional logreads parms are tested for crashes.
+
+These are not correctness errors as such - most cause some unexpected input and thus a possible corruption in the
+program space and/or it's memory.
+
+THE JSON TEMPLATE:
+
+{
+
+  "target_team": ???,
+  "type": "crash",
+  "commands": [
+   {
+      "program": "logappend",
+      "args": [""]
+     },
+     {
+      "program": "logappend",
+      "args": ["    "]
+     },
+   {
+      "program": "logappend",
+      "args": ["- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"]
+     },
+     {
+      "program": "logappend",
+      "args": ["\\t"]
+     },
+     {
+      "program": "logappend",
+      "args": ["\\*"]
+     },
+         {
+      "program": "logappend",
+      "args": ["\\&"]
+     },
+         {
+      "program": "logappend",
+      "args": ["\\#"]
+     },
+         {
+      "program": "logappend",
+      "args": ["\\:"]
+     },
+         {
+      "program": "logappend",
+      "args": ["\\$1"]
+     },
+         {
+      "program": "logappend",
+      "args": ["\\'"]
+     },
+
+      {
+      "program": "logappend",
+     "args": ["-T", "5", "-K", "pw1", "-A", "-E", "emp", "log1"]
+     },
+      {
+      "program": "logappend",
+      "args": ["-T", "5", "-T", "xx", "-T", "-1.1", "-T", "-100","-K", "pw1", "-A", "-E", "emp", "log1"]
+     },
+      {
+      "program": "logappend",
+      "args": ["-T", "6", "-K", "p&&%**%$w1", "-A", "-E", "emp", "log1"]
+     },
+        {
+      "program": "logappend",
+      "args": ["-T", "7", "-K", "pw1", "-A", "-E", "emp last", "log1"]
+     },
+      {
+      "program": "logappend",
+      "args": ["-T\n", "8", "-K\\&", "pw1", "-A", "-E\\'", "emp last", "log1"]
+     },
+      {
+      "program": "logappend",
+      "args": ["\\'R^&$^$$^#^#^*^(&()&)&(%&*$^$^&$^#^&#&$*(^(^&)&)&(%&$^^#*&)_\\'"]
+     },
+    {
+      "program": "logappend",
+      "args": ["-t", "9", "-k", "pw1", "-a", "-e", "emp", "log1"]
+     },
+    {
+      "program": "logappend",
+      "args": ["-T", "10 11", "-K", "pw1", "-A", "-E", "emp", "log1"]
+     },
+      {
+      "program": "logappend",
+      "args": ["-T -T", "12", "-K", "pw1", "-A", "-E", "emp", "log1"]
+     },
+      {
+      "program": "logappend",
+      "args": ["T-T", "13", "-K", "pw1", "-A", "-E", "emp", "log1"]
+     },
+      {
+      "program": "logappend",
+      "args": ["--T", "5", "-K", "pw1", "-A", "-E", "emp", "log1"]
+     },
+      {
+      "program": "logappend",
+      "args": ["-T", "15", "-K", "pw1", "-A", "-E", "emp", "-R", "101  12", "log1"]
+     },
+       {
+      "program": "logappend",
+      "args": ["-T", "", "-K", "pw1", "-A", "-E", "emp", "-R", "101", "log1"]
+     },
+      {
+      "program": "logappend",
+      "args": ["-T", "25", "-K", "pw1", "-A", "-E", "emp2", "-R","102", "log1","log2"]
+     },
+      {
+      "program": "logappend",
+      "args": ["-T", "25", "-K", "pw1", "-A", "-E", "emp2", "-R","102", "log1","log2","log3","log4","log5","log6"]
+     },
+      {
+      "program": "logappend",
+      "args": ["-T", "5", "-K", "pw1", "-A", "-E", "empxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", "log1"]
+     },
+      {
+      "program": "logappend",
+      "args": ["-T", "1", "-K", "pw2", "-A", "-E", "emp", "log1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"]
+     },
+      {
+      "program": "logappend",
+      "args": ["-T", "1", "-K", "pw1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", "-A", "-E", "emp", "log3"]
+     },
+     {
+      "program": "logappend",
+      "args": ["-T", "1", "-K", "pw0", "-A", "-E", "emp2", "-E", "emp2", "-E", "emp3", "-E", "emp4", "-E", "emp5", "-E", "emp6", "-E", "\\'", "-E", "$^$^$^","log10"]
+     },
+
+    {
+      "program": "logappend",
+      "args": ["-B"]
+     },
+       {
+      "program": "logappend",
+      "args": ["- B"]
+     },
+
+     {
+      "program": "logappend",
+      "args": ["- -B"]
+     },
+ {
+      "program": "logappend",
+      "args": ["-B"," "]
+     },
+
+ {
+      "program": "logappend",
+      "args": ["-B","\\n"]
+     },
+      {
+      "program": "logappend",
+      "args": ["-B","Abc%%%% "]
+     },
+      {
+      "program": "logappend",
+      "args": ["-B","abc.exe"]
+     },
+      {
+      "program": "logappend",
+      "args": ["-B","abc.bat"]
+     },
+      {
+      "program": "logappend",
+      "args": ["-B","abc",""]
+     },
+
+    {
+      "program": "logappend",
+      "args": ["-T", "1", "-K", "pw22", "-A", "-E", "emp", "log22"]
+     },
+
+  {
+      "program": "logappend",
+      "args": ["-T", "2", "-K", "pw22", "-A", "-G", "emp", "log22"]
+     },
+  
+    {
+      "program": "logread",
+      "args": ["-K","\\nabc##","-S","log22"]
+     },
+         {
+      "program": "logread",
+      "args": ["-", "-K","pw22","-S","log22"]
+     },
+         {
+      "program": "logread",
+      "args": ["- - - - - -","-K","pw22","-S","log22"]
+     },
+         {
+      "program": "logread",
+      "args": ["-K","pw22","-T","-X","log22"]
+     },
+             {
+      "program": "logread",
+      "args": ["-K","pw22","-I","-X","log22"]
+     },
+            {
+      "program": "logread",
+      "args": ["-K","pw22","-T","-I","log22"]
+     },
+            {
+      "program": "logread",
+      "args": ["-K","pw22","-T","-G","\\n","log22"]
+     },
+           {
+      "program": "logread",
+      "args": ["-K","pw22","-R","-G","abc","log22"]
+     },
+         {
+      "program": "logread",
+      "args": ["-K","pw22","-R","-G","\\n","log22"]
+     },
+         {
+      "program": "logread",
+      "args": ["-K","pw22","-R","-G","aa bb","log22"]
+     }
+ 
+  ]
+
+}

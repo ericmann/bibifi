@@ -1,0 +1,11 @@
+
+
+should generate error, instead accepts batch file with empty line
+
+ubuntu@bibivm:~/breakit/157/code/build$ ./logappend -B ~/breakit/batch5
+no output given
+
+-K secret -T 1 -A -E John log231
+
+-K secret -T 2 -A -R 0 -E John log231
+

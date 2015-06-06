@@ -1,0 +1,1 @@
+Reading time for a person who never entered the gallery produces different results to spec/oracle.

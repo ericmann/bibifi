@@ -1,0 +1,1 @@
+A single batch can target multiple log files as long as token and log name fit together.
