@@ -103,10 +103,6 @@ LogMeta.prototype.activateVisitor = function( type, name ) {
 	var active, inactive;
 	switch( type ) {
 		case 'E':
-			if ( _.contains( this.activeGuests, visitor_id ) || _.contains( this.inactiveGuests, visitor_id ) ) {
-				return false;
-			}
-
 			active = this.activeEmployees;
 			inactive = this.inactiveEmployees;
 
@@ -119,10 +115,6 @@ LogMeta.prototype.activateVisitor = function( type, name ) {
 			this.inactiveEmployees = inactive;
 			break;
 		case 'G':
-			if ( _.contains( this.activeEmployees, visitor_id ) || _.contains( this.inactiveEmployees, visitor_id ) ) {
-				return false;
-			}
-
 			active = this.activeGuests;
 			inactive = this.inactiveGuests;
 
@@ -145,17 +137,22 @@ LogMeta.prototype.activateVisitor = function( type, name ) {
  * Check whether or not a visitor is active.
  *
  * @param {String} name
+ * @param {String} type
  *
  * @returns {Boolean}
  */
-LogMeta.prototype.visitorIsActive = function( name ) {
+LogMeta.prototype.visitorIsActive = function( name, type ) {
 	// Get the ID of the name from the dictionary
 	var visitor_id = this.visitorID( name );
 
-	var activeEmployee = _.contains( this.activeEmployees, visitor_id ),
-		activeGuest = _.contains( this.activeGuests, visitor_id );
-
-	return activeEmployee || activeGuest;
+	switch( type ) {
+		case 'E':
+			return _.contains( this.activeEmployees, visitor_id );
+		case 'G':
+			return _.contains( this.activeGuests, visitor_id );
+		default:
+			return false;
+	}
 };
 
 /**
