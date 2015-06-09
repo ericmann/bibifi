@@ -23,7 +23,6 @@ var util = require( './util' );
 function Entry( raw ) {
 	// Sanitize our raw entries
 	this.name = this.sanitizeName( raw.name );
-	this.type = this.sanitizeType( raw.type );
 	this.action = this.sanitizeAction( raw.action );
 	this.room = this.sanitizeRoom( raw.room );
 	this.time = this.sanitizeTime( raw.time );
@@ -41,17 +40,15 @@ function Entry( raw ) {
  */
 Entry.prototype.parse = function( encoded, log ) {
 	// Extract our encoded data. Encoded strings are of the format:
-	// XXYZ123|123|123
+	// XXY123|123|123
 	// The first two characters are random
-	// Y is the visitor type (E or G)
-	// Z is the visitor action (A or L)
+	// Y is the visitor action (A or L)
 	// The first number is a base36-encoded timestamp
 	// Second number is a base36-encoded room ID or 'L'
 	// Third number is a base36-encoded visitor ID
 
-	var type = encoded[2],
-		action = encoded[3],
-		data = encoded.substr( 4 );
+	var action = encoded[3],
+		data = encoded.substr( 3 );
 
 	// Split our data
 	data = data.split( '|' );
@@ -68,7 +65,6 @@ Entry.prototype.parse = function( encoded, log ) {
 
 	var raw = {
 		'time': time,
-		'type': type,
 		'action': action,
 		'room': room,
 		'name': name
@@ -97,6 +93,12 @@ Entry.prototype.sanitizeName = function( name ) {
 
 	// Make sure we have only valid (word) characters
 	name = name.replace( /[^(a-zA-Z)]/gi, '' );
+
+	// Proxy to the type sanitization
+	var type = name[0];
+	type = this.sanitizeType( type );
+
+	name[ 0 ] = type;
 
 	return name;
 };
@@ -205,7 +207,6 @@ Entry.prototype.sanitizeTime = function( time ) {
  */
 Entry.prototype.isValid = function() {
 	var valid_museum_entry = '' !== this.name &&
-		'' !== this.type &&
 		'' !== this.action &&
 		! isNaN( this.time ) && 0 < this.time;
 
@@ -231,7 +232,7 @@ Entry.prototype.toString = function( log ) {
 	visitor_id = visitor_id.toString( 36 );
 
 	// Encode our data
-	var positional = util.randomString( 2 ) + this.type + this.action,
+	var positional = util.randomString( 2 )+ this.action,
 		dynamic = [
 			time,
 			room,

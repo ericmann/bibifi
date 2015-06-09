@@ -32,16 +32,20 @@ var argv = process.argv.slice( 2 );
 function getStatus( log ) {
 	// Get real names
 	var employees = [], guests = [],
-		employee_ids = log.meta.activeEmployees,
-		guest_ids = log.meta.activeGuests,
+		active_visitors = log.meta.activeVisitors,
 		i, l;
 
-	for ( i = 0, l = employee_ids.length; i < l; i++ ) {
-		employees.push( log.meta.dictionary[ employee_ids[ i ] ] );
-	}
+	for ( i = 0, l = active_visitors.length; i < l; i++ ) {
+		var visitor = log.meta.dictionary[ active_visitors[ i ] ];
 
-	for ( i = 0, l = guest_ids.length; i < l; i++ ) {
-		guests.push( log.meta.dictionary[ guest_ids[ i ] ] );
+		switch( visitor[0] ) {
+			case 'E':
+				employees.push( visitor.substr( 1 ) );
+				break;
+			case 'G':
+				guests.push( visitor.substr( 1 ) );
+				break;
+		}
 	}
 
 	employees = employees.sort().join( ',' );
@@ -51,7 +55,7 @@ function getStatus( log ) {
 	var rooms = {},
 		people = Object.keys( log.meta.locations );
 
-	for ( var i = 0, l = people.length; i < l; i++ ) {
+	for ( i = 0, l = people.length; i < l; i++ ) {
 		var occupant = people[ i ],
 			room = log.meta.locations[ occupant ];
 
@@ -114,8 +118,12 @@ function getHistory( log, names ) {
 		type = concatenated[0],
 		name = concatenated.substr( 2 );
 
+	// Get a name for the index
+	var stored_name = type + name;
+
 	// Get our entries - we only have one visitor, so life is easy!
-	var entries = log.entriesForVisitors( [[name,type]] );
+	var entries = log.entriesForVisitors( [stored_name] );
+	
 	for ( var i = 0, l = entries.length; i < l; i++ ) {
 		var entry = entries[ i ];
 

@@ -331,25 +331,21 @@ LogFile.prototype.entriesForVisitors = function( visitors ) {
 		var visitor = visitors[ i ];
 
 		// Get the ID of the name from the dictionary
-		var visitor_id = log.meta.visitorID( visitor[0] );
+		var visitor_id = log.meta.visitorID( visitor );
 
-		switch( visitor[1] ) {
-			case 'E':
-				if ( ! _.contains( log.meta.activeEmployees, visitor_id ) && ! _.contains( log.meta.inactiveEmployees, visitor_id ) ) {
+		if ( ! _.contains( log.meta.activeVisitors, visitor_id ) && !_.contains( log.meta.inactiveVisitors, visitor_id ) ) {
+			valid = false;
+		} else {
+			switch( visitor[0] ) {
+				case 'E':
+					employees.push( visitor );
+					break;
+				case 'G':
+					guests.push( visitor );
+					break;
+				default:
 					valid = false;
-				} else {
-					employees.push( visitor[0] );
-				}
-				break;
-			case 'G':
-				if ( ! _.contains( log.meta.activeGuests, visitor_id ) && ! _.contains( log.meta.inactiveGuests, visitor_id ) ) {
-					valid = false;
-				} else {
-					guests.push( visitor[0] );
-				}
-				break;
-			default:
-				valid = false;
+			}
 		}
 	}
 
@@ -374,7 +370,7 @@ LogFile.prototype.entriesForVisitors = function( visitors ) {
 		var entry = Entry.prototype.parse( decrypted.toString(), this );
 
 		// If this is a good entry, let's keep it
-		if ( ( 'E' === entry.type && _.contains( employees, entry.name ) ) || ( 'G' === entry.type && _.contains( guests, entry.name ) ) ) {
+		if ( _.contains( employees, entry.name ) || _.contains( guests, entry.name ) ) {
 			entries.push( entry );
 		}
 	}
