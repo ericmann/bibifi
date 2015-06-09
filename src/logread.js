@@ -123,7 +123,7 @@ function getHistory( log, names ) {
 
 	// Get our entries - we only have one visitor, so life is easy!
 	var entries = log.entriesForVisitors( [stored_name] );
-	
+
 	for ( var i = 0, l = entries.length; i < l; i++ ) {
 		var entry = entries[ i ];
 
@@ -168,7 +168,9 @@ function getTime( log, names ) {
 		type = concatenated[0],
 		name = concatenated.substr( 2 );
 
-	var entries = log.entriesForVisitors( [[name, type]] );
+	var real_name = type + name;
+
+	var entries = log.entriesForVisitors( [real_name] );
 
 	for ( var i = 0, l = entries.length; i < l; i++ ) {
 		var entry = entries[ i ];
@@ -177,7 +179,7 @@ function getTime( log, names ) {
 		maxTime = entry.time;
 
 		// Until the visitor enters the library, we don't care about entries
-		if ( false === entryTime && name !== entry.name ) {
+		if ( false === entryTime && real_name !== entry.name ) {
 			continue;
 		}
 		// When they first visit the library, we set their entry time
@@ -229,8 +231,10 @@ function getCollisions( log, names ) {
 		var type = concatenated[0],
 			name = concatenated.substr( 2 );
 
-		visitors.push( [name, type] );
-		testCollection.push( name );
+		var real_name = type + name;
+
+		visitors.push( real_name );
+		testCollection.push( real_name );
 	}
 
 	// Get our entries so we can replay a subset of history
