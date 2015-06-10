@@ -47,7 +47,7 @@ Entry.prototype.parse = function( encoded, log ) {
 	// Second number is a base36-encoded room ID or 'L'
 	// Third number is a base36-encoded visitor ID
 
-	var action = encoded[3],
+	var action = encoded[2],
 		data = encoded.substr( 3 );
 
 	// Split our data
