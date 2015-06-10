@@ -31,24 +31,22 @@ var argv = process.argv.slice( 2 );
  *
  * @param {LogFile} log
  * @param {String}  name
- * @param {String}  type Either E or G
  * @param {Number}  timestamp
  *
  * @returns {Boolean}
  */
-function enterGallery( log, name, type, timestamp ) {
+function enterGallery( log, name, timestamp ) {
 	// Sanitize arguments
 	name = name.replace( /[^(a-zA-Z)]/g, '' );
-	type = type.toUpperCase().replace( /[^(E|G)]/g, '' ).substring( 0, 1 );
 	timestamp = parseInt( timestamp, 10 );
 
 	// Sanitization failed
-	if ( '' === name || '' === type || isNaN( timestamp ) ) {
+	if ( '' === name || isNaN( timestamp ) ) {
 		return false;
 	}
 
 	// Attempt to activate our visitor
-	if ( ! log.meta.activateVisitor( type, name ) ) {
+	if ( ! log.meta.activateVisitor( name ) ) {
 		return false;
 	}
 
@@ -72,13 +70,12 @@ function enterGallery( log, name, type, timestamp ) {
  *
  * @param {LogFile} log
  * @param {String}  name
- * @param {String}  type
  * @param {Number}  room
  * @param {Number}  timestamp
  *
  * @returns {Boolean}
  */
-function enterRoom( log, name, type, room, timestamp ) {
+function enterRoom( log, name, room, timestamp ) {
 	// Sanitize arguments
 	name = name.replace( /[^(a-zA-Z)]/g, '' );
 	room = parseInt( room, 10 );
@@ -90,7 +87,7 @@ function enterRoom( log, name, type, room, timestamp ) {
 	}
 
 	// Make sure the visitor is active
-	if ( ! log.meta.visitorIsActive( name, type ) ) {
+	if ( ! log.meta.visitorIsActive( name ) ) {
 		return false;
 	}
 
@@ -111,13 +108,12 @@ function enterRoom( log, name, type, room, timestamp ) {
  *
  * @param {LogFile} log
  * @param {String}  name
- * @param {String}  type
  * @param {Number}  room
  * @param {Number}  timestamp
  *
  * @return {Boolean}
  */
-function exitRoom( log, name, type, room, timestamp ) {
+function exitRoom( log, name, room, timestamp ) {
 	// Sanitize arguments
 	name = name.replace( /[^(a-zA-Z)]/g, '' );
 	room = parseInt( room, 10 );
@@ -129,7 +125,7 @@ function exitRoom( log, name, type, room, timestamp ) {
 	}
 
 	// Make sure the visitor is active
-	if ( ! log.meta.visitorIsActive( name, type ) ) {
+	if ( ! log.meta.visitorIsActive( name ) ) {
 		return false;
 	}
 
@@ -150,19 +146,17 @@ function exitRoom( log, name, type, room, timestamp ) {
  *
  * @param {LogFile} log
  * @param {String}  name
- * @param {String}  type
  * @param {Number}  timestamp
  *
  * @returns {Boolean}
  */
-function exitGallery( log, name, type, timestamp ) {
+function exitGallery( log, name, timestamp ) {
 	// Sanitize arguments
 	name = name.replace( /[^(a-zA-Z)]/g, '' );
-	type = type.toUpperCase().replace( /[^(E|G)]/g, '' ).substring( 0, 1 );
 	timestamp = parseInt( timestamp, 10 );
 
 	// Sanitization failed
-	if ( '' === name || '' === type || isNaN( timestamp ) ) {
+	if ( '' === name || isNaN( timestamp ) ) {
 		return false;
 	}
 
@@ -172,7 +166,7 @@ function exitGallery( log, name, type, timestamp ) {
 	}
 
 	// Attempt to deactivate the visitor
-	if ( ! log.meta.deactivateVisitor( type, name ) ) {
+	if ( ! log.meta.deactivateVisitor( name ) ) {
 		return false;
 	}
 
@@ -196,16 +190,16 @@ function handleAction( log, entry ) {
 	switch( entry.action ) {
 		case 'A':
 			if ( null === entry.room || 'L' === entry.room ) {
-				success = enterGallery( log, entry.name, entry.type, entry.time );
+				success = enterGallery( log, entry.name, entry.time );
 			} else {
-				success = enterRoom( log, entry.name, entry.type, entry.room, entry.time );
+				success = enterRoom( log, entry.name, entry.room, entry.time );
 			}
 			break;
 		case 'L':
 			if ( null === entry.room || 'L' === entry.room ) {
-				success = exitGallery( log, entry.name, entry.type, entry.time );
+				success = exitGallery( log, entry.name, entry.time );
 			} else {
-				success = exitRoom( log, entry.name, entry.type, entry.room, entry.time );
+				success = exitRoom( log, entry.name, entry.room, entry.time );
 			}
 			break;
 		default:
@@ -258,10 +252,12 @@ function handleBatch( file ) {
 					}
 				}
 
+				// The name is really the type and name concatenated
+				var type = append.visitor_type.trim()[0];
+
 				// Parse the entry
 				var entry = new Entry( {
-					'name'   : append.name,
-					'type'   : append.visitor_type,
+					'name'   : type + append.name,
 					'action' : append.action,
 					'room'   : append.room,
 					'time'   : append.time,
@@ -324,10 +320,12 @@ switch( append.type ) {
 			return util.invalid();
 		}
 
+		// The name is really the type and name concatenated
+		var type = append.visitor_type.trim()[0];
+
 		// Parse our entry
 		var entry = new Entry( {
-			'name'  : append.name,
-			'type'  : append.visitor_type,
+			'name'  : type + append.name,
 			'action': append.action,
 			'room'  : append.room,
 			'time'  : append.time
@@ -357,42 +355,6 @@ switch( append.type ) {
 			}
 		);
 		return;
-
-		// We have a batchfile, let's populate it
-		if ( ! batch.getData() ) {
-			return util.invalid();
-		}
-
-		// Handle entries
-		for ( var i = 0, l = batch.entries.length; i < l; i++ ) {
-			var entry = batch.entries[ i ];
-
-			// If it's an invalid entry, or if the timestamp fails to validate, err
-			if ( ! entry.isValid() || entry.time <= batch.log.meta.time ) {
-				process.stdout.write( 'invalid' );
-				continue;
-			}
-
-			// Make sure the entry is for this log
-			if ( entry.logfile !== batch.logPath || entry.secret !== batch.key ) {
-				process.stdout.write( 'invalid' );
-				continue;
-			}
-
-			// Handle the action
-			if ( ! handleAction( batch.log, entry ) ) {
-				process.stdout.write( 'invalid' );
-				continue;
-			}
-
-			// Append the log
-			batch.log.newEntries.push( entry );
-		}
-
-		// We're done, so let's close the logfile
-		batch.log.close();
-
-		break;
 	default:
 		return util.invalid();
 }
