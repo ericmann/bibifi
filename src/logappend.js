@@ -247,6 +247,7 @@ function handleBatch( file ) {
 
 					// Validate our secret key
 					if ( ! logfile.isValidSecret() ) {
+						maybePurge( logfile );
 						return util.invalid();
 					}
 				}
@@ -266,18 +267,30 @@ function handleBatch( file ) {
 
 				// If it's an invalid entry, or if the timestamp fails to validate, err
 				if ( ! entry.isValid() || entry.time <= logfile.meta.time ) {
+					if ( maybePurge( logfile ) ) {
+						logfile = false;
+					}
+
 					process.stdout.write( 'invalid' );
 					continue;
 				}
 
 				// Make sure the entry is for this log
 				if ( entry.logfile !== logfile.path || entry.secret !== logfile.passkey ) {
+					if ( maybePurge( logfile ) ) {
+						logfile = false;
+					}
+
 					process.stdout.write( 'invalid' );
 					continue;
 				}
 
 				// Handle the action
 				if ( ! handleAction( logfile, entry ) ) {
+					if ( maybePurge( logfile ) ) {
+						logfile = false;
+					}
+
 					process.stdout.write( 'invalid' );
 					continue;
 				}
@@ -288,7 +301,6 @@ function handleBatch( file ) {
 		} );
 
 		lineStream.on( 'end', function() {
-//			console.log( logfile.newEntries.length );
 			if ( logfile ) {
 				logfile.close();
 			}
@@ -300,14 +312,20 @@ function handleBatch( file ) {
 /**
  * If the log is new, the dump it and don't write an empty file!
  *
- * @param LogFile log
+ * @param {LogFile} log
+ *
+ * @return {Boolean}
  */
 function maybePurge( log ) {
 	// If no entries, truncate and exit
 	if ( log.newFile ) {
 		fs.closeSync( log.fd );
 		fs.unlinkSync( log.path );
+
+		return true;
 	}
+
+	return false;
 }
 
 // Validate the entry arguments
