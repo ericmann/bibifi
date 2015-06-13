@@ -81,7 +81,7 @@ Entry.prototype.parse = function( encoded, log ) {
  * @returns {String}
  */
 Entry.prototype.sanitizeName = function( name ) {
-	if ( undefined === name ) {
+	if ( undefined === name || null === name ) {
 		return '';
 	}
 
@@ -113,7 +113,7 @@ Entry.prototype.sanitizeName = function( name ) {
  * @return {String}
  */
 Entry.prototype.sanitizeType = function( type ) {
-	if ( undefined === type ) {
+	if ( undefined === type || null === type ) {
 		return '';
 	}
 
@@ -165,7 +165,7 @@ Entry.prototype.sanitizeRoom = function( room ) {
  * @return {String}
  */
 Entry.prototype.sanitizeAction = function( action ) {
-	if ( undefined === action ) {
+	if ( undefined === action || null === action ) {
 		return '';
 	}
 
