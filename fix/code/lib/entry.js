@@ -151,8 +151,15 @@ Entry.prototype.sanitizeRoom = function( room ) {
 	// Cast as an integer
 	room = parseInt( room, 10 );
 
-	// Make sure we're positive
-	room = Math.abs( room );
+	// Make sure the room is a number
+	if ( isNaN( room ) ) {
+		return NaN;
+	}
+
+	// Make sure the room is in bounds.
+	if ( room < 0 || room > 1073741823 ) {
+		return NaN;
+	}
 
 	return room;
 };
