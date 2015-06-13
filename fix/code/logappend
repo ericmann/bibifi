@@ -331,8 +331,15 @@ switch( append.type ) {
 			'time'  : append.time
 		} );
 
+
 		// If it's an invalid entry, or if the timestamp fails to validate, err
 		if ( ! entry.isValid() || entry.time <= log.meta.time ) {
+			// If no entries, truncate and exit
+			if ( log.newFile ) {
+				fs.closeSync( log.fd );
+				fs.unlinkSync( log.path );
+			}
+
 			return util.invalid();
 		}
 
