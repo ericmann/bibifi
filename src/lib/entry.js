@@ -207,11 +207,23 @@ Entry.prototype.sanitizeAction = function( action ) {
  * @returns {Number}
  */
 Entry.prototype.sanitizeTime = function( time ) {
+	// Make sure the time only contains numbers
+	if ( /[^(0-9)]/gi.test( time ) ) {
+		return NaN;
+	}
+
 	// Cast as an integer
 	time = parseInt( time, 10 );
 
-	// Make sure we're positive
-	time = Math.abs( time );
+	// Make sure the time is a number
+	if ( isNaN( time ) ) {
+		return NaN;
+	}
+
+	// Make sure the time is in bounds.
+	if ( time < 1 || time > 1073741823 ) {
+		return NaN;
+	}
 
 	return time;
 };
