@@ -1,0 +1,1 @@
+The invalid order of entries should not create an empty logfile. This was the case if time was the same or decreasing from entry to entry and triggered an invalid write later as the empty logfile lacks meta information!
