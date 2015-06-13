@@ -1,0 +1,1 @@
+Validate the room entry such that it's between 0 and 1073741823. Previously, we were just casting as an integer and making sure things were positive - this meant negative room numbers could create a collision and out-of-bounds room IDs were OK.
