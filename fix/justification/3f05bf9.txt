@@ -1,0 +1,1 @@
+Logappend should require an action flag, either -A or -L.
