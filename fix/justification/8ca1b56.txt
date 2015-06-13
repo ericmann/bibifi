@@ -1,0 +1,1 @@
+Validate the time entry such that it's between 1 and 1073741823. Previously, we were just casting as an integer and making sure things were positive - this meant negative timestamps could create a collision and out-of-bounds timestamps were OK.

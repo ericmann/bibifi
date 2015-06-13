@@ -1,1 +1,19 @@
-{"target_team":157,"type":"correctness","commands":[{"program":"logappend","args":["-K","secret","-T","1073741824","-G","cdx","-A","log"]}]}
+{
+  "target_team": 157,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": [
+        "-K",
+        "secret",
+        "-T",
+        "1073741824",
+        "-G",
+        "cdx",
+        "-A",
+        "log"
+      ]
+    }
+  ]
+}
