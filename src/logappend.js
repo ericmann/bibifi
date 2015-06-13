@@ -297,6 +297,19 @@ function handleBatch( file ) {
 	} );
 }
 
+/**
+ * If the log is new, the dump it and don't write an empty file!
+ *
+ * @param LogFile log
+ */
+function maybePurge( log ) {
+	// If no entries, truncate and exit
+	if ( log.newFile ) {
+		fs.closeSync( log.fd );
+		fs.unlinkSync( log.path );
+	}
+}
+
 // Validate the entry arguments
 var append = cli.validate_append_args();
 
@@ -316,6 +329,8 @@ switch( append.type ) {
 
 		// Validate our secret key
 		if ( ! log.isValidSecret() ) {
+			maybePurge( log );
+
 			return util.invalid();
 		}
 
@@ -333,17 +348,15 @@ switch( append.type ) {
 
 		// If it's an invalid entry, or if the timestamp fails to validate, err
 		if ( ! entry.isValid() || entry.time <= log.meta.time ) {
-			// If no entries, truncate and exit
-			if ( log.newFile ) {
-				fs.closeSync( log.fd );
-				fs.unlinkSync( log.path );
-			}
+			maybePurge( log );
 
 			return util.invalid();
 		}
 
 		// Handle the action
 		if ( ! handleAction( log, entry ) ) {
+			maybePurge( log );
+
 			return util.invalid();
 		}
 
