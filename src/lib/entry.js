@@ -92,7 +92,9 @@ Entry.prototype.sanitizeName = function( name ) {
 	name = name.trim();
 
 	// Make sure we have only valid (word) characters
-	name = name.replace( /[^(a-zA-Z)]/gi, '' );
+	if ( /[^(a-zA-Z)]/gi.test( name ) ) {
+		name = '';
+	}
 
 	// Proxy to the type sanitization
 	var type = name[0];
