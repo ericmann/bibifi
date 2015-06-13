@@ -148,17 +148,16 @@ Entry.prototype.sanitizeRoom = function( room ) {
 		return 'L';
 	}
 
+	// Make sure the room only contains numbers
+	if ( /[^(0-9)]/gi.test( room ) ) {
+		return NaN;
+	}
+
 	// Cast as an integer
-	var roomFloat = parseFloat( room );
 	room = parseInt( room, 10 );
 
 	// Make sure the room is a number
 	if ( isNaN( room ) ) {
-		return NaN;
-	}
-
-	// Make sure the room is an integer
-	if ( room !== roomFloat ) {
 		return NaN;
 	}
 
