@@ -357,7 +357,7 @@ switch( append.type ) {
 		// Handle the action
 		if ( ! handleAction( log, entry ) ) {
 			maybePurge( log );
-			
+
 			return util.invalid();
 		}
 
