@@ -136,6 +136,10 @@ CLI.prototype.validate_append_args = function( argv ) {
 		return append_query;
 	}
 
+	if ( /[^(a-zA-Z0-9_\.\/)]/g.test( append_query.file ) ) {
+		return append_query;
+	}
+
 	// If we're good, we're valid
 	append_query['status'] = 'valid';
 
