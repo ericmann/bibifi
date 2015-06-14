@@ -100,8 +100,9 @@ Query.prototype.sanitizeLogfile = function( logfile ) {
 	// No whitespace
 	logfile = logfile.trim();
 
-	// Only valid chars
-	logfile = logfile.replace( /[^(a-zA-Z0-9_)]/g, '' );
+	if ( /[^(a-zA-Z0-9_\.\/)]/g.test( logfile ) ) {
+		return '';
+	}
 
 	return logfile;
 };
