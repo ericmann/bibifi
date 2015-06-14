@@ -1,0 +1,1 @@
+String arguments (the key and logfile) must be set for both reading and writing logs, otherwise the CLI params are invalid.
