@@ -277,7 +277,7 @@ function handleBatch( file ) {
 				}
 
 				// Make sure the entry is for this log
-				if ( entry.logfile !== logfile.path || entry.secret !== logfile.passkey ) {
+				if ( entry.secret !== logfile.passkey ) {
 					if ( maybePurge( logfile ) ) {
 						logfile = false;
 					}
