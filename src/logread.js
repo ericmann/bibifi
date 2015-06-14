@@ -74,7 +74,7 @@ function getStatus( log ) {
 			rooms[ room ] = [];
 		}
 
-		rooms[ room ].push( log.meta.dictionary[ occupant].substr(1) );
+		rooms[ room ].push( log.meta.dictionary[ occupant ].substr(1) );
 	}
 
 	// Get ordered room keys
@@ -83,7 +83,7 @@ function getStatus( log ) {
 	// Build out our output
 	var roomOutput = [];
 	for ( i = 0, l = roomKeys.length; i < l; i++ ) {
-		var key = roomKeys[ i],
+		var key = roomKeys[ i ],
 			room = rooms[ key ];
 
 		roomOutput.push( key.toString() + ': ' + room.sort().join( ',' ) );

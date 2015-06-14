@@ -131,8 +131,8 @@ CLI.prototype.validate_append_args = function( argv ) {
 		}
 	}
 
-	// Make sure the key is valid
-	if ( null === append_query.key || /[^(a-zA-Z0-9)]/gi.test( append_query.key ) ) {
+	// Make sure the key is valid in non-batch mdoe
+	if ( 'batch' !== append_query.type && ( null === append_query.key || /[^(a-zA-Z0-9)]/gi.test( append_query.key ) ) ) {
 		return append_query;
 	}
 

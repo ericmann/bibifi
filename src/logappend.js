@@ -69,13 +69,12 @@ function enterGallery( log, name, timestamp ) {
  *
  * @param {LogFile} log
  * @param {String}  name
- * @param {String}  type
  * @param {Number}  room
  * @param {Number}  timestamp
  *
  * @returns {Boolean}
  */
-function enterRoom( log, name, type, room, timestamp ) {
+function enterRoom( log, name, room, timestamp ) {
 	// Sanitize arguments
 	name = name.replace( /[^(a-zA-Z)]/g, '' );
 	room = parseInt( room, 10 );
@@ -87,7 +86,7 @@ function enterRoom( log, name, type, room, timestamp ) {
 	}
 
 	// Make sure the visitor is active
-	if ( ! log.meta.visitorIsActive( name, type) ) {
+	if ( ! log.meta.visitorIsActive( name ) ) {
 		return false;
 	}
 
@@ -108,13 +107,12 @@ function enterRoom( log, name, type, room, timestamp ) {
  *
  * @param {LogFile} log
  * @param {String}  name
- * @param {String}  type
  * @param {Number}  room
  * @param {Number}  timestamp
  *
  * @return {Boolean}
  */
-function exitRoom( log, name, type, room, timestamp ) {
+function exitRoom( log, name, room, timestamp ) {
 	// Sanitize arguments
 	name = name.replace( /[^(a-zA-Z)]/g, '' );
 	room = parseInt( room, 10 );
@@ -126,7 +124,7 @@ function exitRoom( log, name, type, room, timestamp ) {
 	}
 
 	// Make sure the visitor is active
-	if ( ! log.meta.visitorIsActive( name, type ) ) {
+	if ( ! log.meta.visitorIsActive( name ) ) {
 		return false;
 	}
 
@@ -193,14 +191,14 @@ function handleAction( log, entry ) {
 			if ( null === entry.room || 'L' === entry.room ) {
 				success = enterGallery( log, entry.name, entry.time );
 			} else {
-				success = enterRoom( log, entry.name, entry.type, entry.room, entry.time );
+				success = enterRoom( log, entry.name, entry.room, entry.time );
 			}
 			break;
 		case 'L':
 			if ( null === entry.room || 'L' === entry.room ) {
 				success = exitGallery( log, entry.name, entry.time );
 			} else {
-				success = exitRoom( log, entry.name, entry.type, entry.room, entry.time );
+				success = exitRoom( log, entry.name, entry.room, entry.time );
 			}
 			break;
 		default:
@@ -226,7 +224,7 @@ function validateEntry( logFile, entry ) {
 	}
 
 	// If it's an invalid entry, or if the timestamp fails to validate, err
-	if ( ! entry.isValid() || entry.time < logFile.meta.time ) {
+	if ( ! entry.isValid() || entry.time <= logFile.meta.time ) {
 		return false;
 	}
 
@@ -242,16 +240,19 @@ function validateEntry( logFile, entry ) {
  * @returns {Promise}
  */
 function handleEntry( append, exit ) {
+console.log( append );
 	if ( undefined === exit ) {
 		exit = true;
 	}
 
 	var logFile = new LogFile( append.file, append.key );
 
+	// The name is really the type and name concatenated
+	var type = append.visitor_type.trim()[0];
+
 	// Parse our entry
 	var entry = new Entry( {
-		'name'  : append.name,
-		'type'  : append.visitor_type,
+		'name'  : type + append.name,
 		'action': append.action,
 		'room'  : append.room,
 		'time'  : append.time
@@ -328,84 +329,6 @@ function handleBatch( file ) {
 			}, Promise.resolve( true ) ).then( fulfill );
 		} );
 	} );
-}
-
-/**
- * If the log is new, the dump it and don't write an empty file!
- *
- * @param {LogFile} log
- *
- * @return {Boolean}
- */
-function maybePurge( log ) {
-	// If no entries, truncate and exit
-	if ( log.newFile ) {
-		fs.closeSync( log.fd );
-		fs.unlinkSync( log.path );
-
-		return true;
-	}
-
-	return false;
-}
-
-/**
- * Append a single logfile.
- *
- * @param {Object}  append
- * @param {Boolean} [exit]
- */
-function appendLog( append, exit ) {
-	if ( undefined === exit ) {
-		exit = true;
-	}
-
-	// Get a log file
-	var log;
-	try {
-		log = new LogFile( append.file, append.key );
-	} catch ( e ) {
-		return util.invalid( exit );
-	}
-
-	// Validate our secret key
-	if ( ! log.isValidSecret() ) {
-		maybePurge( log );
-
-		return util.invalid( exit );
-	}
-
-	// The name is really the type and name concatenated
-	var type = append.visitor_type.trim()[0];
-
-	// Parse our entry
-	var entry = new Entry( {
-		'name'  : type + append.name,
-		'action': append.action,
-		'room'  : append.room,
-		'time'  : append.time
-	} );
-
-
-	// If it's an invalid entry, or if the timestamp fails to validate, err
-	if ( ! entry.isValid() || entry.time <= log.meta.time ) {
-		maybePurge( log );
-
-		return util.invalid( exit );
-	}
-
-	// Handle the action
-	if ( ! handleAction( log, entry ) ) {
-		maybePurge( log );
-
-		return util.invalid( exit );
-	}
-
-	// Append the log
-	log.newEntries.push( entry );
-
-	// We're done, so let's close the logfile
-	log.close();
 }
 
 // Validate the entry arguments

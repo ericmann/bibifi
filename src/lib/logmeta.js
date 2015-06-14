@@ -109,11 +109,10 @@ LogMeta.prototype.activateVisitor = function( name ) {
  * Check whether or not a visitor is active.
  *
  * @param {String} name
- * @param {String} type
  *
  * @returns {Boolean}
  */
-LogMeta.prototype.visitorIsActive = function( name, type ) {
+LogMeta.prototype.visitorIsActive = function( name ) {
 	// Get the ID of the name from the dictionary
 	var visitor_id = this.visitorID( name );
 
