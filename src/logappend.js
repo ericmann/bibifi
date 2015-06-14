@@ -219,8 +219,7 @@ function readBatch( readable ) {
  *
  */
 function handleBatch( file ) {
-	var lineStream = new LineStream(),
-		logfile = false;
+	var lineStream = new LineStream();
 
 	return new Promise( function( fulfill, reject ) {
 		fs.createReadStream( file )
@@ -237,73 +236,11 @@ function handleBatch( file ) {
 					continue;
 				}
 
-				// If we don't have a log, let's get one!
-				if ( false === logfile ) {
-					try {
-						logfile = new LogFile( append.file, append.key );
-					} catch ( e ) {
-						return util.invalid();
-					}
-
-					// Validate our secret key
-					if ( ! logfile.isValidSecret() ) {
-						maybePurge( logfile );
-						return util.invalid();
-					}
-				}
-
-				// The name is really the type and name concatenated
-				var type = append.visitor_type.trim()[0];
-
-				// Parse the entry
-				var entry = new Entry( {
-					'name'   : type + append.name,
-					'action' : append.action,
-					'room'   : append.room,
-					'time'   : append.time,
-					'secret' : append.key,
-					'logfile': append.file
-				} );
-
-				// If it's an invalid entry, or if the timestamp fails to validate, err
-				if ( ! entry.isValid() || entry.time <= logfile.meta.time ) {
-					if ( maybePurge( logfile ) ) {
-						logfile = false;
-					}
-
-					process.stdout.write( 'invalid' );
-					continue;
-				}
-
-				// Make sure the entry is for this log
-				if ( entry.secret !== logfile.passkey ) {
-					if ( maybePurge( logfile ) ) {
-						logfile = false;
-					}
-
-					process.stdout.write( 'invalid' );
-					continue;
-				}
-
-				// Handle the action
-				if ( ! handleAction( logfile, entry ) ) {
-					if ( maybePurge( logfile ) ) {
-						logfile = false;
-					}
-
-					process.stdout.write( 'invalid' );
-					continue;
-				}
-
-				// Append the log
-				logfile.newEntries.push( entry );
+				appendLog( append, false );
 			}
 		} );
 
 		lineStream.on( 'end', function() {
-			if ( logfile ) {
-				logfile.close();
-			}
 			fulfill();
 		} );
 	} );
@@ -328,6 +265,65 @@ function maybePurge( log ) {
 	return false;
 }
 
+/**
+ * Append a single logfile.
+ *
+ * @param {Object}  append
+ * @param {Boolean} [exit]
+ */
+function appendLog( append, exit ) {
+	if ( undefined === exit ) {
+		exit = true;
+	}
+
+	// Get a log file
+	var log;
+	try {
+		log = new LogFile( append.file, append.key );
+	} catch ( e ) {
+		return util.invalid( exit );
+	}
+
+	// Validate our secret key
+	if ( ! log.isValidSecret() ) {
+		maybePurge( log );
+
+		return util.invalid( exit );
+	}
+
+	// The name is really the type and name concatenated
+	var type = append.visitor_type.trim()[0];
+
+	// Parse our entry
+	var entry = new Entry( {
+		'name'  : type + append.name,
+		'action': append.action,
+		'room'  : append.room,
+		'time'  : append.time
+	} );
+
+
+	// If it's an invalid entry, or if the timestamp fails to validate, err
+	if ( ! entry.isValid() || entry.time <= log.meta.time ) {
+		maybePurge( log );
+
+		return util.invalid( exit );
+	}
+
+	// Handle the action
+	if ( ! handleAction( log, entry ) ) {
+		maybePurge( log );
+
+		return util.invalid( exit );
+	}
+
+	// Append the log
+	log.newEntries.push( entry );
+
+	// We're done, so let's close the logfile
+	log.close();
+}
+
 // Validate the entry arguments
 var append = cli.validate_append_args();
 
@@ -337,52 +333,7 @@ if ( 'valid' !== append.status ) {
 
 switch( append.type ) {
 	case 'entry':
-		// Get a log file
-		var log;
-		try {
-			log = new LogFile( append.file, append.key );
-		} catch ( e ) {
-			return util.invalid();
-		}
-
-		// Validate our secret key
-		if ( ! log.isValidSecret() ) {
-			maybePurge( log );
-
-			return util.invalid();
-		}
-
-		// The name is really the type and name concatenated
-		var type = append.visitor_type.trim()[0];
-
-		// Parse our entry
-		var entry = new Entry( {
-			'name'  : type + append.name,
-			'action': append.action,
-			'room'  : append.room,
-			'time'  : append.time
-		} );
-
-
-		// If it's an invalid entry, or if the timestamp fails to validate, err
-		if ( ! entry.isValid() || entry.time <= log.meta.time ) {
-			maybePurge( log );
-
-			return util.invalid();
-		}
-
-		// Handle the action
-		if ( ! handleAction( log, entry ) ) {
-			maybePurge( log );
-
-			return util.invalid();
-		}
-
-		// Append the log
-		log.newEntries.push( entry );
-
-		// We're done, so let's close the logfile
-		log.close();
+		appendLog( append, true );
 
 		break;
 	case 'batch':

@@ -121,18 +121,32 @@ Util.prototype.decryptData = function( pass_key, ciphertext ) {
 
 /**
  * Print an error message.
+ *
+ * @param {Boolean} [exit]
  */
-Util.prototype.invalid = function() {
+Util.prototype.invalid = function( exit ) {
+	if ( undefined === exit ) {
+		exit = true;
+	}
+
 	process.stdout.write( 'invalid' );
-	process.exit( 255 );
+
+	exit && process.exit( 255 );
 };
 
 /**
  * Print an error message.
+ *
+ * @param {Boolean} [exit]
  */
-Util.prototype.integrityViolation = function() {
+Util.prototype.integrityViolation = function( exit ) {
+	if ( undefined === exit ) {
+		exit = true;
+	}
+
 	process.stdout.write( 'integrity violation' );
-	process.exit( 255 );
+
+	exit && process.exit( 255 );
 };
 
 /**
