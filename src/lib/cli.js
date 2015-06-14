@@ -169,17 +169,12 @@ CLI.prototype.validate_query = function( argv ) {
 		param = argv[i];
 
 		// Grab a key parameter
-		if ( param.indexOf( '-K' ) === 0 ) {
-			// If the key is standalone
-			if ( param === '-K' ) {
-				i += 1;
-				query.key = argv[ i ];
-			} else {
-				query.key = param.replace( '-K', '' );
-			}
+		if ( param === '-K' ) {
+			i += 1;
+			query.key = argv[ i ];
 		}
 		// Grab the Status query
-		else if ( param.indexOf( '-S' ) === 0 ) {
+		else if ( '-S' === param ) {
 			// Only one query type is allowed
 			if ( type_selected && type_selected !== 'S' ) {
 				return query;
@@ -189,7 +184,7 @@ CLI.prototype.validate_query = function( argv ) {
 			type_selected = 'S';
 		}
 		// Grab the Room query
-		else if ( param.indexOf( '-R' ) === 0 ) {
+		else if ( '-R' === param ) {
 			// Only one query type is allowed
 			if ( type_selected && type_selected !== 'R' ) {
 				return query;
@@ -199,7 +194,7 @@ CLI.prototype.validate_query = function( argv ) {
 			type_selected = 'R';
 		}
 		// Grab the Time query
-		else if ( param.indexOf( '-T' ) === 0 ) {
+		else if ( '-T' === param ) {
 			// Only one query type is allowed
 			if ( type_selected && type_selected !== 'T' ) {
 				return query;
@@ -209,7 +204,7 @@ CLI.prototype.validate_query = function( argv ) {
 			type_selected = 'T';
 		}
 		// Grab the Collision query
-		else if ( param.indexOf( '-I' ) === 0 ) {
+		else if ( '-I' === param ) {
 			// Only one query type is allowed
 			if ( type_selected && type_selected !== 'I' ) {
 				return query;
@@ -219,24 +214,16 @@ CLI.prototype.validate_query = function( argv ) {
 			type_selected = 'I';
 		}
 		// Grab an employee
-		else if ( param.indexOf( '-E' ) === 0 ) {
-			if ( param === '-E' ) {
-				i += 1;
-				name = argv[i];
-			} else {
-				name = param.replace( '-E', '' );
-			}
+		else if ( param === '-E' ) {
+			i += 1;
+			name = argv[i];
 
 			query.names.push( 'E-' + name )
 		}
 		// Grab a guest
-		else if ( param.indexOf( '-G' ) === 0 ) {
-			if ( param === '-G' ) {
-				i += 1;
-				name = argv[i];
-			} else {
-				name = param.replace( '-G', '' );
-			}
+		else if ( param === '-G' ) {
+			i += 1;
+			name = argv[i];
 
 			query.names.push( 'G-' + name )
 		}
@@ -249,6 +236,11 @@ CLI.prototype.validate_query = function( argv ) {
 			query.file = param;
 			log_parsed = true;
 		}
+	}
+
+	// Make sure the key is valid
+	if ( /[^(a-zA-Z0-9)]/gi.test( query.key ) ) {
+		return query;
 	}
 
 	// If we're good, we're valid!
