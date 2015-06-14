@@ -132,11 +132,12 @@ CLI.prototype.validate_append_args = function( argv ) {
 	}
 
 	// Make sure the key is valid
-	if ( /[^(a-zA-Z0-9)]/gi.test( append_query.key ) ) {
+	if ( null === append_query.key || /[^(a-zA-Z0-9)]/gi.test( append_query.key ) ) {
 		return append_query;
 	}
 
-	if ( /[^(a-zA-Z0-9_\.\/)]/g.test( append_query.file ) ) {
+	// Validate logfile
+	if ( null === append_query.file || /[^(a-zA-Z0-9_\.\/)]/g.test( append_query.file ) ) {
 		return append_query;
 	}
 
@@ -243,7 +244,12 @@ CLI.prototype.validate_query = function( argv ) {
 	}
 
 	// Make sure the key is valid
-	if ( /[^(a-zA-Z0-9)]/gi.test( query.key ) ) {
+	if ( null === query.key || /[^(a-zA-Z0-9)]/gi.test( query.key ) ) {
+		return query;
+	}
+
+	// Validate file
+	if ( null === query.file || /[^(a-zA-Z0-9_\.\/)]/g.test( query.file ) ) {
 		return query;
 	}
 
