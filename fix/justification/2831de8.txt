@@ -1,0 +1,1 @@
+Name entries with invalid characters should be rejected, not merely sanitized.

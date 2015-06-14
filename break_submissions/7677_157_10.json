@@ -1,0 +1,46 @@
+{
+  "target_team": 157,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "1", "-G", "BUZZ", "-A", "log10"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "2", "-G", "BUZZ", "-A", "-R", "1", "log10"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "3", "-G", "BUZZ", "-L", "-R", "1", "log10"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "5", "-G", "BUZZ", "-A", "-R", "2", "log10"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "10", "-G", "BUZZ", "-L", "-R", "2", "log10"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "20", "-G", "BUZZ", "-L", "log10"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "23", "-G", "BUZZ", "-A", "log10"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "NOTASECRET", "-T", "-G", "BUZZ", "log10"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "25", "-G", "BUZZ", "-A", "-R", "5", "log10"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "NOTASECRET", "-T", "-G", "BUZZ", "log10"]
+    }
+  ]
+}

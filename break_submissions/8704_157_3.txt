@@ -1,0 +1,1 @@
+Should print integrity violation from /etc/passwd

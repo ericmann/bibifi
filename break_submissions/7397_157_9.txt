@@ -1,0 +1,2 @@
+-T Gives the total time spent in the gallery by an employee or guest. If the employee or guest is still in the gallery, print the time spent so far. Output in an integer on a single line.
+See https://www.builditbreakit.org/static/doc/spring2015/spec/LOGREAD.html

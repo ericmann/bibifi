@@ -1,0 +1,14 @@
+{
+  "target_team": 157,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "1", "-G", "BUZ_Z", "-A", "log13"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "2", "-G", "BUZZ1", "-A", "log13"]
+    }
+  ]
+}

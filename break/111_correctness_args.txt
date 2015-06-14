@@ -1,0 +1,1 @@
+Junk arguments should trigger an error.

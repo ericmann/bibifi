@@ -1,0 +1,1 @@
+application crash if batch file provided doesn't exist

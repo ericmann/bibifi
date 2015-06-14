@@ -1,0 +1,4 @@
+logread -I
+
+From logread spec:
+-I Prints the rooms, as a comma-separated list of room IDs, that were occupied by all the specified employees and guests at the same time over the complete history of the gallery. Room IDs should be printed in ascending numerical order.

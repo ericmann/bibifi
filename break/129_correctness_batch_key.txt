@@ -1,0 +1,1 @@
+The key for all entries in a batch must match.

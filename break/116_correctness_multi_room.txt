@@ -1,0 +1,1 @@
+Only the last room flag should be used

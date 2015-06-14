@@ -1,0 +1,6 @@
+This program does not respond correctly to an invalid
+logappend command. Specifically, when given a logappend
+command that places a person directly in a room, even though
+it is recognised as an invalid command, the pair
+logfile name - token is reserved. This results to the wrong
+output to the following logappend command.

@@ -32,16 +32,20 @@ var argv = process.argv.slice( 2 );
 function getStatus( log ) {
 	// Get real names
 	var employees = [], guests = [],
-		employee_ids = log.meta.activeEmployees,
-		guest_ids = log.meta.activeGuests,
+		active_visitors = log.meta.activeVisitors,
 		i, l;
 
-	for ( i = 0, l = employee_ids.length; i < l; i++ ) {
-		employees.push( log.meta.dictionary[ employee_ids[ i ] ] );
-	}
+	for ( i = 0, l = active_visitors.length; i < l; i++ ) {
+		var visitor = log.meta.dictionary[ active_visitors[ i ] ];
 
-	for ( i = 0, l = guest_ids.length; i < l; i++ ) {
-		guests.push( log.meta.dictionary[ guest_ids[ i ] ] );
+		switch( visitor[0] ) {
+			case 'E':
+				employees.push( visitor.substr( 1 ) );
+				break;
+			case 'G':
+				guests.push( visitor.substr( 1 ) );
+				break;
+		}
 	}
 
 	employees = employees.sort().join( ',' );
@@ -51,7 +55,7 @@ function getStatus( log ) {
 	var rooms = {},
 		people = Object.keys( log.meta.locations );
 
-	for ( var i = 0, l = people.length; i < l; i++ ) {
+	for ( i = 0, l = people.length; i < l; i++ ) {
 		var occupant = people[ i ],
 			room = log.meta.locations[ occupant ];
 
@@ -70,7 +74,7 @@ function getStatus( log ) {
 			rooms[ room ] = [];
 		}
 
-		rooms[ room ].push( log.meta.dictionary[ occupant ] );
+		rooms[ room ].push( log.meta.dictionary[ occupant].substr(1) );
 	}
 
 	// Get ordered room keys
@@ -114,8 +118,12 @@ function getHistory( log, names ) {
 		type = concatenated[0],
 		name = concatenated.substr( 2 );
 
+	// Get a name for the index
+	var stored_name = type + name;
+
 	// Get our entries - we only have one visitor, so life is easy!
-	var entries = log.entriesForVisitors( [[name,type]] );
+	var entries = log.entriesForVisitors( [stored_name] );
+
 	for ( var i = 0, l = entries.length; i < l; i++ ) {
 		var entry = entries[ i ];
 
@@ -160,7 +168,9 @@ function getTime( log, names ) {
 		type = concatenated[0],
 		name = concatenated.substr( 2 );
 
-	var entries = log.entriesForVisitors( [[name, type]] );
+	var real_name = type + name;
+
+	var entries = log.entriesForVisitors( [real_name] );
 
 	for ( var i = 0, l = entries.length; i < l; i++ ) {
 		var entry = entries[ i ];
@@ -169,7 +179,7 @@ function getTime( log, names ) {
 		maxTime = entry.time;
 
 		// Until the visitor enters the library, we don't care about entries
-		if ( false === entryTime && name !== entry.name ) {
+		if ( false === entryTime && real_name !== entry.name ) {
 			continue;
 		}
 		// When they first visit the library, we set their entry time
@@ -221,8 +231,10 @@ function getCollisions( log, names ) {
 		var type = concatenated[0],
 			name = concatenated.substr( 2 );
 
-		visitors.push( [name, type] );
-		testCollection.push( name );
+		var real_name = type + name;
+
+		visitors.push( real_name );
+		testCollection.push( real_name );
 	}
 
 	// Get our entries so we can replay a subset of history

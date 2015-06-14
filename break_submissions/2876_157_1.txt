@@ -1,0 +1,3 @@
+Log append specification (https://www.builditbreakit.org/static/doc/spring2015/spec/LOGAPPEND.html option -R) states that room numbers should be positive integers within a range.
+
+The application currently accepts and processes negative room numbers as input.

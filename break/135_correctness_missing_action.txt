@@ -1,0 +1,1 @@
+Program should handle a missing -A/-L without crashing.

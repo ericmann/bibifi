@@ -1,0 +1,18 @@
+{
+  "target_team": 157,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-T", "6", "-K", "secret", "-A", "-E", "RIANA", "-R", "1", "log1"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-T", "7", "-K", "secret", "-A", "-E", "RIANA",  "log1"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "secret", "-S", "log1"]
+    }
+  ]
+}

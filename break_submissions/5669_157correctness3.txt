@@ -1,0 +1,1 @@
+The logread program provides data on all individuals instead of just one individual in the parameter -G | -E.

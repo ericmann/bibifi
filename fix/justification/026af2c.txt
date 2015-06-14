@@ -1,0 +1,1 @@
+Security keys should be strictly alphanumeric and previous versions of the application were allowing special characters!

@@ -1,0 +1,1 @@
+Each line in a batch file can specify a different log file.

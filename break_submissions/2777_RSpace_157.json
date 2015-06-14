@@ -1,0 +1,30 @@
+{
+  "target_team": 157,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-T", "5", "-K", "1", "-A", "-G", "miro", "logg"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-T", "6", "-K", "1", "-A", "-G", "miro", "-R", "10", "logg"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-T", "7", "-K", "1", "-L", "-G", "miro", "-R", "10", "logg"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-T", "8", "-K", "1", "-A", "-E", "miro", "logg"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-T", "9", "-K", "1", "-A", "-E", "miro", "-R", "50", "logg"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "1", "-R", "-E", "miro", "logg"]
+    }
+  ]
+}

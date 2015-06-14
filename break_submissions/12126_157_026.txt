@@ -1,0 +1,1 @@
+Batch bug: Switched to a different log with a different key in batch, should not be a problem.  Logread queries 2nd log.  Expected output is 'Some

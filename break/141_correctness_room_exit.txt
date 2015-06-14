@@ -1,0 +1,1 @@
+Visitors can only exit the room they're currently in.

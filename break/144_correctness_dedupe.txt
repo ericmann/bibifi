@@ -1,0 +1,1 @@
+Logs should allow employees and guests with the same name, just not within the same group.

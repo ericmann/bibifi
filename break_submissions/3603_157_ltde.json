@@ -1,0 +1,102 @@
+{
+    "target_team": 157, 
+    "type": "correctness", 
+    "commands": [
+        {
+            "program": "logappend", 
+            "args": [
+                "-T", 
+                "1", 
+                "-K", 
+                "SECRET", 
+                "-E", 
+                "GLAYDS", 
+                "-A", 
+                "RSRYYXDZ"
+            ]
+        }, 
+        {
+            "program": "logappend", 
+            "args": [
+                "-T", 
+                "2", 
+                "-K", 
+                "SECRET", 
+                "-E", 
+                "GLAYDS", 
+                "-A", 
+                "-R", 
+                "5", 
+                "RSRYYXDZ"
+            ]
+        }, 
+        {
+            "program": "logappend", 
+            "args": [
+                "-T", 
+                "3", 
+                "-K", 
+                "SECRET", 
+                "-E", 
+                "GLAYDS", 
+                "-L", 
+                "-R", 
+                "5", 
+                "RSRYYXDZ"
+            ]
+        }, 
+        {
+            "program": "logappend", 
+            "args": [
+                "-T", 
+                "4", 
+                "-K", 
+                "SECRET", 
+                "-E", 
+                "GLAYDS", 
+                "-L", 
+                "RSRYYXDZ"
+            ]
+        }, 
+        {
+            "program": "logappend", 
+            "args": [
+                "-T", 
+                "5", 
+                "-K", 
+                "SECRET", 
+                "-E", 
+                "GLAYDS", 
+                "-A", 
+                "RSRYYXDZ"
+            ]
+        }, 
+        {
+            "program": "logappend", 
+            "args": [
+                "-T", 
+                "6", 
+                "-K", 
+                "SECRET", 
+                "-E", 
+                "GLAYDS", 
+                "-A", 
+                "-R", 
+                "3", 
+                "RSRYYXDZ"
+            ]
+        }, 
+        {
+            "program": "logread", 
+            "args": [
+                "-K", 
+                "SECRET", 
+                "-T", 
+                "-E", 
+                "GLAYDS", 
+                "RSRYYXDZ"
+            ]
+        }
+    ], 
+    "batch": ""
+}

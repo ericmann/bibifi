@@ -1,0 +1,32 @@
+{
+    "target_team": 157,
+    "type": "correctness",
+    "commands": [
+        {
+	        "program": "logappend",
+            "args": [
+                "-B",
+                "batch"
+            ]
+        },
+        {
+	        "program": "logread",
+            "args": [
+                "-K",
+                "FYDDSIWV",
+                "-S",
+                "HHFNPRAJ"
+            ]
+        },
+        {
+	        "program": "logread",
+            "args": [
+                "-K",
+                "FYDDSIWV",
+                "-S",
+                "HHHHHHHH"
+            ]
+        }
+    ],
+    "batch": "LVQgMSAtSyBGWUREU0lXViAtRyBQRVJSWSAtQSBISEZOUFJBSgotVCAxIC1LIEZZRERTSVdWIC1HIFBFUlJZIC1BIEhISEhISEhICi1UIDIgLUsgRllERFNJV1YgLUcgQU5JVFJBIC1BIEhIRk5QUkFKCi1UIDIgLUsgRllERFNJV1YgLUcgQU5JVFJBIC1BIEhISEhISEhICi1UIDMgLUsgRllERFNJV1YgLUcgUEVSUlkgLUEgLVIgMSBISEZOUFJBSgotVCAzIC1LIEZZRERTSVdWIC1HIFBFUlJZIC1BIC1SIDIgSEhISEhISEgK"
+}

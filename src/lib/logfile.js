@@ -40,7 +40,6 @@ function LogFile( file, passkey ) {
 	this.metaIndex = null;
 	this.meta = null;
 	this.newEntries = [];
-
 }
 
 /**
@@ -48,9 +47,15 @@ function LogFile( file, passkey ) {
  *
  * The file is an encrypted GZip string, so we first decrypt, then we decompress, then we populate a buffer.
  *
+ * @param {Boolean} [exit]
+ *
  * @returns {Promise}
  */
-LogFile.prototype.read = function() {
+LogFile.prototype.read = function( exit ) {
+	if ( undefined === exit ) {
+		exit = true;
+	}
+
 	var logFile = this;
 
 	return new Promise( function( resolve, reject ) {
@@ -70,9 +75,7 @@ LogFile.prototype.read = function() {
 					.on( 'error', util.invalid );
 
 			} catch ( e ) {
-				console.log( '--------' );
-				//console.log( e );
-				return util.invalid();
+				return util.invalid( exit );
 			}
 
 			var dataBuffers = [];
@@ -84,8 +87,6 @@ LogFile.prototype.read = function() {
 						dataBuffers.push( buff );
 					}
 				} catch ( e ) {
-					console.log( '++++' );
-					console.log( e );
 				}
 			} );
 
@@ -376,25 +377,21 @@ LogFile.prototype.entriesForVisitors = function( visitors ) {
 		var visitor = visitors[ i ];
 
 		// Get the ID of the name from the dictionary
-		var visitor_id = log.meta.visitorID( visitor[0] );
+		var visitor_id = log.meta.visitorID( visitor );
 
-		switch( visitor[1] ) {
-			case 'E':
-				if ( ! _.contains( log.meta.activeEmployees, visitor_id ) && ! _.contains( log.meta.inactiveEmployees, visitor_id ) ) {
+		if ( ! _.contains( log.meta.activeVisitors, visitor_id ) && !_.contains( log.meta.inactiveVisitors, visitor_id ) ) {
+			valid = false;
+		} else {
+			switch( visitor[0] ) {
+				case 'E':
+					employees.push( visitor );
+					break;
+				case 'G':
+					guests.push( visitor );
+					break;
+				default:
 					valid = false;
-				} else {
-					employees.push( visitor[0] );
-				}
-				break;
-			case 'G':
-				if ( ! _.contains( log.meta.activeGuests, visitor_id ) && ! _.contains( log.meta.inactiveGuests, visitor_id ) ) {
-					valid = false;
-				} else {
-					guests.push( visitor[0] );
-				}
-				break;
-			default:
-				valid = false;
+			}
 		}
 	}
 
@@ -414,7 +411,7 @@ LogFile.prototype.entriesForVisitors = function( visitors ) {
 		entry = Entry.prototype.parse( entry.toString(), this );
 
 		// If this is a good entry, let's keep it
-		if ( ( 'E' === entry.type && _.contains( employees, entry.name ) ) || ( 'G' === entry.type && _.contains( guests, entry.name ) ) ) {
+		if ( _.contains( employees, entry.name ) || _.contains( guests, entry.name ) ) {
 			entries.push( entry );
 		}
 	}

@@ -1,0 +1,176 @@
+
+BREAK IT BUG REPORT #8: JUSTIFICATION ON WHY THIS IS A CORRECTNESS BUG:
+BY: RAUL GARCIA
+TEAM: CODE TIGERS
+DATE:  6/1/15
+TYPE: CORRECTNESS
+CAUSE: FAILURE TO DETECT MULTIPLE CORRECTNESS ERRORS OR LOGREAD REPORTS DO NOT MATCH ORACLE
+ERROR: CORRECTNESS 
+
+JUSTIFICATION:
+
+The syntax rules for logappend/logread are:
+
+logappend -T <timestamp> -K <token> (-E <employee-name> | -G <guest-name>) (-A | -L) [-R <room-id>] <log>
+logread -K <token> -S <log>
+
+AND
+
+logread -K <token> -T (-E <name> | -G <name>) <log>
+logread -K <token> -I (-E <name> | -G <name>) [(-E <name> | -G <name>) ...] <log>
+
+In this batch we add new checks for optional parms such as logread -I,  logread -T and also try too fool all the
+non optional parm like logread -S and logread -R.
+
+The main way we try to fool them is by having situations where twice employees/guests enter the gallery and exit the galllery and then enter again and exit again (with other logs in between). We also use various rooms such as integer and zero filled, names with case differences to see if sorts are ok etc. In particular we try to fool this way the time counts. We also try with non existent names, incorrect passwords or logs, or reports for empty galleries.
+
+The main idea is to compare the log -S and other reports with the oracles output. 
+
+We use 5 log files to add complexity and try to confuse the logread at the end with incorrect passwords.
+
+Also, after adding a complex scenario of logappends, since there are 5 log files,
+we check if logread can match correctly the log file that was created by logappend..
+
+JSON TEMPLATE USED:
+
+{
+
+  "target_team": ???,
+  "type": "correctness",
+  "commands": [
+{ "program": "logappend",
+  "args": ["-T","1" ,"-K" ,"pw1" ,"-A" ,"-E" ,"Fred" ,"log1"] },
+{ "program": "logappend",
+  "args": ["-T", "2" ,"-K" ,"pw1" ,"-A" ,"-G" ,"Jill" ,"log1"] },
+{ "program": "logappend",
+  "args": ["-T", "3" ,"-K" ,"pw1" ,"-A" ,"-E" ,"Fred" ,"-R", "1" ,"log1"] },
+{ "program": "logappend",
+  "args": ["-T", "4" ,"-K" ,"pw1" ,"-A" ,"-G" ,"Jill" ,"-R", "1" ,"log1"] },
+{ "program": "logappend",
+  "args": ["-T", "5" ,"-K" ,"pw1" ,"-L" ,"-E" ,"Fred" ,"-R", "1" ,"log1"] },
+
+{ "program": "logappend",
+  "args": ["-T", "1" ,"-K" ,"pw1" ,"-A" ,"-E" ,"Fred", "log2"] },
+{ "program": "logappend",
+  "args": ["-T", "2" ,"-K" ,"pw1" ,"-A" ,"-G" ,"Jill", "log2"] },
+{ "program": "logappend",
+  "args": ["-T", "3" ,"-K" ,"pw1" ,"-A" ,"-E" ,"Fred" ,"-R", "1" ,"log2"] },
+{ "program": "logappend",
+  "args": ["-T","4","-K" ,"pw1" ,"-A" ,"-G" ,"Jill" ,"-R", "1" ,"log2"] },
+{ "program": "logappend",
+  "args": ["-T","5" ,"-K" ,"pw1" ,"-L" ,"-E" ,"Fred" ,"-R", "1" ,"log2"] },
+{ "program": "logappend",
+  "args": ["-T","6" ,"-K" ,"pw1" ,"-A" ,"-E" ,"Fred" ,"-R", "2" ,"log2"] },
+{ "program": "logappend",
+  "args": ["-T","7" ,"-K" ,"pw1" ,"-L" ,"-E" ,"Fred" ,"-R", "2" ,"log2"] },
+{ "program": "logappend",
+  "args": ["-T","8" ,"-K" ,"pw1" ,"-A" ,"-E" ,"Fred" ,"-R", "3" ,"log2"] },
+{ "program": "logappend",
+  "args": ["-T","9" ,"-K" ,"pw1" ,"-L" ,"-E" ,"Fred" ,"-R", "3" ,"log2"] },
+{ "program": "logappend",
+  "args": ["-T","10" ,"-K" ,"pw1" ,"-A" ,"-E" ,"FreD" ,"log2"] },
+{ "program": "logappend",
+  "args": ["-T","11" ,"-K" ,"pw1" ,"-A" ,"-E" ,"FRED" ,"log2"] },
+{ "program": "logappend",
+  "args": ["-T","12" ,"-K" ,"pw1" ,"-A" ,"-E" ,"FreD" ,"-R", "2" ,"log2"] },
+{ "program": "logappend",
+  "args": ["-T","13" ,"-K" ,"pw1" ,"-A" ,"-E" ,"FRED" ,"-R", "2" ,"log2"] },
+{ "program": "logappend",
+  "args": ["-T","14" ,"-K" ,"pw1" ,"-L" ,"-E" ,"FRED" ,"-R", "2" ,"log2"] },
+
+{ "program": "logappend",
+  "args": ["-T","4" ,"-K" ,"pw1" ,"-A" ,"-G", "GXXX"  ,"log1"] },
+  { "program": "logappend",
+  "args": ["-T","5" ,"-K" ,"pw2" ,"-A" ,"-G", "GXXX"  ,"log1"] },
+  { "program": "logappend",
+  "args": ["-T","6" ,"-K" ,"pw1" ,"-A" ,"-G", "gxxx"  ,"log1"] },
+{ "program": "logappend",
+  "args": ["-T","6" ,"-K" ,"pw1" ,"-A" ,"-E" ,"FRED" ,"log1"] },
+{ "program": "logappend",
+  "args": ["-T","7" ,"-K" ,"pw1" ,"-L" ,"-E" ,"FRED" ,"log1"] },
+{ "program": "logappend",
+  "args": ["-T","8" ,"-K" ,"pw1" ,"-A" ,"-E" ,"FRED" ,"log1"] },
+{ "program": "logappend",
+  "args": ["-T","9" ,"-K" ,"pw1" ,"-L" ,"-E" ,"FRED" ,"log1"] },
+{ "program": "logappend",
+  "args": ["-T","1" ,"-K" ,"pw1" ,"-A" ,"-E" ,"FRED" ,"log10"] },
+{ "program": "logappend",
+  "args": ["-T","2" ,"-K" ,"pw1" ,"-L" ,"-E" ,"FRED" ,"log10"] },
+{ "program": "logappend",
+  "args": ["-T","2" ,"-K" ,"pw1" ,"-A" ,"-E" ,"FRED" ,"log10"] },
+{ "program": "logappend",
+  "args": ["-T","4" ,"-K" ,"pw1" ,"-L" ,"-E" ,"FRED" ,"log10"] },
+{ "program": "logappend",
+  "args": ["-T","10" ,"-K", "pw2" ,"-A" ,"-E" ,"FRED" ,"log100"] },
+{ "program": "logappend",
+  "args": ["-T","20" ,"-K", "pw2" ,"-L" ,"-E" ,"FRED" ,"log100"] },
+{ "program": "logappend",
+  "args": ["-T","30" ,"-K", "pw2" ,"-A" ,"-E" ,"FRED" ,"log100"] },
+{ "program": "logappend",
+  "args": ["-T","40" ,"-K" ,"pw1" ,"-L" ,"-E" ,"FRED" ,"log100"] },
+{ "program": "logappend",
+  "args": ["-T","16" ,"-K" ,"pw1" ,"-A" ,"-E" ,"Fred" ,"-R", "0002" ,"log1"] },
+{ "program": "logappend",
+  "args": ["-T","17" ,"-K" ,"pw1" ,"-L" ,"-E" ,"Fred" ,"-R", "2" ,"log1"] },
+{ "program": "logappend",
+  "args": ["-T","18" ,"-K" ,"pw1" ,"-A" ,"-E" ,"Fred" ,"-R", "003" ,"log1"] },
+{ "program": "logappend",
+  "args": ["-T","19" ,"-K" ,"pw1" ,"-L" ,"-E" ,"Fred" ,"-R", "03" ,"log1"] },
+{ "program": "logappend",
+  "args": ["-T","20" ,"-K" ,"pw1" ,"-L" ,"-E" ,"Fred" ,"log1"] },
+
+        {
+        "program": "logread",
+        "args": ["-K" ,"pw1", "-S" ,"log1"] },
+        {
+        "program": "logread",
+        "args": ["-K" ,"pw1", "-S", "log2"] },
+       {
+        "program": "logread",
+        "args": ["-K" ,"pw1" ,"-R" ,"-E" ,"Fred","log2"] },
+       {
+       "program": "logread",
+       "args": ["-K" ,"pw1" ,"-R" ,"-E" ,"Fred" ,"log1"] },
+       {
+        "program": "logread",
+        "args": ["-K" ,"pw1","-T" ,"-E" ,"Fred" ,"log1"] },
+       {
+        "program": "logread",
+        "args": ["-K" ,"pw1","-T" ,"-E" ,"Fred","log2"] },
+
+       {
+        "program": "logread",
+        "args": ["-K" ,"pw1" ,"-R" ,"-E","FrSS" ,"log1"] },
+       {
+        "program": "logread",
+         "args": ["-K" ,"pw1" ,"-R" ,"-E", "FrSS","log2"] },
+       {
+        "program": "logread",
+        "args": ["-K" ,"pw1","-T" ,"-E", "FrXX","log1"] },
+       {
+       "program": "logread",
+        "args": ["-K" ,"pw1","-T" ,"-E", "FrXX","log2"] },
+       {
+        "program": "logread",
+        "args": ["-K" ,"pw1","-I" ,"-E", "Fred","log1"] },
+       {
+       "program": "logread",
+        "args": ["-K" ,"pw1","-I" ,"-E", "FrXX","log2"] },
+               {
+       "program": "logread",
+        "args": ["-K" ,"pw2","-I" ,"-E", "FRED","log100"] },
+         {
+       "program": "logread",
+        "args": ["-K" ,"pw2","-R" ,"-E", "FRED","log100"] },
+             {
+        "program": "logread",
+        "args": ["-K" ,"pw2","-T" ,"-E", "FRED","log100"] },
+             {
+       "program": "logread",
+        "args": ["-K" ,"pw2","-S", "log100"] },
+            {
+         "program": "logread",
+        "args": ["-K" ,"pw1","-S", "log100"] }
+  ]
+
+}

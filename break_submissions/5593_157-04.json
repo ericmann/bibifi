@@ -1,0 +1,1 @@
+{"target_team": 157, "type": "correctness", "commands": [{"program": "logappend", "args": ["-B", "batch"]}, {"program": "logread", "args": ["-K", "secret", "-S", "TESTLOG2"]}], "batch": "LVQgMSAtSyBzZWNyZXQgLUcgR0lHR0lPIC1MIFRFU1RMT0cxCi1UIDEgLUsgc2VjcmV0IC1HIEdJR0dJTyAtQSBURVNUTE9HMg=="}

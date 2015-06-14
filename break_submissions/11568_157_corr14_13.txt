@@ -1,0 +1,1 @@
+Maximum room ID is 1073741823. (SPEC.html, Changelog, 5/19/15.)

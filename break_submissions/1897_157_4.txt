@@ -1,0 +1,2 @@
+This token consists of an arbitrary-sized string of alphanumeric (a-z, A-Z, and 0-9) characters. see https://www.builditbreakit.org/static/doc/spring2015/spec/LOGAPPEND.html
+If the tocken contains other characters, logappend should print invalid and return 255

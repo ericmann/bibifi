@@ -1,0 +1,1 @@
+Many read operations, all incomplete, and so all should return "invalid".

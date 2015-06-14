@@ -1,0 +1,34 @@
+{
+  "target_team": 157,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-A", "-T", "1", "-G", "AAA", "log"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-A", "-T", "2", "-L", "-G", "AAA", "log"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-L", "-T", "3", "-A", "-G", "AAA", "log"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-A", "-T", "4", "-L", "-E", "BBB", "log"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-L", "-T", "5", "-A", "-E", "BBB", "log"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-T", "6", "-G", "CCC", "log"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "secret", "-S", "log"]
+    }
+  ]
+}

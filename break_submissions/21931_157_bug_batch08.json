@@ -1,0 +1,15 @@
+{
+  "target_team":157,
+  "type": "correctness",
+  "commands": [
+{
+ "program": "logappend",
+ "args": ["-B", "batch"]
+},
+{
+ "program": "logread",
+ "args": ["-K", "secret", "-I", "-G", "Jill", "-E", "Bob", "log"]
+}
+  ],
+ "batch": "LUsgc2VjcmV0IC1UIDYgLUEgLUUgSmlsbCBsb2cNCi1LIHNlY3JldCAtVCA3IC1BIC1FIEppbGwgLVIgOTkgbG9nDQotSyBzZWNyZXQgLVQgOSAtQSAtRSBCb2IgbG9nDQotSyBzZWNyZXQgLVQgMTAgLUEgLUUgQm9iIC1SIDk5IGxvZw0KLUsgc2VjcmV0IC1UIDE3IC1MIC1FIEppbGwgLVIgOTkgbG9nDQotSyBzZWNyZXQgLVQgMjAgLUwgLUUgQm9iIC1SIDk5IGxvZw0KLUsgc2VjcmV0IC1UIDMwIC1BIC1FIEJvYiAtUiAxMCBsb2cNCi1LIHNlY3JldCAtVCA0MCAtQSAtRSBKaWxsIC1SIDc3NzcgbG9nDQotSyBzZWNyZXQgLVQgNTAgLUwgLUUgQm9iIC1SIDEwIGxvZw0KLUsgc2VjcmV0IC1UIDYwIC1BIC1FIEJvYiAtUiA3Nzc3IGxvZw0KLUsgc2VjcmV0IC1UIDcwIC1MIC1FIEJvYiAtUiA3Nzc3IGxvZw0KLUsgc2VjcmV0IC1UIDgwIC1BIC1HIEppbGwgbG9nDQotSyBzZWNyZXQgLVQgODggLUEgLUcgSmlsbCAtUiA1IGxvZw0KLUsgc2VjcmV0IC1UIDc2ODAgLUEgLUUgQm9iIC1SIDUgbG9n"
+}

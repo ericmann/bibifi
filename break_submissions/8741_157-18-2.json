@@ -1,0 +1,30 @@
+{
+  "target_team": 157,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-T", "5", "-K", "secret", "-A", "-E", "Gone", "LOGXG"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-T", "6", "-K", "secret", "-L", "-E", "Gone", "LOGXG"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-T", "100", "-K", "secret", "-A", "-E", "StillInside", "LOGXG"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-T", "150", "-K", "secret", "-A", "-E", "LastEvent", "LOGXG"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "secret", "-T", "-E", "Gone", "LOGXG"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "secret", "-T", "-E", "StillInside", "LOGXG"]
+    }
+  ]
+}

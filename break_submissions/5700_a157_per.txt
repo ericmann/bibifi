@@ -1,0 +1,15 @@
+[ "logappend -T 1 -K secret@% -A -E Fred log37" ]
+
+should printout:
+
+[
+    {
+        "exit": 255,
+        "output": "invalid\n"
+    }
+]
+
+instead we get:
+
+ubuntu@bibivm:~/breakit/157/code/build$ ./logappend -T 1 -K secret@% -A -E Fred log37
+ubuntu@bibivm:~/breakit/157/code/build$

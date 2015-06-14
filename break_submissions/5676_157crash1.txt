@@ -1,0 +1,2 @@
+The logappend program omits the parameter -A when a new person arrives to the gallery.
+The logappend program tries to read a "null" parameter and crashes.

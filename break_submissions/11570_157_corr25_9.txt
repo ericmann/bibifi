@@ -1,0 +1,1 @@
+Tokens may not contain periods. (logappend spec, -K parameter.)

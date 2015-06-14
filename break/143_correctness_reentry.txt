@@ -1,0 +1,1 @@
+Visitors should be able to enter, exit, re-enter, re-exit the gallery without error.

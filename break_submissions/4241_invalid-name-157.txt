@@ -1,0 +1,1 @@
+A name can only contain alphabetic characters.

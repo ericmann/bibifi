@@ -1,0 +1,28 @@
+{
+  "target_team": 157,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-B", "batch"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "secret", "-S", "log1"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "secret", "-S", "log2"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "other", "-S", "log3"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "badtok", "-S", "log1"]
+    }
+  ],
+  "batch": "LUsgc2VjcmV0IC1UIDEgLUEgLUUgQUFBIGxvZzENCi1LIHNlY3JldCAtVCAyIC1BIC1SIDcgLUcgQkJCIGxvZzENCi1LIHNlY3JldCAtVCAxIC1BIC1HIEJCQiBsb2cyDQotSyBzZWNyZXQgLVQgMyAtQSAtUiA1IC1FIEFBQSBsb2cxDQotSyBzZWNyZXQgLVQgMiAtQSAtUiA2NCAtRyBCQkIgbG9nMg0KLUsgc2VjcmV0IC1UIDEgLUEgLVIgMTAgLUUgQUFBIGxvZzENCi1LIHNlY3JldCAtVCA0IC1BIC1HIEJCQiBsb2cxDQotSyBvdGhlciAtVCAxIC1BIC1HIEJCQiBsb2czDQotSyBzZWNyZXQgLVQgNSAtQSAtUiA2NCAtRyBCQkIgbG9nMQ0KLUsgc2VjcmV0IC1UIDMgLUwgLVIgNjQgLUcgQkJCIGxvZzINCi1LIHNlY3JldCAtVCA0IC1BIC1SIDk5IC1HIEJCQiBsb2cyDQotSyB3cm9uZzEgLVQgNiAtTCAtUiA2NCAtRyBCQkIgbG9nMQ0KLUsgc2VjcmV0IC1UIDUgLUEgLUcgQUFBIGxvZzINCi1LIHNlY3JldCAtVCA3IC1MIC1SIDUgLUUgQUFBIGxvZzENCi1LIHNlY3JldCAtVCA4IC1BIC1SIDY0IC1FIEFBQSBsb2cxDQotSyBzZWNyZXQgLVQgNiAtTCAtUiA5OSAtRyBCQkIgbG9nMg0KLUsgb3RoZXIgLVQgMiAtQSAtUiA2NCAtRyBCQkIgbG9nMw0KLUsgc2VjcmV0IC1UIDkgLUwgLVIgNjQgLUcgQkJCIGxvZzENCi1LIGJhZHRvayAtVCAxMCAtQSAtRSBDQ0MgbG9nMQ0KLUsgc2VjcmV0IC1UIDcgLUEgLUcgQkJCIGxvZzINCi1LIHNlY3JldCAtVCAxMSAtTCAtRyBCQkIgbG9nMQ0KLUsgc2VjcmV0IC1UIDEyIC1BIC1HIEJCQiBsb2cxDQo="
+}
+

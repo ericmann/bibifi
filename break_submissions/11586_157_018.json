@@ -1,0 +1,18 @@
+{
+  "target_team": 157,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-T", "1", "-G", "Lou", "-A", "logread_no_key"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-T", "2", "-G", "Lou", "-A", "-R", "13", "logread_no_key"]
+    },
+    {
+      "program": "logread",
+      "args": ["-R", "-G", "Lou", "logread_no_key"]
+    }
+  ]
+}

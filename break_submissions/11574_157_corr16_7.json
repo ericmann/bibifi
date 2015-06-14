@@ -1,0 +1,14 @@
+{
+  "target_team":  157,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-T", "1", "-K", "UBSVZGIX", "-E", "JOSHUA", "-A", "TPWMVDMZ"] 
+    },
+    {
+      "program": "logappend",
+      "args": ["-T", "2", "-K", "UBSVZGIX", "-E", "JOSHUA", "-A", "-R", "-1.5", "TPWMVDMZ"] 
+    }
+  ]
+}

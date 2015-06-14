@@ -1,0 +1,1 @@
+log is created even if argument are wrong but logappend cannot work anymore with correct argument

@@ -1,0 +1,59 @@
+{
+  "target_team": 157, 
+  "type": "correctness", 
+  "commands": [
+    {
+      "output": "invalid", 
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "1", 
+        "-K", 
+        "UBSVZGIX", 
+        "-E", 
+        "J\u00fcrgen", 
+        "-A", 
+        "bad_invalid_nameslog"
+      ]
+    }, 
+    {
+      "output": "invalid", 
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "1", 
+        "-K", 
+        "UBSVZGIX", 
+        "-E", 
+        "Ren\u00e8", 
+        "bad_invalid_nameslog"
+      ]
+    }, 
+    {
+      "output": "invalid", 
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "1", 
+        "-K", 
+        "UBSVZGIX", 
+        "-E", 
+        "0123", 
+        "bad_invalid_nameslog"
+      ]
+    }, 
+    {
+      "output": "invalid", 
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "1", 
+        "-K", 
+        "UBSVZGIX", 
+        "-E", 
+        "JENNY-MARIA", 
+        "bad_invalid_nameslog"
+      ]
+    }
+  ]
+}

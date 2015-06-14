@@ -1,0 +1,1 @@
+Bytes from 150 to 249 have been modified in the log file (without touching all byte with character '$'). This to ensure we can modify specific records.

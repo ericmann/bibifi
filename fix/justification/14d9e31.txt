@@ -1,0 +1,1 @@
+Both periods and slashes should be allowed in filenames.

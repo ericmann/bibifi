@@ -1,0 +1,1 @@
+Does not properly relay error on long files names for logappend. Assuming it did succeed, the logread result is incorrect.

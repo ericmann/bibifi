@@ -1,0 +1,1 @@
+Employee leaves the gallery without entering. Logappend command should not update logread in case of an invalid entry. See: https://www.builditbreakit.org/static/doc/spring2015/spec/SPEC.html

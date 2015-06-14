@@ -1,0 +1,1 @@
+Erroneous lines in the batch file should print "invalid" and continue. Batches should always exit with code 0.

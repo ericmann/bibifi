@@ -1,0 +1,34 @@
+{
+	"target_team": 157,
+	"type": "correctness",
+	"commands": [
+	{
+		"program": "logappend",
+		"args": ["-K", "secret", "-T", "10", "-A", "-E", "Fred", "LOG"]
+	},
+        {
+                "program": "logappend",
+                "args": ["-K", "secret", "-T", "20", "-A", "-E", "João", "LOG"]
+        },
+        {
+                "program": "logappend",
+                "args": ["-K", "secret", "-T", "25", "-A", "-E", "Kléber", "LOG"]
+        },
+        {
+                "program": "logappend",
+                "args": ["-K", "secret", "-T", "30", "-A", "-E", "Lingüiça", "LOG"]
+        },
+        {
+                "program": "logappend",
+                "args": ["-K", "secret", "-T", "35", "-A", "-E", "Vovô", "LOG"]
+        },
+        {
+                "program": "logappend",
+                "args": ["-K", "secret", "-T", "37", "-A", "-E", "Asàmoa", "LOG"]
+        },
+	{
+		"program": "logread",
+		"args": ["-K", "secret", "-S", "LOG"]
+	}
+	]
+}

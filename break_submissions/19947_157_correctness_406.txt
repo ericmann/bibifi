@@ -1,0 +1,1 @@
+Logappend incorrect behaviour with same name persons.

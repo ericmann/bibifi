@@ -1,0 +1,1 @@
+negative time in batch file ins not rejected properly. logread -S reports this person.

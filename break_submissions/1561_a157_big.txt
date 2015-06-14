@@ -1,0 +1,21 @@
+[ "logappend -T 1 -K secret -A -E Fred log115", "logappend -T 2 -K secret -A -E Fred -R 1073741825 log115" ]
+
+should printout:
+
+[
+    {
+        "exit": 0,
+        "output": ""
+    },
+    {
+        "exit": 255,
+        "output": "invalid\n"
+    }
+]
+instead we get:
+
+ubuntu@bibivm:~/breakit/157/code/build$ sh  ~/breakit/biglog
+./logappend -T 1 -K secret  -A -E Fred log115
+./logappend -T 2 -K secret  -A -E Fred -R 1073741825 log115
+ubuntu@bibivm:~/breakit/157/code/build$
+

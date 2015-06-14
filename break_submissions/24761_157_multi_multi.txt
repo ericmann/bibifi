@@ -1,0 +1,10 @@
+logappend outputs "invalid" for every line in the batch file (and does not
+output any new lines).
+
+It seems that actually, the first logfile is created by logappend.
+
+It also seems that logread creates non-existing log files "on the fly",
+but it also strips the .s from the filename - so it creates 157_multi1log
+instead of reading the 157_multi.1.log which was created by logappend.
+
+

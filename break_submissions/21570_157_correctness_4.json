@@ -1,0 +1,114 @@
+{
+    "target_team": 157,
+    "type": "correctness", 
+    "commands": [
+        {
+            "args": [
+                "--help"
+            ], 
+            "program": "logappend"
+        }, 
+        {
+            "args": [
+                "--help"
+            ], 
+            "program": "logread"
+        }, 
+        {
+            "args": [
+                "-h"
+            ], 
+            "program": "logappend"
+        }, 
+        {
+            "args": [
+                "-h"
+            ], 
+            "program": "logread"
+        }, 
+        {
+            "args": [
+                "--token"
+            ], 
+            "program": "logappend"
+        }, 
+        {
+            "args": [
+                "--token"
+            ], 
+            "program": "logread"
+        }, 
+        {
+            "args": [
+                "-T", 
+                "1", 
+                "-K", 
+                "CDDLSRNY", 
+                "-E", 
+                "JOSHUA", 
+                "-A", 
+                "--help", 
+                "CBSOEPFM"
+            ], 
+            "program": "logappend"
+        }, 
+        {
+            "args": [
+                "-T", 
+                "2", 
+                "-K", 
+                "CDDLSRNY", 
+                "-E", 
+                "SARAH", 
+                "-A", 
+                "--token", 
+                "CBSOEPFM"
+            ], 
+            "program": "logappend"
+        }, 
+        {
+            "args": [
+                "-T", 
+                "3", 
+                "-K", 
+                "CDDLSRNY", 
+                "-G", 
+                "NOELLE", 
+                "-A", 
+                "-h", 
+                "CBSOEPFM"
+            ], 
+            "program": "logappend"
+        }, 
+        {
+            "args": [
+                "-K", 
+                "CDDLSRNY", 
+                "-S", 
+                "--help", 
+                "CBSOEPFM"
+            ], 
+            "program": "logread"
+        }, 
+        {
+            "args": [
+                "-K", 
+                "CDDLSRNY", 
+                "-S", 
+                "--token", 
+                "CBSOEPFM"
+            ], 
+            "program": "logread"
+        }, 
+        {
+            "args": [
+                "-K", 
+                "CDDLSRNY", 
+                "-S", 
+                "-h", 
+                "CBSOEPFM"
+            ], 
+            "program": "logread"
+        }
+    ]
+}

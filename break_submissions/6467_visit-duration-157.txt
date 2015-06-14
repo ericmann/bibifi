@@ -1,0 +1,1 @@
+-T Gives the total time spent in the gallery by an employee or guest. If the employee or guest is still in the gallery, print the time spent so far. Output in an integer on a single line. This feature is optional. If the specified employee or guest does not appear in the gallery, then nothing is printed.

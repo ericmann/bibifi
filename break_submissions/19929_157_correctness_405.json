@@ -1,0 +1,30 @@
+{
+    "target_team": 157,
+    "type": "correctness",
+    "commands": [
+        {
+            "program": "logappend",
+            "args": [
+                "-T",
+                "1",
+                "-K",
+                "key",
+                "-E",
+                "ana",
+                "-A",
+                "log"
+            ]
+        },
+        {
+            "program": "logread",
+            "args": [
+                "-K",
+                "key",
+                "-T",
+                "-E",
+                "bob",
+                "log"
+            ]
+        }
+    ]
+}

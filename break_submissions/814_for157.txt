@@ -1,0 +1,19 @@
+Sorry this is the same issue, made mistake in the .json before put -K batch instaed of -B batch
+log3 file is not created for this batch:
+
+-K secret -T 1 -A -E John log2
+-K secret -T 2 -A -R 0 -E John log2
+-K secret -T 3 -A -G James log3
+-K secret -T 4 -A -R 0 -G James log3
+-K secret -T 5 -A -E Johna log2
+-K secret -T 6 -A -R 0 -E Johna log2
+
+
+
+ ./logappend -B ~/breakit/125/code/build/batch6
+invalidinvalidubuntu@bibivm:~/breakit/157/code/build$ ls
+lib  log2  logappend  logread  makefile
+ubuntu@bibivm:~/breakit/157/code/build$ ./logread -K secret -S log3
+
+
+ubuntu@bibivm:~/breakit/157/code/build$

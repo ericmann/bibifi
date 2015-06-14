@@ -1,0 +1,1 @@
+if -B is present, no args besides batch filename should be allowed on cmdline

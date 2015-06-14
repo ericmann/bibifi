@@ -1,0 +1,6 @@
+Invalid argument: non existent batch file, expecting an error.
+Details: Expected 'invalid' got '/home/ubuntu/breakit/157/code/build/logappend:230
+	returnnewPromise(function(fulfill,reject){
+	^
+ReferenceError:Promiseisnotdefined
+athandleBatch(/home/ub

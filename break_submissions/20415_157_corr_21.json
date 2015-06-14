@@ -1,0 +1,38 @@
+{
+  "target_team": 157,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-T", "1", "-K", "s", "-G", "J%hn", "-A", "log021"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-T", "2", "-K", "s", "-G", "_onic", "-A", "log021"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-T", "3", "-K", "s", "-G", "Eve9", "-A", "log021"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-T", "4", "-K", "s", "-G", "Karl-Heinz", "-A", "log021"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-T", "5", "-K", "s", "-G", "h4xx0r3!ee7", "-A", "log021"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-T", "6", "-K", "s", "-G", "John,Doe", "-A", "log021"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-T", "7", "-K", "s", "-G", "John.Doe", "-A", "log021"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "s", "-S", "log021"]
+    }
+  ]
+}

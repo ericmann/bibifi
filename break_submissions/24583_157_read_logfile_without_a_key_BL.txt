@@ -1,0 +1,1 @@
+Allows to read a log file without a key!

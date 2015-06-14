@@ -1,0 +1,12 @@
+{
+  "target_team": 144,
+  "type": "integrity",
+  "commands": [
+    {
+      "program": "logread",
+      "args": ["-S"]
+    }
+  ],
+  "logfile": "OXHRZRWA",
+  "replacement": "alBFMm42d05maFdGZlZiV05JcXNvZUVoa0s3S1B2U29MR0c4NFFobTZGOD0Kcm9xTWUxQjdab09YT0RoZ1dMOHlHMlF1SThCYTN4NTJGWVY4TUs2eDk5ST0="
+}

@@ -1,0 +1,1 @@
+Incorrect behavior on batch option (-B) without a batch file specified.

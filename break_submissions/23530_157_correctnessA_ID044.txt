@@ -1,0 +1,1 @@
+If the log file does not exist, logread should exit 255 with a consistent message.

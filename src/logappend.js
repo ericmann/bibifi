@@ -30,24 +30,22 @@ var argv = process.argv.slice( 2 );
  *
  * @param {LogFile} log
  * @param {String}  name
- * @param {String}  type Either E or G
  * @param {Number}  timestamp
  *
  * @returns {Boolean}
  */
-function enterGallery( log, name, type, timestamp ) {
+function enterGallery( log, name, timestamp ) {
 	// Sanitize arguments
 	name = name.replace( /[^(a-zA-Z)]/g, '' );
-	type = type.toUpperCase().replace( /[^(E|G)]/g, '' ).substring( 0, 1 );
 	timestamp = parseInt( timestamp, 10 );
 
 	// Sanitization failed
-	if ( '' === name || '' === type || isNaN( timestamp ) ) {
+	if ( '' === name || isNaN( timestamp ) ) {
 		return false;
 	}
 
 	// Attempt to activate our visitor
-	if ( ! log.meta.activateVisitor( type, name ) ) {
+	if ( ! log.meta.activateVisitor( name ) ) {
 		return false;
 	}
 
@@ -149,19 +147,17 @@ function exitRoom( log, name, type, room, timestamp ) {
  *
  * @param {LogFile} log
  * @param {String}  name
- * @param {String}  type
  * @param {Number}  timestamp
  *
  * @returns {Boolean}
  */
-function exitGallery( log, name, type, timestamp ) {
+function exitGallery( log, name, timestamp ) {
 	// Sanitize arguments
 	name = name.replace( /[^(a-zA-Z)]/g, '' );
-	type = type.toUpperCase().replace( /[^(E|G)]/g, '' ).substring( 0, 1 );
 	timestamp = parseInt( timestamp, 10 );
 
 	// Sanitization failed
-	if ( '' === name || '' === type || isNaN( timestamp ) ) {
+	if ( '' === name || isNaN( timestamp ) ) {
 		return false;
 	}
 
@@ -171,7 +167,7 @@ function exitGallery( log, name, type, timestamp ) {
 	}
 
 	// Attempt to deactivate the visitor
-	if ( ! log.meta.deactivateVisitor( type, name ) ) {
+	if ( ! log.meta.deactivateVisitor( name ) ) {
 		return false;
 	}
 
@@ -195,14 +191,14 @@ function handleAction( log, entry ) {
 	switch( entry.action ) {
 		case 'A':
 			if ( null === entry.room || 'L' === entry.room ) {
-				success = enterGallery( log, entry.name, entry.type, entry.time );
+				success = enterGallery( log, entry.name, entry.time );
 			} else {
 				success = enterRoom( log, entry.name, entry.type, entry.room, entry.time );
 			}
 			break;
 		case 'L':
 			if ( null === entry.room || 'L' === entry.room ) {
-				success = exitGallery( log, entry.name, entry.type, entry.time );
+				success = exitGallery( log, entry.name, entry.time );
 			} else {
 				success = exitRoom( log, entry.name, entry.type, entry.room, entry.time );
 			}
@@ -240,11 +236,16 @@ function validateEntry( logFile, entry ) {
 /**
  * Handle a specific entry.
  *
- * @param {Object} append
+ * @param {Object}  append
+ * @param {Boolean} [exit]
  *
  * @returns {Promise}
  */
-function handleEntry( append ) {
+function handleEntry( append, exit ) {
+	if ( undefined === exit ) {
+		exit = true;
+	}
+
 	var logFile = new LogFile( append.file, append.key );
 
 	// Parse our entry
@@ -257,11 +258,11 @@ function handleEntry( append ) {
 	} );
 
 	return new Promise( function ( fulfill, reject ) {
-		logFile.read().then( function () {
+		logFile.read( exit ).then( function () {
 
 			// Handle the action
 			if ( ! validateEntry( logFile, entry ) || ! handleAction( logFile, entry ) ) {
-				return util.invalid();
+				return util.invalid( exit );
 			}
 
 			// Append the log
@@ -280,14 +281,13 @@ function handleEntry( append ) {
  * @param {String} file
  */
 function handleBatch( file ) {
-	var lineStream = new LineStream(),
-		logfile = false;
+	var lineStream = new LineStream();
 
 	return new Promise( function( fulfill, reject ) {
 		fs.createReadStream( file )
 			.pipe( lineStream );
 
-		var entries = [];
+		var entryPromises = [];
 
 		lineStream.on( 'readable', function() {
 			var line;
@@ -307,56 +307,105 @@ function handleBatch( file ) {
 					'logfile': append.file
 				} );
 
+				if ( 'entry' !== append.type || 'valid' !== append.status ) {
+					process.stdout.write( 'invalid' );
+					continue;
+				}
+
 				if ( 'entry' !== append.type ) {
 					process.stdout.write( 'invalid' );
 					continue;
 				}
 
-				if ( 0 === entries.length ) {
-					entries.push( append );
-				} else {
-					entries.push( entry );
-				}
+				entryPromises.push( handleEntry( append ) );
 			}
 		} );
 
+
 		lineStream.on( 'end', function() {
-			// Process the first entry
-			var first = entries.shift();
-
-			handleEntry( first ).then( function() {
-				return new Promise( function( fulfill, reject ) {
-
-					var logFile = new LogFile( first.file, first.key );
-
-					logFile.read().then( function() {
-
-						for ( var i = 0, l = entries.length; i < l; i ++ ) {
-							var entry = entries[ i ];
-
-							// Make sure the entry is for this log
-							if ( ! validateEntry( logFile, entry ) || entry.logfile !== logFile.path || entry.secret !== logFile.passkey ) {
-								process.stdout.write( 'invalid' );
-							}
-							// Handle the action
-							else if ( ! handleAction( logFile, entry ) ) {
-								process.stdout.write( 'invalid' );
-							}
-							// Append the log
-							else {
-								logFile.newEntries.push( entry );
-							}
-						}
-
-						fulfill( logFile );
-					} );
-				} ).then( function ( log ) {
-						log.close();
-					} );
-			} );
-
+			entryPromises.reduce( function( curr, next ) {
+				return curr.then( next );
+			}, Promise.resolve( true ) ).then( fulfill );
 		} );
 	} );
+}
+
+/**
+ * If the log is new, the dump it and don't write an empty file!
+ *
+ * @param {LogFile} log
+ *
+ * @return {Boolean}
+ */
+function maybePurge( log ) {
+	// If no entries, truncate and exit
+	if ( log.newFile ) {
+		fs.closeSync( log.fd );
+		fs.unlinkSync( log.path );
+
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * Append a single logfile.
+ *
+ * @param {Object}  append
+ * @param {Boolean} [exit]
+ */
+function appendLog( append, exit ) {
+	if ( undefined === exit ) {
+		exit = true;
+	}
+
+	// Get a log file
+	var log;
+	try {
+		log = new LogFile( append.file, append.key );
+	} catch ( e ) {
+		return util.invalid( exit );
+	}
+
+	// Validate our secret key
+	if ( ! log.isValidSecret() ) {
+		maybePurge( log );
+
+		return util.invalid( exit );
+	}
+
+	// The name is really the type and name concatenated
+	var type = append.visitor_type.trim()[0];
+
+	// Parse our entry
+	var entry = new Entry( {
+		'name'  : type + append.name,
+		'action': append.action,
+		'room'  : append.room,
+		'time'  : append.time
+	} );
+
+
+	// If it's an invalid entry, or if the timestamp fails to validate, err
+	if ( ! entry.isValid() || entry.time <= log.meta.time ) {
+		maybePurge( log );
+
+		return util.invalid( exit );
+	}
+
+	// Handle the action
+	if ( ! handleAction( log, entry ) ) {
+		maybePurge( log );
+
+		return util.invalid( exit );
+	}
+
+	// Append the log
+	log.newEntries.push( entry );
+
+	// We're done, so let's close the logfile
+	log.close();
 }
 
 // Validate the entry arguments

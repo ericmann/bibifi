@@ -1,0 +1,69 @@
+{
+    "target_team": 157, 
+    "type": "correctness", 
+    "commands": [
+        {
+            "program": "logappend", 
+            "args": [
+                "-T", 
+                "-1", 
+                "-K", 
+                "DMDNPESL", 
+                "-E", 
+                "JOSHUA", 
+                "-A", 
+                "WWNOSAPE"
+            ]
+        }, 
+        {
+            "program": "logappend", 
+            "args": [
+                "-T", 
+                "-2", 
+                "-K", 
+                "DMDNPESL", 
+                "-E", 
+                "JOSHUA", 
+                "-A", 
+                "-R", 
+                "2", 
+                "WWNOSAPE"
+            ]
+        }, 
+        {
+            "program": "logappend", 
+            "args": [
+                "-T", 
+                "-3", 
+                "-K", 
+                "DMDNPESL", 
+                "-G", 
+                "NOELLE", 
+                "-A", 
+                "WWNOSAPE"
+            ]
+        }, 
+        {
+            "program": "logappend", 
+            "args": [
+                "-T", 
+                "-4", 
+                "-K", 
+                "DMDNPESL", 
+                "-G", 
+                "SHENITA", 
+                "-A", 
+                "WWNOSAPE"
+            ]
+        }, 
+        {
+            "program": "logread", 
+            "args": [
+                "-K", 
+                "DMDNPESL", 
+                "-S", 
+                "WWNOSAPE"
+            ]
+        }
+    ]
+}

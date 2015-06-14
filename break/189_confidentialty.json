@@ -1,0 +1,12 @@
+{
+  "target_team": 189,
+  "type": "confidentiality",
+  "logfile": "UBVSXDZI",
+  "commands": [
+    {
+      "program": "logread",
+      "args": ["-R", "-G", "ZULMA"],
+      "output": "8"
+    }
+  ]
+}

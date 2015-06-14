@@ -1,0 +1,40 @@
+
+BREAK IT BUG REPORT #2: JUSTIFICATION ON WHY THIS IS A BUG:
+BY: RAUL GARCIA
+TEAM: CODE TIGERS
+DATE:  5/31/14
+TYPE: CORRECTNESS
+CAUSE: LACK OF PROPER CHECKING OF THE LOGAPPEND PARMS
+ERROR: THE -E OR -G IS MISSING WITH THEIR RESPECTIVE PARMS
+
+JUSTIFICATION:
+
+Basically we tell the log some guy arrives or leaves - but we forgot to say who!
+
+The specs for the project mention for logappend:
+
+logappend -T <timestamp> -K <token> (-E <employee-name> | -G <guest-name>) (-A | -L) [-R <room-id>] <log>
+
+In the part: (-E <employee-name> | -G <guest-name>) we state that these are obligatory - either -E xxx or -G xxxx.
+
+Now it is essential to check for K,T and the log file since these define a log file.
+
+But to detect that the parm -E and -G are missing the coder has to have an internal count of the used parms
+or directly verify them or have a correct regex expression. We beleive that many will not do this but just
+parse the parm and their argument values. Maybe check that E/G are there but it may pass the if/else in the
+case there is no match. 
+
+
+TEST CASE TEMPLATE:
+
+{
+  "target_team": ???,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-K", "secret", "-T", "1", "-A", "log1"]
+    }
+  ]
+
+}

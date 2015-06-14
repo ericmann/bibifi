@@ -1,0 +1,1 @@
+Visitor type flag should be upper case.

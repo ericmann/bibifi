@@ -1,0 +1,1 @@
+Name given to logappend for -S function, which requires no name. Expected output is 'invalid'

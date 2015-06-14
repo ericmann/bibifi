@@ -1,0 +1,15 @@
+{
+  "target_team": 157,
+  "type": "correctness",
+  "commands": [
+    { "program": "logappend", "args": [ "-T", "1", "-K", "SECRETKEY", "-E", "KRIEGER", "-A", "KKCOMPLEX" ] },
+    { "program": "logappend", "args": [ "-T", "2", "-K", "SECRETKEY", "-E", "KRIEGER", "-A", "-R", "2", "KKCOMPLEX" ] },
+    { "program": "logappend", "args": [ "-T", "3", "-K", "SECRETKEY", "-E", "KRIEGER", "-L", "-R", "2", "KKCOMPLEX" ] },
+    { "program": "logappend", "args": [ "-T", "4", "-K", "SECRETKEY", "-E", "LANA", "-A", "KKCOMPLEX" ] },
+    { "program": "logappend", "args": [ "-T", "5", "-K", "SECRETKEY", "-E", "LANA", "-A", "-R", "2", "KKCOMPLEX" ] },
+    {
+      "program": "logread",
+      "args": [ "-K", "SECRETKEY", "-I", "-E", "LANA", "-E", "KRIEGER", "KKCOMPLEX"]
+    }
+  ]
+}

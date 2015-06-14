@@ -1,0 +1,1 @@
+logappend lets enter negative numbers of rooms.

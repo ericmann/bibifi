@@ -11,6 +11,7 @@ log6
 node_modules/nodeunit
 node_modules/.bin/nodeunit
 node_modules/.bin/nodeunit.cmd
+break/validate.py
 
 # Built files
 build/lib

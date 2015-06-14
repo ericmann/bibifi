@@ -1,0 +1,1 @@
+wrong logread parameter with wrong command into the batch file

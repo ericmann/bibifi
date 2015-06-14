@@ -1,0 +1,2 @@
+Testing different wrong ways to provide a parameter to the application.
+The application was supposed to refuse all append operations with "invalid" (except the first).

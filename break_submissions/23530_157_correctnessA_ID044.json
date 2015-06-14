@@ -1,0 +1,26 @@
+{
+  "target_team": 157, 
+  "type": "correctness", 
+  "commands": [
+    {
+      "output": "invalid", 
+      "program": "logread", 
+      "args": [
+        "-K", 
+        "sec3", 
+        "-S", 
+        "thisfiledoesnotexist123log"
+      ]
+    }, 
+    {
+      "output": "invalid", 
+      "program": "logread", 
+      "args": [
+        "-K", 
+        "sec3", 
+        "-S", 
+        "thisfiledoesnotexist123log"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+Acording to the spefication of the Build, Timestamp value must be between 1 to 1073741823 inclusively, but
+this app allow to use a timestamp over this range and don't show a invalid message.

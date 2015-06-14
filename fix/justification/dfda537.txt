@@ -1,0 +1,1 @@
+As per the updated spec, employees and guests can have the same name in the gallery. The code was previously forcing names to be unique across the superset of groups.

@@ -1,0 +1,32 @@
+{
+  "target_team": 157, 
+  "type": "correctness", 
+  "commands": [
+    {
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "1", 
+        "-K", 
+        "sec", 
+        "-E", 
+        "Laura", 
+        "-A", 
+        "personkindchecknameslog"
+      ]
+    }, 
+    {
+      "program": "logappend", 
+      "args": [
+        "-T", 
+        "2", 
+        "-K", 
+        "sec", 
+        "-G", 
+        "Laura", 
+        "-A", 
+        "personkindchecknameslog"
+      ]
+    }
+  ]
+}

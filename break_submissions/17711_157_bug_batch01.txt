@@ -1,0 +1,1 @@
+unintelligible batchfile. should return 0 but returns error code.

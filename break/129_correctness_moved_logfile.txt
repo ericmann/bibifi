@@ -1,0 +1,1 @@
+Logfiles are permitted in other directories!

@@ -1,0 +1,80 @@
+
+BREAK IT BUG REPORT #9: JUSTIFICATION ON WHY THIS IS A BUG:
+BY: RAUL GARCIA
+TEAM: CODE TIGERS
+DATE:  6/2/14
+TYPE: CORRECTNESS
+CAUSE: LACK OF SEPARATION OF LOG FILES VS BATCH FILES, AND INVALID PASSWORDS FOR LOGREAD
+ERROR: TWO LOG FILES ARE CREATED - LOG 1 AND 2. Then we issue a logappend -B for log1 after logappend for log2.
+       At the end we issue logreads with incorrect passwords.
+
+JUSTIFICATION:
+
+The specs for the project mention for logappend:
+
+logappend -T <timestamp> -K <token> (-E <employee-name> | -G <guest-name>) (-A | -L) [-R <room-id>] <log>
+logappend -B file
+
+The program logappend must keep separate lists of logfiles vs batch files - since these are two different entities.
+The program shoud know not to allow mixing of these two which implicitly are meant for different purposes.
+The batch files are never encrypted, while the log files can be encrypted.
+
+It is essential to check for K,T and the log file since these define a log file.
+
+Now the command logappend -B file assumes it is issued for the previous logappend and it's log file,
+there is no logfile mentioned with -B, since we assume each record of the batch file will have a log file at the end.
+
+We are telling logappend to insert the records in the (previous) log file if all is ok (password, time and same log file).
+
+But since we created a log in step 1 we do have an existing log1 (file). Then we create log2 with another logappend.
+Then we issue a logappend -B for log2 (is after logappend for log2) with the log1 as batch file - which already exists.
+
+The program logappend should know that the current log file to append is log2. 
+But we give it log1 which was created with another password (and may be encrypted).
+
+Thus the oracle gives a double invalid - which is unexpected (one is enough?) and logappend -B should always return 0.
+In futher test if pw1=pw2 we get three invalid's.
+
+The last two checks should give integrity violation-since they are the incorrect passwords for logread.
+
+JSON TEMPLATE :
+
+
+{
+  "target_team": ???,
+  "type": "correctness",
+  "commands": [
+ 
+    {
+      "program": "logappend",
+      "args": ["-K", "pw1", "-T", "2", "-E", "Fred", "-A", "log1"]
+    },
+     
+     {
+      "program": "logappend",
+      "args": ["-K", "pw2", "-T", "1", "-E", "Fred", "-A", "log2"]
+    },
+
+    {
+      "program": "logappend",
+      "args": ["-B", "log1"]
+    },
+    {
+      "program": "logread",
+      "args": [ "-K", "pw1", "-S", "log1"]
+    },
+    {
+      "program": "logread",
+      "args": [ "-K", "pw2", "-S" ,"log2"]
+    },
+     {
+      "program": "logread",
+      "args": [ "-K", "pw2", "-S", "log1"]
+    },
+    {
+      "program": "logread",
+      "args": [ "-K", "pw1", "-S" ,"log2"]
+    }
+ ]
+ 
+}

@@ -1,0 +1,1 @@
+This app crash when no log is given

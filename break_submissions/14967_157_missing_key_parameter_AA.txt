@@ -1,0 +1,1 @@
+Should not allow append to a new log file if key parameter is missing

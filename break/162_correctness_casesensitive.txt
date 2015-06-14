@@ -1,0 +1,1 @@
+Names should be case-sensitive; in this case a second entry is created and corrupts the logfile on subsequent reads!

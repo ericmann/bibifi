@@ -1,0 +1,1 @@
+when switching logfiles inside a batch, each logfile should have its own latest timestamp and should validate against it

@@ -1,0 +1,1 @@
+Logread incorrect behaviour two persons same name.

@@ -1,0 +1,2 @@
+Invalid flags: 'action' flag missing, expecting an error.
+Details: Expected 'invalid' got '' on ./logread -K secret log1 (error? <nil>)

@@ -1,0 +1,4 @@
+This test uses a batch file manipulating multiple log files at once, using wrong token
+and other invalid operations, checking that all the output for the wrong parameters
+is generated, as well as being able to read the state of the generated log files.
+This submission was not capable of following these rules.

@@ -1,0 +1,6 @@
+Invalid flags: person missing, expecting an error.
+Details: Expected 'invalid' got '/home/ubuntu/breakit/157/code/build/logread:161
+		type=concatenated[0],
+		^
+TypeError:Cannotreadproperty'0'ofundefined
+atgetTime(/home/ubuntu/breakit/157/code/build/l

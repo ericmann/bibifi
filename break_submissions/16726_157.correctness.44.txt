@@ -1,0 +1,1 @@
+Time spent in the gallery by a person who never entered in, should not raise 'invalid'.

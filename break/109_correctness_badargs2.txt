@@ -1,0 +1,1 @@
+Extra parameters (i.e. -R) in an entry should trigger an invalid warning.

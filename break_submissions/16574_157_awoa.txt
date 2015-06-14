@@ -1,0 +1,1 @@
+If logappend must exit due to an error condition, or if the argument combination is incomplete or contradictory, logappend should print "invalid" to stdout and exit, returning a 255. 

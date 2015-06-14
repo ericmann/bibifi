@@ -1,0 +1,12 @@
+{
+  "target_team": 182,
+  "type": "integrity",
+  "commands": [
+    {
+      "program": "logread",
+      "args": ["-S"]
+    }
+  ],
+  "logfile": "FYNHGZAN",
+  "replacement": "OTkwZGFmNGI4YzE5OTM3YjI0Mzg5ODlmZGNkNDFkMDJULzRrWnFqQ2VnRHF2R2xSY3k2MEFBPT0KZjdhNDExN2YyYjZmOTZlMjlhMzU0MWRhNjJlYzEzODlCLzhlcXNRcW9BakVrRlBwclZTblp6R1F4SnNWVWNubQ=="
+}

@@ -1,0 +1,97 @@
+{
+    "target_team": 157, 
+    "type": "correctness", 
+    "commands": [
+        {
+            "program": "logappend", 
+            "args": [
+                "-T", 
+                "1", 
+                "-K", 
+                "VBAWQWPD", 
+                "-E", 
+                "JAMES", 
+                "-A", 
+                "MVPOSPWR"
+            ]
+        }, 
+        {
+            "program": "logappend", 
+            "args": [
+                "-T", 
+                "2", 
+                "-K", 
+                "VBAWQWPD", 
+                "-E", 
+                "JAMES", 
+                "-A", 
+                "-R", 
+                "2", 
+                "MVPOSPWR"
+            ]
+        }, 
+        {
+            "program": "logappend", 
+            "args": [
+                "-T", 
+                "3", 
+                "-K", 
+                "VBAWQWPD", 
+                "-G", 
+                "SARAH", 
+                "-A", 
+                "MVPOSPWR"
+            ]
+        }, 
+        {
+            "program": "logappend", 
+            "args": [
+                "-T", 
+                "4", 
+                "-K", 
+                "VBAWQWPD", 
+                "-G", 
+                "SHENITA", 
+                "-A", 
+                "MVPOSPWR"
+            ]
+        }, 
+        {
+            "program": "logappend", 
+            "args": [
+                "-T", 
+                "5", 
+                "-K", 
+                "VBAWQWPD", 
+                "-G", 
+                "SARAH", 
+                "-A", 
+                "-R", 
+                "2", 
+                "MVPOSPWR"
+            ]
+        }, 
+        {
+            "program": "logread", 
+            "args": [
+                "-K", 
+                "VBAWQWPD", 
+                "-T", 
+                "-G", 
+                "JAMES", 
+                "MVPOSPWR"
+            ]
+        }, 
+        {
+            "program": "logread", 
+            "args": [
+                "-K", 
+                "VBAWQWPD", 
+                "-T", 
+                "-E", 
+                "FRED", 
+                "MVPOSPWR"
+            ]
+        }
+    ]
+}

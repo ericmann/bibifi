@@ -1,0 +1,28 @@
+{
+    "target_team": 157, 
+    "type": "correctness", 
+    "commands": [
+        {
+            "program": "logappend", 
+            "args": [
+                "-T", 
+                "1", 
+                "-K", 
+                "VNIREWPO", 
+                "-E", 
+                "JOSHUA", 
+                "-A", 
+                "GEROGBNO.log"
+            ]
+        }, 
+        {
+            "program": "logread", 
+            "args": [
+                "-K", 
+                "VNIREWPO", 
+                "-S", 
+                "GEROGBNO.log"
+            ]
+        }
+    ]
+}

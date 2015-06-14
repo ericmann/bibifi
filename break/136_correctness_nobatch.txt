@@ -1,0 +1,1 @@
+With no batch file, should print "invalid"

@@ -1,0 +1,20 @@
+{
+    "target_team": 157, 
+    "type": "correctness", 
+    "commands": [
+        {
+            "program": "logappend", 
+            "args": [
+                "-T", 
+                "-1", 
+                "-K", 
+                "SECRET", 
+                "-E", 
+                "GLAYDS", 
+                "-A", 
+                "RSRYYXDZ"
+            ]
+        }
+    ], 
+    "batch": ""
+}

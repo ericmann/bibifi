@@ -1,0 +1,1 @@
+Visitors must exit their room before entering a new one.

@@ -1,0 +1,74 @@
+{
+    "target_team": 157,
+    "type": "correctness",
+    "commands": [
+        {
+            "args": ["-T","1","-K","SECRET","-E","MAURO","-A","log"],
+            "program": "logappend"
+        },
+        {
+            "args": ["-T","2","-K","SECRET","-G","VANESSA","-A","log"],
+            "program": "logappend"
+        },
+        {
+            "args": ["-T","3","-K","SECRET","-E","MAURO","-R","10000","-A","log"],
+            "program": "logappend"
+        },        
+        {
+            "args": ["-T","5","-K","SECRET","-G","VANESSA","-R","30000","-A","log"],
+            "program": "logappend"
+        },        
+        {
+            "args": ["-T","9","-K","SECRET","-E","MAURO","-R","10000","-L","log"],
+            "program": "logappend"
+        },        
+        {
+            "args": ["-T","100","-K","SECRET","-G","VANESSA","-R","30000","-L","log"],
+            "program": "logappend"
+        },        
+        {
+            "args": ["-T","101","-K","SECRET","-G","VANESSA","-L","log"],
+            "program": "logappend"
+        },        
+        {
+            "args": ["-T","102","-K","SECRET","-E","MAURO","-L","log"],
+            "program": "logappend"
+        },        
+        {
+            "args": ["-T","105","-K","SECRET","-E","MAURO","-A","log"],
+            "program": "logappend"
+        },        
+        {
+            "args": ["-T","106","-K","SECRET","-G","VANESSA","-A","log"],
+            "program": "logappend"
+        },        
+        {
+            "args": ["-T","109","-K","SECRET","-G","VANESSA","-L","log"],
+            "program": "logappend"
+        },        
+        {
+            "args": ["-T","110","-K","SECRET","-E","MAURO","-L","log"],
+            "program": "logappend"
+        },        
+        {
+            "args": ["-T","200","-K","SECRET","-E","MAURO","-A","log"],
+            "program": "logappend"
+        },        
+        {
+            "args": ["-T","1000","-K","SECRET","-G","VANESSA","-A","log"],
+            "program": "logappend"
+        },        
+        {
+            "args": ["-K","SECRET","-T","-E","MAURO","log"],
+            "program": "logread"
+        },
+        {
+            "args": ["-K","SECRET","-T","-G","VANESSA","log"],
+            "program": "logread"
+        },
+        {
+            "args": ["-K","SECRET","-T","-E","VANESSA","log"],
+            "program": "logread"
+        }
+    ]
+}

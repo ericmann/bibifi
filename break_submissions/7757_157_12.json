@@ -1,0 +1,70 @@
+{
+  "target_team": 157,
+  "type": "correctness",
+  "commands": [
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "1", "-G", "BUZZ", "-A", "log12"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "5", "-G", "BUZZ", "-A", "-R", "1", "log12"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "10", "-G", "BUDDY", "-A", "log12"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "15", "-G", "BUDDY", "-A", "-R", "1", "log12"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "20", "-G", "CINDERELLA", "-A", "log12"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "25", "-G", "CINDERELLA", "-A", "-R", "1", "log12"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "27", "-G", "BUDDY", "-L", "-R", "1", "log12"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "30", "-G", "SNOWWHITE", "-A", "log12"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "33", "-G", "SNOWWHITE", "-A", "-R", "1", "log12"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "35", "-G", "CINDERELLA", "-L", "-R", "1", "log12"]
+    },
+    {
+      "program": "logappend",
+      "args": ["-K", "NOTASECRET", "-T", "43", "-G", "SNOWWHITE", "-L", "-R", "1", "log12"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "NOTASECRET", "-I", "-G", "BUDDY", "-G", "SNOWWHITE", "log12"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "NOTASECRET", "-I", "-G", "BUZZ", "-G", "BUDDY", "-G", "CINDERELLA", "log12"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "NOTASECRET", "-I", "-G", "BUDDY", "-G", "CINDERELLA", "-G", "SNOWWHITE", "log12"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "NOTASECRET", "-I", "-G", "BUZZ", "-G", "SNOWWHITE", "-G", "CINDERELLA", "log12"]
+    },
+    {
+      "program": "logread",
+      "args": ["-K", "NOTASECRET", "-I", "-G", "BUZZ", "-G", "BUDDY", "-G", "CINDERELLA", "-G", "SNOWWHITE", "log12"]
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+Program accepts "-1" as proper value for timestamp, and returns with 0 when it should return 255 and print invalid.
+Specs:Valid times range from 1 to 1073741823 inclusively.

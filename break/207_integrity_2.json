@@ -1,0 +1,12 @@
+{
+  "target_team": 207,
+  "type": "integrity",
+  "commands": [
+    {
+      "program": "logread",
+      "args": ["-S"]
+    }
+  ],
+  "logfile": "YZPRJYAJ",
+  "replacement": "Bgm3HhPVhZq7u+K/ht6hF+XsrukIYEHN+rRJ+ZS+9ZotRU9MLQo8y5MbvzPq6e1Fo7r68jjEW1+JuRmjuP9ICkvvNi6aJQOKexAcZKvTbDMiXHXVLnktRU9MLQo0J8LFENJmwQyywZEs67MELIRjZLIfB/h6XPW/aMDGtP1/5aVsBeI9Ehd9VVgZdWwtRU9MLQo="
+}

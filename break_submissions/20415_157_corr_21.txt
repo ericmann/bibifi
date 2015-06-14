@@ -1,0 +1,1 @@
+Guest and employee names are alphabetic characters only.

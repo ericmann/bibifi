@@ -1,0 +1,1 @@
+A batch file executes each line as if logappend was called alone and different lines may refer to multiple logfiles. This submission expects the logfiles in the batch to be constant, reporting incorrect/unexpected output.

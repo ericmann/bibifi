@@ -1,0 +1,8 @@
+{
+  "target_team": 157,
+  "type": "correctness", 
+  "commands": [
+    {"program": "logappend", "args": ["-T","1","-K","tok$en","-E","F%red","-A","logIC"]},
+    {"program": "logappend", "args": ["-T","2","-K","token","-E","Fred","-%","-$","-A","logIC"]}
+  ]    
+}

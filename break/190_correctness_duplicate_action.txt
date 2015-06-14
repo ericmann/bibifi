@@ -1,0 +1,1 @@
+The action flag (-A/-L) should only appear once.
