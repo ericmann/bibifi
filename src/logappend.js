@@ -231,6 +231,11 @@ function handleBatch( file ) {
 				var lineArgv = line.toString().match( /\S+/g ),
 					append = cli.validate_append_args( lineArgv );
 
+				if ( 'valid' !== append.status ) {
+					process.stdout.write( 'invalid' );
+					continue;
+				}
+
 				if ( 'entry' !== append.type ) {
 					process.stdout.write( 'invalid' );
 					continue;
