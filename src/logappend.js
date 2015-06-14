@@ -240,7 +240,6 @@ function validateEntry( logFile, entry ) {
  * @returns {Promise}
  */
 function handleEntry( append, exit ) {
-console.log( append );
 	if ( undefined === exit ) {
 		exit = true;
 	}
@@ -263,7 +262,8 @@ console.log( append );
 
 			// Handle the action
 			if ( ! validateEntry( logFile, entry ) || ! handleAction( logFile, entry ) ) {
-				return util.invalid( exit );
+				util.invalid( exit );
+				return logFile.close().then( fulfill );
 			}
 
 			// Append the log
@@ -274,6 +274,12 @@ console.log( append );
 		} );
 
 	} );
+}
+
+function wrapHandle( append, exit ) {
+	return function() {
+		return handleEntry( append, exit );
+	};
 }
 
 /**
@@ -288,45 +294,49 @@ function handleBatch( file ) {
 		fs.createReadStream( file )
 			.pipe( lineStream );
 
-		var entryPromises = [];
+		var entries = [],
+			entryPromises = [];
 
 		lineStream.on( 'readable', function() {
+			lineStream.pause();
 			var line;
-			while( null !== ( line = lineStream.read() ) ) {
 
+			while( null !== ( line = lineStream.read() ) ) {
 				var lineArgv = line.toString().match( /\S+/g ),
 					append = cli.validate_append_args( lineArgv );
-
-				// Parse the entry
-				var entry = new Entry( {
-					'name'   : append.name,
-					'type'   : append.visitor_type,
-					'action' : append.action,
-					'room'   : append.room,
-					'time'   : append.time,
-					'secret' : append.key,
-					'logfile': append.file
-				} );
 
 				if ( 'entry' !== append.type || 'valid' !== append.status ) {
 					process.stdout.write( 'invalid' );
 					continue;
 				}
 
-				if ( 'entry' !== append.type ) {
-					process.stdout.write( 'invalid' );
-					continue;
-				}
-
-				entryPromises.push( handleEntry( append ) );
+				entries.push( wrapHandle( append, false ) );
 			}
 		} );
 
 
 		lineStream.on( 'end', function() {
-			entryPromises.reduce( function( curr, next ) {
-				return curr.then( next );
-			}, Promise.resolve( true ) ).then( fulfill );
+			function runEntry() {
+				return new Promise( function( fulfill, reject ) {
+					var entry = entries.shift();
+
+					if ( undefined === entry ) {
+						fulfill();
+					} else {
+						entry().then( function() {
+							if ( entries.length === 0 ) {
+								fulfill();
+							} else {
+								runEntry().then( fulfill );
+							}
+						} );
+					}
+
+					return entry();
+				} );
+			}
+
+			runEntry().then( fulfill );
 		} );
 	} );
 }
