@@ -58,67 +58,46 @@ CLI.prototype.validate_append_args = function( argv ) {
 		var param = argv[i];
 
 		// Grab a key parameter
-		if ( param.indexOf( '-K' ) === 0 ) {
-			// If the key is standalone
-			if ( param === '-K' ) {
-				i += 1;
-				append_query.key = argv[ i ];
-			} else {
-				append_query.key = param.replace( '-K', '' );
-			}
+		if ( '-K' === param ) {
+			i += 1;
+			append_query.key = argv[ i ];
 		}
 		// Grab a time parameter
-		else if ( param.indexOf( '-T' ) === 0 ) {
-			if ( param === '-T' ) {
-				i += 1;
-				append_query.time = argv[ i ];
-			} else {
-				append_query.time = param.replace( '-T', '' );
-			}
+		else if ( '-T' === param ) {
+			i += 1;
+			append_query.time = argv[ i ];
 		}
 		// Grab a room parameter
-		else if ( param.indexOf( '-R' ) === 0 ) {
-			if ( param === '-R' ) {
-				i += 1;
-				append_query.room = argv[ i ];
-			} else {
-				append_query.room = param.replace( '-R', '' );
-			}
+		else if ( '-R' === param ) {
+			i += 1;
+			append_query.room = argv[ i ];
 		}
 		// Grab an employee name
-		else if ( param.indexOf( '-E' ) === 0 ) {
+		else if ( '-E' === param ) {
 			// Only one type is allowed
 			if ( type_selected && type_selected !== 'E' ) {
 				return append_query;
 			}
 
-			if ( param === '-E' ) {
-				i += 1;
-				append_query.name = argv[ i ];
-			} else {
-				append_query.name = param.replace( '-E', '' );
-			}
+			i += 1;
+			append_query.name = argv[ i ];
 			append_query.visitor_type = 'E';
 			type_selected = 'E';
 		}
 		// Grab a guest name
-		else if ( param.indexOf( '-G' ) === 0 ) {
+		else if ( '-G' === param ) {
 			// Only one type is allowed
 			if ( type_selected && type_selected !== 'G' ) {
 				return append_query;
 			}
 
-			if ( param === '-G' ) {
-				i += 1;
-				append_query.name = argv[ i ];
-			} else {
-				append_query.name = param.replace( '-G', '' );
-			}
+			i += 1;
+			append_query.name = argv[ i ];
 			append_query.visitor_type = 'G';
 			type_selected = 'G';
 		}
 		// Grab an arrive action
-		else if ( param.indexOf( '-A' ) === 0 ) {
+		else if ( '-A' === param ) {
 			// Only one type is allowed
 			if ( action_selected && action_selected !== 'A' ) {
 				return append_query;
@@ -128,7 +107,7 @@ CLI.prototype.validate_append_args = function( argv ) {
 			action_selected = 'A';
 		}
 		// Grab a leave action
-		else if ( param.indexOf( '-L' ) === 0 ) {
+		else if ( '-L' === param ) {
 			// Only one type is allowed
 			if ( action_selected && action_selected !== 'L' ) {
 				return append_query;
@@ -138,7 +117,7 @@ CLI.prototype.validate_append_args = function( argv ) {
 			action_selected = 'L';
 		}
 		// Are we a batch?
-		else if ( param.indexOf( '-B' ) === 0 ) {
+		else if ( '-B' === param ) {
 			append_query.type = 'batch';
 		}
 		// Get the logfile name
