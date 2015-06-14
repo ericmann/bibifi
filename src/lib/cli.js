@@ -131,6 +131,11 @@ CLI.prototype.validate_append_args = function( argv ) {
 		}
 	}
 
+	// Make sure the key is valid
+	if ( /[^(a-zA-Z0-9)]/gi.test( append_query.key ) ) {
+		return append_query;
+	}
+
 	// If we're good, we're valid
 	append_query['status'] = 'valid';
 
