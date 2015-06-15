@@ -74,7 +74,7 @@ function getStatus( log ) {
 			rooms[ room ] = [];
 		}
 
-		rooms[ room ].push( log.meta.dictionary[ occupant].substr(1) );
+		rooms[ room ].push( log.meta.dictionary[ occupant ].substr(1) );
 	}
 
 	// Get ordered room keys
@@ -83,7 +83,7 @@ function getStatus( log ) {
 	// Build out our output
 	var roomOutput = [];
 	for ( i = 0, l = roomKeys.length; i < l; i++ ) {
-		var key = roomKeys[ i],
+		var key = roomKeys[ i ],
 			room = rooms[ key ];
 
 		roomOutput.push( key.toString() + ': ' + room.sort().join( ',' ) );
@@ -308,45 +308,40 @@ if ( ! lookup.isValid() ) {
 }
 
 // Get a log file
-var log;
-try {
-	log = new LogFile( lookup.logfile, lookup.secret );
-} catch ( e ) {
-	return util.integrityViolation();
-}
+var log = new LogFile( lookup.logfile, lookup.secret );
 
-// Validate our security key
-if ( ! log.isValidSecret() ) {
-	return util.invalid();
-}
-
-switch( lookup.query ) {
-	case 'S':
-		if ( ! getStatus( log ) ) {
-			return util.invalid();
-		}
-		break;
-	case 'R':
-		if ( ! getHistory( log, query.names ) ) {
-			return util.invalid();
-		}
-		break;
-	case 'T':
-		if ( ! getTime( log, query.names ) ) {
-			return util.invalid();
-		}
-		break;
-	case 'I':
-		if ( ! getCollisions( log, query.names ) ) {
-			return util.invalid();
-		}
-		break;
-	default:
+// Read in the logfile
+log.read().then( function() {
+	// Validate our security key
+	if ( ! log.isValidSecret() ) {
 		return util.invalid();
-}
+	}
 
-// Close the file
-log.exit();
+	switch( lookup.query ) {
+		case 'S':
+			if ( ! getStatus( log ) ) {
+				return util.invalid();
+			}
+			break;
+		case 'R':
+			if ( ! getHistory( log, query.names ) ) {
+				return util.invalid();
+			}
+			break;
+		case 'T':
+			if ( ! getTime( log, query.names ) ) {
+				return util.invalid();
+			}
+			break;
+		case 'I':
+			if ( ! getCollisions( log, query.names ) ) {
+				return util.invalid();
+			}
+			break;
+		default:
+			return util.invalid();
+	}
 
-// Fin
-process.exit( 0 );
+	// Fin
+	process.exit( 0 );
+} );

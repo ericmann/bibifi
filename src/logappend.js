@@ -209,92 +209,42 @@ function handleAction( log, entry ) {
 	return success;
 }
 
-function readBatch( readable ) {
-
-}
-
 /**
- * Handle a batchfile.
+ * Validate entry.
  *
+ * @param {LogFile} logFile
+ * @param {Entry}   entry
  *
+ * @returns {Boolean}
  */
-function handleBatch( file ) {
-	var lineStream = new LineStream();
-
-	return new Promise( function( fulfill, reject ) {
-		fs.createReadStream( file )
-			.pipe( lineStream );
-
-		lineStream.on( 'readable', function() {
-			var line;
-			while( null !== ( line = lineStream.read() ) ) {
-				var lineArgv = line.toString().match( /\S+/g ),
-					append = cli.validate_append_args( lineArgv );
-
-				if ( 'valid' !== append.status ) {
-					process.stdout.write( 'invalid' );
-					continue;
-				}
-
-				if ( 'entry' !== append.type ) {
-					process.stdout.write( 'invalid' );
-					continue;
-				}
-
-				appendLog( append, false );
-			}
-		} );
-
-		lineStream.on( 'end', function() {
-			fulfill();
-		} );
-	} );
-}
-
-/**
- * If the log is new, the dump it and don't write an empty file!
- *
- * @param {LogFile} log
- *
- * @return {Boolean}
- */
-function maybePurge( log ) {
-	// If no entries, truncate and exit
-	if ( log.newFile ) {
-		fs.closeSync( log.fd );
-		fs.unlinkSync( log.path );
-
-		return true;
+function validateEntry( logFile, entry ) {
+	// Validate our secret key
+	if ( ! logFile.isValidSecret() ) {
+		return false;
 	}
 
-	return false;
+	// If it's an invalid entry, or if the timestamp fails to validate, err
+	if ( ! entry.isValid() || entry.time <= logFile.meta.time ) {
+		return false;
+	}
+
+	return true;
 }
 
 /**
- * Append a single logfile.
+ * Handle a specific entry.
  *
  * @param {Object}  append
  * @param {Boolean} [exit]
+ *
+ * @returns {Promise}
  */
-function appendLog( append, exit ) {
+function handleEntry( append, exit ) {
 	if ( undefined === exit ) {
 		exit = true;
 	}
 
-	// Get a log file
-	var log;
-	try {
-		log = new LogFile( append.file, append.key );
-	} catch ( e ) {
-		return util.invalid( exit );
-	}
-
-	// Validate our secret key
-	if ( ! log.isValidSecret() ) {
-		maybePurge( log );
-
-		return util.invalid( exit );
-	}
+	var logFile = new LogFile( append.file, append.key );
 
 	// The name is really the type and name concatenated
 	var type = append.visitor_type.trim()[0];
@@ -307,26 +257,84 @@ function appendLog( append, exit ) {
 		'time'  : append.time
 	} );
 
+	return new Promise( function ( fulfill, reject ) {
+		logFile.read( exit ).then( function () {
 
-	// If it's an invalid entry, or if the timestamp fails to validate, err
-	if ( ! entry.isValid() || entry.time <= log.meta.time ) {
-		maybePurge( log );
+			// Handle the action
+			if ( ! validateEntry( logFile, entry ) || ! handleAction( logFile, entry ) ) {
+				util.invalid( exit );
+				return logFile.close().then( fulfill );
+			}
 
-		return util.invalid( exit );
-	}
+			// Append the log
+			logFile.newEntries.push( entry );
 
-	// Handle the action
-	if ( ! handleAction( log, entry ) ) {
-		maybePurge( log );
+			// We're done, so let's close the logfile
+			logFile.close().then( fulfill );
+		} );
 
-		return util.invalid( exit );
-	}
+	} );
+}
 
-	// Append the log
-	log.newEntries.push( entry );
+/**
+ * Handle a batchfile.
+ *
+ * @param {String} file
+ */
+function handleBatch( file ) {
+	var lineStream = new LineStream();
 
-	// We're done, so let's close the logfile
-	log.close();
+	return new Promise( function( fulfill, reject ) {
+		fs.createReadStream( file )
+			.pipe( lineStream );
+
+		var entries = [], blah = [];
+
+		lineStream.on( 'readable', function() {
+			var line;
+
+			while( null !== ( line = lineStream.read() ) ) {
+				var lineArgv = line.toString().match( /\S+/g ),
+					append = cli.validate_append_args( lineArgv );
+
+				if ( 'entry' !== append.type || 'valid' !== append.status ) {
+					process.stdout.write( 'invalid' );
+					continue;
+				}
+
+				var wrapper = (function( a ) {
+					return function() {
+						return handleEntry( a, false );
+					}
+				})( append );
+
+				entries.push( append );
+			}
+		} );
+
+		lineStream.on( 'end', function() {
+			function runEntry() {
+				return new Promise( function( fulfill, reject ) {
+					var entry = entries.shift();
+
+					if ( undefined === entry ) {
+						fulfill();
+					} else {
+						handleEntry( entry, false ).then( function() {
+							if ( entries.length === 0 ) {
+								fulfill();
+							} else {
+								runEntry().then( fulfill );
+							}
+						} );
+					}
+				} );
+			}
+
+			runEntry().then( fulfill );
+		} );
+
+	} );
 }
 
 // Validate the entry arguments
@@ -338,19 +346,17 @@ if ( 'valid' !== append.status ) {
 
 switch( append.type ) {
 	case 'entry':
-		appendLog( append, true );
+		handleEntry( append ).then( function() {
+			process.exit( 0 );
+		} );
 
 		break;
 	case 'batch':
-		handleBatch( append.file ).then(
-			function() {
-				process.exit( 0 );
-			}
-		);
-		return;
+		handleBatch( append.file ).then( function() {
+			process.exit( 0 );
+		} );
+
+		break;
 	default:
 		return util.invalid();
 }
-
-// Fin
-process.exit( 0 );
