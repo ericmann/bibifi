@@ -276,12 +276,6 @@ function handleEntry( append, exit ) {
 	} );
 }
 
-function wrapHandle( append, exit ) {
-	return function() {
-		return handleEntry( append, exit );
-	};
-}
-
 /**
  * Handle a batchfile.
  *
@@ -294,11 +288,9 @@ function handleBatch( file ) {
 		fs.createReadStream( file )
 			.pipe( lineStream );
 
-		var entries = [],
-			entryPromises = [];
+		var entries = [], blah = [];
 
 		lineStream.on( 'readable', function() {
-			lineStream.pause();
 			var line;
 
 			while( null !== ( line = lineStream.read() ) ) {
@@ -310,10 +302,15 @@ function handleBatch( file ) {
 					continue;
 				}
 
-				entries.push( wrapHandle( append, false ) );
+				var wrapper = (function( a ) {
+					return function() {
+						return handleEntry( a, false );
+					}
+				})( append );
+
+				entries.push( append );
 			}
 		} );
-
 
 		lineStream.on( 'end', function() {
 			function runEntry() {
@@ -323,7 +320,7 @@ function handleBatch( file ) {
 					if ( undefined === entry ) {
 						fulfill();
 					} else {
-						entry().then( function() {
+						handleEntry( entry, false ).then( function() {
 							if ( entries.length === 0 ) {
 								fulfill();
 							} else {
@@ -331,13 +328,12 @@ function handleBatch( file ) {
 							}
 						} );
 					}
-
-					return entry();
 				} );
 			}
 
 			runEntry().then( fulfill );
 		} );
+
 	} );
 }
 
